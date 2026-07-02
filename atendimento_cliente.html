@@ -336,20 +336,25 @@ document.getElementById('btnSave').addEventListener('click',function(){
 
 /* ---------- Historico ---------- */
 let PF=[];
-function carregarPF(){
+function carregarPF(tries){
+  tries=tries||0;
   var l=document.getElementById('pf-list');
   if(!BACKEND){ l.innerHTML='<p class="hint">Sem liga\u00E7\u00E3o \u00E0 nuvem.</p>'; return; }
-  l.innerHTML='<p class="hint">A carregar\u2026</p>';
+  if(!tries) l.innerHTML='<p class="hint">A carregar\u2026</p>';
   fetch(BACKEND+'?action=notas&t='+Date.now())
-    .then(r=>r.json()).then(function(j){
+    .then(function(r){ return r.json(); }).then(function(j){
       if(j&&j.ok&&Array.isArray(j.notas)){
         PF=j.notas.filter(function(n){return String(n.seccao)==='_pfhist';})
           .map(function(n){ var o={}; try{o=JSON.parse(n.texto||'{}');}catch(e){} o.id=n.id; o.ts=n.data; return o; })
           .filter(function(o){ return o.topico===TOPICO; })
           .sort(function(a,b){ return new Date(b.ts)-new Date(a.ts); });
         renderPF();
-      } else { l.innerHTML='<p class="hint">Sem dados.</p>'; }
-    }).catch(function(){ l.innerHTML='<p class="hint">Sem liga\u00E7\u00E3o. Recarrega.</p>'; });
+      } else { throw new Error('resposta invalida'); }
+    }).catch(function(){
+      // o backend as vezes devolve HTML em vez de JSON -> tenta de novo
+      if(tries<3){ setTimeout(function(){ carregarPF(tries+1); }, 1500); }
+      else { l.innerHTML='<p class="hint">N\u00E3o foi poss\u00EDvel carregar o hist\u00F3rico. Recarrega a p\u00E1gina.</p>'; }
+    });
 }
 function renderPF(){
   var l=document.getElementById('pf-list'); l.innerHTML='';
