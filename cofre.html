@@ -361,6 +361,7 @@ function saveLocal(){ try{ localStorage.setItem(STORE_KEY,serialize()); }catch(e
 /* ---------- Sincroniza\u00E7\u00E3o (nuvem) ---------- */
 let saveTimer;
 let loading=true;   // durante o arranque/leitura nao escreve na nuvem
+let userEditedDuringLoad=false;   // se o utilizador contar ANTES do pullCloud terminar, nao deixar a nuvem sobrepor
 function save(){
   saveLocal();
   if(loading) return;
@@ -386,13 +387,16 @@ function pullCloud(tries){
   setStatus('sync','A ligar\u2026');
   fetch(BACKEND+'?action=get&t='+Date.now())
     .then(r=>r.json()).then(j=>{
-      if(j&&j.ok&&j.data){
+      // So adota o estado da nuvem se o utilizador AINDA nao comecou a contar
+      // (senao apagaria o que ele acabou de escrever durante o arranque).
+      if(j&&j.ok&&j.data && !userEditedDuringLoad){
         try{ const remote=JSON.parse(j.data); if(remote&&(remote.cofre||remote.cofreManha||remote.cofreNoite)){ state=Object.assign(defaultState(),remote); saveLocal(); initAll(true); } }catch(e){}
       }
       loading=false;
+      if(userEditedDuringLoad){ save(); }   // envia para a nuvem o que ele escreveu durante o arranque
       setStatus('ok','Guardado na nuvem');
     })
-    .catch(e=>{ if(tries<3){ setTimeout(()=>pullCloud(tries+1),2000); } else { loading=false; setStatus('off','Sem liga\u00E7\u00E3o \u2014 a usar dados do dispositivo'); } });
+    .catch(e=>{ if(tries<3){ setTimeout(()=>pullCloud(tries+1),2000); } else { loading=false; if(userEditedDuringLoad){ save(); } setStatus('off','Sem liga\u00E7\u00E3o \u2014 a usar dados do dispositivo'); } });
 }
 function setStatus(kind,txt){
   const el=document.getElementById('saveStatus'); if(!el) return;
@@ -651,6 +655,9 @@ function initAll(keepTab){
   renderCofre(); renderBanco(); renderCaixas();
 }
 
+// Se o utilizador comecar a contar enquanto a nuvem ainda esta a carregar,
+// marca para o pullCloud NAO apagar o que ele escreveu (evita "nao gravou").
+document.addEventListener('input',function(){ if(loading) userEditedDuringLoad=true; }, true);
 initAll();
 pullCloud();
 </script>
