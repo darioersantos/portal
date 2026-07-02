@@ -89,6 +89,17 @@
     #printArea li .bx{width:18px;height:18px;border:1.6px solid #000;border-radius:3px;flex:none;}
     #printArea .ph-sign{margin-top:24px;font-size:13px;line-height:2.4;}
   }
+
+  /* editar a lista de tarefas (adicionar/remover, guardada na nuvem) */
+  .area-edit{background:rgba(255,255,255,.18);border:none;color:#fff;border-radius:9px;padding:7px 11px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;flex:none;margin-left:8px;}
+  .area-edit.on{background:#fff;color:var(--accent-dark);}
+  .task .tdel{display:none;margin-left:auto;background:none;border:none;color:var(--neg);font-weight:800;cursor:pointer;font-family:inherit;padding:4px 8px;flex:none;font-size:15px;}
+  .area.editing .task .tdel{display:inline-flex;}
+  .addrow{display:none;gap:8px;margin:2px 15px 14px;}
+  .area.editing .addrow{display:flex;}
+  .addrow input{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:10px;padding:11px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);}
+  .addrow input:focus{outline:none;border-color:var(--accent);}
+  .addrow button{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:11px 15px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
 </style>
 </head>
 <body>
@@ -185,29 +196,91 @@ const AREAS=[
 
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
+/* ---- lista de tarefas edit\u00E1vel (guardada na nuvem, igual em todos os dispositivos) ---- */
+const ITEMS_SEC='_lpitems';
+let itemsNoteId='';
+const EDITMODE={};
+function aplicarItens(map){ AREAS.forEach(function(a){ if(map && Array.isArray(map[a.key]) && map[a.key].length){ a.tarefas=map[a.key].map(String); } }); }
+function carregarItens(){
+  if(!BACKEND) return;
+  fetch(BACKEND+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){
+    if(!(j&&j.ok&&Array.isArray(j.notas))) return;
+    var vs=j.notas.filter(function(n){return String(n.seccao)===ITEMS_SEC;}).sort(function(a,b){return new Date(b.data)-new Date(a.data);});
+    if(!vs.length) return;
+    try{ aplicarItens(JSON.parse(vs[0].texto||'{}')); itemsNoteId=String(vs[0].id); }catch(e){}
+    for(var i=1;i<vs.length;i++){ fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_del', id:vs[i].id})}).catch(function(){}); }
+    renderKeep();
+  }).catch(function(){});
+}
+function guardarItens(){
+  if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem \u2014 a altera\u00E7\u00E3o n\u00E3o ficou guardada.'); return; }
+  var payload={}; AREAS.forEach(function(a){ payload[a.key]=a.tarefas; });
+  var old=itemsNoteId; itemsNoteId='';
+  fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action:'nota_add', seccao:ITEMS_SEC, autor:'lista', texto:JSON.stringify(payload)})})
+    .then(function(r){return r.json();}).then(function(j){
+      if(j&&j.ok&&old){ fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_del', id:old})}).catch(function(){}); }
+    })
+    .catch(function(){ alert('N\u00E3o foi poss\u00EDvel guardar a lista na nuvem. Tenta de novo.'); });
+}
+function snapshotChecks(){
+  var m={};
+  document.querySelectorAll('#areas .task').forEach(function(lbl){
+    var c=lbl.querySelector('input'); if(c&&c.checked){ m[c.dataset.area+'||'+lbl.querySelector('.tt').textContent]=1; }
+  });
+  return m;
+}
+function restoreChecks(m){
+  document.querySelectorAll('#areas .task').forEach(function(lbl){
+    var c=lbl.querySelector('input');
+    if(c && m[c.dataset.area+'||'+lbl.querySelector('.tt').textContent]) c.checked=true;
+  });
+}
+function renderKeep(){ var m=snapshotChecks(); render(); restoreChecks(m); update(); }
+
 function render(){
   const root=document.getElementById('areas'); root.innerHTML='';
   AREAS.forEach(function(a){
-    const card=document.createElement('div'); card.className='area'; card.dataset.key=a.key;
+    const card=document.createElement('div'); card.className='area'+(EDITMODE[a.key]?' editing':''); card.dataset.key=a.key;
     let tasks='';
     a.tarefas.forEach(function(t,i){
-      tasks+='<label class="task"><input type="checkbox" data-area="'+a.key+'" data-i="'+i+'"><span class="box"></span><span class="tt">'+esc(t)+'</span></label>';
+      tasks+='<label class="task"><input type="checkbox" data-area="'+a.key+'" data-i="'+i+'"><span class="box"></span><span class="tt">'+esc(t)+'</span><button type="button" class="tdel" data-area="'+a.key+'" data-i="'+i+'" title="Remover da lista">\u2715</button></label>';
     });
     card.innerHTML=
-      '<div class="area-head"><span class="area-ic"><i data-lu="'+a.lu+'" data-sz="22"></i></span><h2>'+esc(a.nome)+'</h2><span class="area-prog" id="prog-'+a.key+'">0/'+a.tarefas.length+'</span></div>'+
+      '<div class="area-head"><span class="area-ic"><i data-lu="'+a.lu+'" data-sz="22"></i></span><h2>'+esc(a.nome)+'</h2><span class="area-prog" id="prog-'+a.key+'">0/'+a.tarefas.length+'</span><button type="button" class="area-edit'+(EDITMODE[a.key]?' on':'')+'" data-area="'+a.key+'"><i data-lu="pen-line" data-sz="13"></i> '+(EDITMODE[a.key]?'Concluir':'Editar')+'</button></div>'+
       '<button class="area-all" data-area="'+a.key+'">Marcar todas</button>'+
-      '<div class="tasks">'+tasks+'</div>';
+      '<div class="tasks">'+tasks+'</div>'+
+      '<div class="addrow"><input type="text" placeholder="Nova tarefa\u2026" data-add="'+a.key+'"><button type="button" data-add="'+a.key+'">\uFF0B Adicionar</button></div>';
     root.appendChild(card);
   });
   root.querySelectorAll('input[type=checkbox]').forEach(function(c){ c.addEventListener('change', update); });
   root.querySelectorAll('.area-all').forEach(function(b){
     b.addEventListener('click', function(){
       const key=b.dataset.area;
-      const boxes=root.querySelectorAll('input[data-area="'+key+'"]');
+      const boxes=root.querySelectorAll('input[type=checkbox][data-area="'+key+'"]');
       const allOn=[].every.call(boxes, x=>x.checked);
       boxes.forEach(function(x){ x.checked=!allOn; });
       b.textContent = allOn ? 'Marcar todas' : 'Desmarcar todas';
       update();
+    });
+  });
+  root.querySelectorAll('.area-edit').forEach(function(b){
+    b.addEventListener('click', function(){ EDITMODE[b.dataset.area]=!EDITMODE[b.dataset.area]; renderKeep(); });
+  });
+  root.querySelectorAll('.tdel').forEach(function(b){
+    b.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      var a=AREAS.find(function(x){return x.key===b.dataset.area;}); var i=+b.dataset.i;
+      if(!a || !a.tarefas[i]) return;
+      if(!confirm('Remover "'+a.tarefas[i]+'" da lista?\n(Fica removida em todos os dispositivos.)')) return;
+      a.tarefas.splice(i,1); guardarItens(); renderKeep();
+    });
+  });
+  root.querySelectorAll('.addrow button').forEach(function(b){
+    b.addEventListener('click', function(){
+      var inp=b.parentElement.querySelector('input'); var v=(inp.value||'').trim(); if(!v) return;
+      var a=AREAS.find(function(x){return x.key===b.getAttribute('data-add');}); if(!a) return;
+      a.tarefas.push(v); inp.value=''; guardarItens(); renderKeep();
     });
   });
   update();
@@ -216,7 +289,7 @@ function render(){
 function update(){
   let total=0, done=0;
   AREAS.forEach(function(a){
-    const boxes=document.querySelectorAll('input[data-area="'+a.key+'"]');
+    const boxes=document.querySelectorAll('input[type=checkbox][data-area="'+a.key+'"]');
     let d=0; boxes.forEach(function(x){ if(x.checked) d++; });
     total+=boxes.length; done+=d;
     document.getElementById('prog-'+a.key).textContent=d+'/'+boxes.length;
@@ -280,6 +353,7 @@ function imprimirPorSeccao(){
 document.getElementById('btnPrint').addEventListener('click', imprimirPorSeccao);
 
 render();
+carregarItens();
 </script>
 </body>
 </html>
