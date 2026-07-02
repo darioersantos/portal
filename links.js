@@ -41,11 +41,11 @@ window.PORTAL_LINKS = {
   /* ---- Plano Formativo (em breve) ---- */
   pf_atendimento:    "atendimento_cliente.html",
   pf_szclub:         "szclub.html",
-  pf_onlines:        "",
+  pf_onlines:        "onlines.html",
   pf_sprays:         "sprays.html",
   pf_palmilhas:      "palmilhas.html",
-  pf_entrada:        "",
-  pf_provadores:     "",
+  pf_entrada:        "entrada.html",
+  pf_provadores:     "provadores.html",
 
   /* ---- Outros ---- */
   atas:              "atas.html",
