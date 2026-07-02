@@ -118,6 +118,14 @@
   .aviso .acts .ed{color:var(--accent-dark);} .aviso .acts .del2{color:var(--neg);}
   #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
   #lightbox img{max-width:100%;max-height:100%;border-radius:8px;}
+
+  /* Impress&#xE3;o: s&#xF3; a lista de post-its (sem bot&#xF5;es nem cabe&#xE7;alho) */
+  @media print{
+    header,.newbtn,.modal-overlay,#lightbox,.aviso .acts{display:none !important;}
+    body{background:#fff;padding-bottom:0;}
+    .card{box-shadow:none;border:none;padding:0;}
+    .aviso{page-break-inside:avoid;}
+  }
 </style>
 </head>
 <body>
@@ -154,7 +162,7 @@
       <label for="descricao">Descri&#xE7;&#xE3;o</label>
       <textarea id="descricao" class="bigdesc" placeholder="Detalhes do post-it, decis&#xE3;o ou incid&#xEA;ncia&#x2026;"></textarea>
       <div class="mediabar">
-        <button type="button" class="iconbtn" id="btnMic" title="Gravar &#xE1;udio" aria-label="Gravar &#xE1;udio"><svg class="micsvg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg><span id="micTime">&#xC1;udio</span></button>
+        <button type="button" class="iconbtn" id="btnMic" title="Ditar por voz" aria-label="Ditar por voz"><svg class="micsvg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg><span id="micLbl">Ditar</span></button>
         <button type="button" class="iconbtn" id="btnCamara" title="Tirar foto" aria-label="C&#xE2;mara"><i data-lu="camera"></i></button>
         <button type="button" class="iconbtn" id="btnGaleria" title="Galeria" aria-label="Galeria"><i data-lu="image"></i></button>
       </div>
@@ -174,9 +182,9 @@
 "use strict";
 const BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
 const SEC='_mural';
-const MAXLEN=48000;   // limite seguro para caber numa celula da folha (foto+audio partilham este espaco)
+const MAXLEN=48000;   // limite seguro para caber numa celula da folha
 let DADOS=[];
-var pendingFoto='', pendingAudio='', editId='';
+var pendingFoto='', editId='';
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function fmtDataHora(iso){ var d=new Date(iso); if(isNaN(d)) return String(iso||''); return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
 function fmtData(s){ var d=new Date((s||'')+'T00:00:00'); if(isNaN(d)){ d=new Date(s); } return isNaN(d)?String(s||''):d.toLocaleDateString('pt-PT'); }
@@ -217,9 +225,8 @@ function carregar(){
 /* ---- pr\u00E9-visualiza\u00E7\u00E3o de media (foto + \u00E1udio) ---- */
 function mostrarPrev(){
   var p=document.getElementById('mediaPrev'); p.innerHTML='';
-  if(pendingFoto){ var d=document.createElement('div'); d.className='mp'; d.innerHTML='<img src="'+pendingFoto+'"><button type="button" class="mprem" data-k="foto">Remover</button>'; p.appendChild(d); }
-  if(pendingAudio){ var d2=document.createElement('div'); d2.className='mp'; d2.innerHTML='<audio controls src="'+pendingAudio+'"></audio><button type="button" class="mprem" data-k="audio">Remover</button>'; p.appendChild(d2); }
-  p.querySelectorAll('.mprem').forEach(function(b){ b.onclick=function(){ if(b.getAttribute('data-k')==='foto')pendingFoto=''; else pendingAudio=''; mostrarPrev(); }; });
+  if(pendingFoto){ var d=document.createElement('div'); d.className='mp'; d.innerHTML='<img src="'+pendingFoto+'"><button type="button" class="mprem">Remover</button>'; p.appendChild(d); }
+  p.querySelectorAll('.mprem').forEach(function(b){ b.onclick=function(){ pendingFoto=''; mostrarPrev(); }; });
 }
 /* ---- Fotos (c\u00E2mara ou galeria), comprimidas para caber ---- */
 function comprimir(file, cb){
@@ -240,31 +247,24 @@ document.getElementById('btnGaleria').addEventListener('click',function(){ docum
 document.getElementById('fileCamara').addEventListener('change',onFoto);
 document.getElementById('fileGaleria').addEventListener('change',onFoto);
 
-/* ---- Gravar \u00C1UDIO (n\u00E3o \u00E9 ditado) ---- */
+/* ---- Ditar por voz (fala -> texto na descri\u00E7\u00E3o, igual \u00E0s Tarefas) ---- */
 (function(){
-  var btn=document.getElementById('btnMic'), lbl=document.getElementById('micTime');
-  if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder)){ if(btn) btn.style.display='none'; return; }
-  var rec=null, chunks=[], stream=null, timer=null, secs=0;
-  function paraTracks(){ try{ if(stream) stream.getTracks().forEach(function(t){t.stop();}); }catch(e){} stream=null; }
-  function stop(){ if(rec&&rec.state==='recording'){ try{ rec.stop(); }catch(e){} } }
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var btn=document.getElementById('btnMic'), lbl=document.getElementById('micLbl');
+  if(!SR||!btn){ if(btn) btn.style.display='none'; return; }
+  var rec=null, ligado=false;
   btn.addEventListener('click',function(){
-    if(rec&&rec.state==='recording'){ stop(); return; }
-    navigator.mediaDevices.getUserMedia({audio:true}).then(function(s){
-      stream=s; chunks=[];
-      var opts={};
-      try{ if(MediaRecorder.isTypeSupported('audio/webm;codecs=opus')){ opts={mimeType:'audio/webm;codecs=opus',audioBitsPerSecond:12000}; } }catch(e){}
-      try{ rec=new MediaRecorder(s,opts); }catch(e){ rec=new MediaRecorder(s); }
-      rec.ondataavailable=function(ev){ if(ev.data&&ev.data.size) chunks.push(ev.data); };
-      rec.onstop=function(){
-        clearInterval(timer); btn.classList.remove('rec'); lbl.textContent='\u00C1udio'; paraTracks();
-        var blob=new Blob(chunks,{type:(rec.mimeType||'audio/webm')});
-        var fr=new FileReader();
-        fr.onload=function(){ var d=String(fr.result||''); if(d.length>34000){ alert('O \u00E1udio ficou grande demais. Grava um clip mais curto (at\u00E9 ~15s).'); }else{ pendingAudio=d; } mostrarPrev(); };
-        fr.readAsDataURL(blob);
-      };
-      rec.start(); secs=0; btn.classList.add('rec'); lbl.textContent='0s \u25CF parar';
-      timer=setInterval(function(){ secs++; lbl.textContent=secs+'s \u25CF parar'; if(secs>=20) stop(); },1000);
-    }).catch(function(){ alert('N\u00E3o foi poss\u00EDvel aceder ao microfone. Autoriza o acesso no telem\u00F3vel/computador.'); });
+    if(ligado){ try{ rec.stop(); }catch(e){} return; }
+    rec=new SR(); rec.lang='pt-PT'; rec.interimResults=false; rec.continuous=true;
+    var ta=document.getElementById('descricao');
+    rec.onstart=function(){ ligado=true; btn.classList.add('rec'); lbl.textContent='A ouvir\u2026'; };
+    rec.onend=function(){ ligado=false; btn.classList.remove('rec'); lbl.textContent='Ditar'; };
+    rec.onerror=function(){ ligado=false; btn.classList.remove('rec'); lbl.textContent='Ditar'; };
+    rec.onresult=function(ev){
+      var s=''; for(var i=ev.resultIndex;i<ev.results.length;i++){ if(ev.results[i].isFinal) s+=ev.results[i][0].transcript; }
+      if(s){ ta.value=(ta.value?ta.value+' ':'')+s.trim(); }
+    };
+    try{ rec.start(); }catch(e){}
   });
 })();
 
@@ -274,11 +274,11 @@ document.getElementById('btnSave').addEventListener('click',function(){
   const descricao=document.getElementById('descricao').value.trim();
   const evento=document.getElementById('evento').value||'';
   const autor=document.getElementById('autor').value.trim();
-  if(!titulo && !descricao && !pendingFoto && !pendingAudio){ alert('Escreve algo, ou anexa uma foto/\u00E1udio.'); return; }
+  if(!titulo && !descricao && !pendingFoto){ alert('Escreve algo, ou anexa uma foto.'); return; }
   if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
-  var payload={ titulo:titulo, descricao:descricao, data:new Date().toISOString(), evento:evento, foto:pendingFoto||'', audio:pendingAudio||'' };
+  var payload={ titulo:titulo, descricao:descricao, data:new Date().toISOString(), evento:evento, foto:pendingFoto||'' };
   var texto=JSON.stringify(payload);
-  if(texto.length>MAXLEN){ alert('O post-it ficou grande demais (foto/\u00E1udio). Remove a foto ou grava um \u00E1udio mais curto.'); return; }
+  if(texto.length>MAXLEN){ alert('O post-it ficou grande demais. Reduz o texto ou remove a foto.'); return; }
   const btn=this; btn.disabled=true; var lbl=btn.textContent; btn.textContent='A guardar\u2026';
   var oldId=editId;
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
@@ -303,7 +303,7 @@ var modal=document.getElementById('modal');
 function resetForm(){
   document.getElementById('titulo').value=''; document.getElementById('descricao').value='';
   document.getElementById('evento').value=''; var a=document.getElementById('autor'); if(a) a.value='';
-  pendingFoto=''; pendingAudio=''; editId=''; mostrarPrev();
+  pendingFoto=''; editId=''; mostrarPrev();
 }
 function openModal(){
   resetForm();
@@ -318,7 +318,7 @@ function editar(o){
   document.getElementById('titulo').value=d.titulo||'';
   document.getElementById('descricao').value=d.descricao||'';
   document.getElementById('evento').value=d.evento||'';
-  pendingFoto=d.foto||''; pendingAudio=d.audio||''; mostrarPrev();
+  pendingFoto=d.foto||''; mostrarPrev();
   var a=document.getElementById('autor'); if(a&&o.autor){ a.value=o.autor; }
   document.getElementById('formTitle').textContent='Editar post-it';
   document.getElementById('btnSave').textContent='Guardar altera\u00E7\u00F5es';
