@@ -47,7 +47,7 @@
   .task .box::after{content:"\2713";color:#fff;font-size:17px;font-weight:900;opacity:0;}
   .task input:checked + .box{background:var(--pos);border-color:var(--pos);}
   .task input:checked + .box::after{opacity:1;}
-  .task .tt{font-size:15px;line-height:1.25;}
+  .task .tt{font-size:15px;line-height:1.25;flex:1;min-width:0;}
   .task input:checked ~ .tt{color:var(--muted);text-decoration:line-through;}
 
   .field{margin:18px 2px 0;}
@@ -116,8 +116,10 @@
   /* editar a lista de tarefas (adicionar/remover, guardada na nuvem) */
   .area-edit{background:rgba(255,255,255,.18);border:none;color:#fff;border-radius:9px;padding:7px 11px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;flex:none;}
   .area-edit.on{background:#fff;color:var(--accent-dark);}
-  .task .tdel{display:none;margin-left:auto;background:none;border:none;color:var(--neg);font-weight:800;cursor:pointer;font-family:inherit;padding:4px 8px;flex:none;font-size:15px;}
+  .task .tdel{display:none;margin-left:0;background:none;border:none;color:var(--neg);font-weight:800;cursor:pointer;font-family:inherit;padding:4px 8px;flex:none;font-size:15px;}
   .area.editing .task .tdel{display:inline-flex;}
+  .task .tmv{display:none;background:none;border:1.5px solid var(--line);border-radius:8px;color:var(--muted);font-weight:800;cursor:pointer;font-family:inherit;padding:3px 8px;flex:none;font-size:13px;line-height:1;}
+  .area.editing .task .tmv{display:inline-flex;}
   .addrow{display:none;gap:8px;margin:2px 15px 14px;}
   .area.editing .addrow{display:flex;}
   .addrow input{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:10px;padding:11px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);}
@@ -245,7 +247,7 @@ function render(){
     const card=document.createElement('div'); card.className='area'+(idx===0?'':' hide')+(EDITMODE[a.key]?' editing':''); card.dataset.key=a.key;
     let tasks='';
     a.tarefas.forEach(function(t,i){
-      tasks+='<label class="task"><input type="checkbox" data-area="'+a.key+'" data-i="'+i+'"><span class="box"></span><span class="tt">'+esc(t)+'</span><button type="button" class="tdel" data-area="'+a.key+'" data-i="'+i+'" title="Remover da lista">\u2715</button></label>';
+      tasks+='<label class="task"><input type="checkbox" data-area="'+a.key+'" data-i="'+i+'"><span class="box"></span><span class="tt">'+esc(t)+'</span><button type="button" class="tmv tup" data-area="'+a.key+'" data-i="'+i+'" title="Subir">\u25B2</button><button type="button" class="tmv tdown" data-area="'+a.key+'" data-i="'+i+'" title="Descer">\u25BC</button><button type="button" class="tdel" data-area="'+a.key+'" data-i="'+i+'" title="Remover da lista">\u2715</button></label>';
     });
     card.innerHTML=
       '<div class="area-head"><span class="area-ic"><i data-lu="'+a.lu+'" data-sz="22"></i></span><h2>'+esc(a.nome)+'</h2><button type="button" class="area-edit'+(EDITMODE[a.key]?' on':'')+'" data-area="'+a.key+'"><i data-lu="pen-line" data-sz="13"></i> '+(EDITMODE[a.key]?'Concluir':'Editar lista')+'</button></div>'+
@@ -273,6 +275,16 @@ function render(){
       if(!a || !a.tarefas[i]) return;
       if(!confirm('Remover "'+a.tarefas[i]+'" da lista?\n(Fica removida em todos os dispositivos.)')) return;
       a.tarefas.splice(i,1); guardarItens(); renderKeep();
+    });
+  });
+  root.querySelectorAll('.tmv').forEach(function(b){
+    b.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      var a=AREAS.find(function(x){return x.key===b.dataset.area;}); if(!a) return;
+      var i=+b.dataset.i; var j=b.classList.contains('tup')?i-1:i+1;
+      if(j<0 || j>=a.tarefas.length) return;
+      var tmp=a.tarefas[i]; a.tarefas[i]=a.tarefas[j]; a.tarefas[j]=tmp;
+      guardarItens(); renderKeep();
     });
   });
   root.querySelectorAll('.addrow button').forEach(function(b){
