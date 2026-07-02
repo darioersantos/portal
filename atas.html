@@ -83,6 +83,29 @@
   .selnames{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;}
   .selnames .chip{background:var(--accent-soft);color:var(--accent-ink);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:7px;}
   .selnames .chip b{cursor:pointer;color:var(--neg);font-size:14px;}
+
+  /* bot&#xE3;o novo + popup de cria&#xE7;&#xE3;o da ata */
+  .newbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(230,98,0,.3);margin:0 0 6px;}
+  .newbtn:active{transform:scale(.98);}
+  .newbtn i{width:19px;height:19px;}
+  .modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(26,19,3,.5);display:none;align-items:flex-start;justify-content:center;padding:calc(20px + env(safe-area-inset-top)) 14px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .modal-overlay.open{display:flex;}
+  .modal-card{background:var(--card);border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.3);padding:18px;width:100%;max-width:560px;margin:auto;}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;}
+  .modal-head h2{margin:0;font-size:18px;font-weight:800;color:var(--accent-dark);}
+  .modal-x{background:#f4efe9;border:none;color:var(--muted);border-radius:10px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;}
+  .modal-x i{width:18px;height:18px;}
+  .bigpaste{min-height:130px;}
+  .hint{font-size:12px;color:var(--muted);margin:0 2px 8px;line-height:1.4;}
+  .genbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;border:1.5px solid var(--accent);color:var(--accent-dark);border-radius:13px;padding:13px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin:2px 0 6px;}
+  .genbtn:disabled{opacity:.6;}
+  .genbtn i{width:18px;height:18px;}
+  .gen-status{font-size:12.5px;font-weight:700;text-align:center;min-height:16px;margin-bottom:8px;color:var(--muted);}
+  .gen-status.ok{color:var(--pos);} .gen-status.ai{color:var(--accent-dark);}
+  .aviso .acts{display:flex;gap:4px;flex:none;}
+  .aviso .acts button{background:none;border:none;cursor:pointer;font-family:inherit;padding:3px 5px;display:inline-flex;}
+  .aviso .acts .prt{color:var(--accent-dark);} .aviso .acts .del2{color:var(--neg);}
+  @media print{ header,.newbtn,.modal-overlay,.aviso .acts,#cardLista>h2{display:none !important;} body{background:#fff;padding-bottom:0;} .card{box-shadow:none;border:none;padding:0;} .aviso{page-break-inside:avoid;border:none;} }
 </style>
 </head>
 <body>
@@ -101,20 +124,37 @@
 </header>
 
 <main>
-  <div class="card" id="cardForm">
-    <h2 id="formTitle">Nova ata de reuni&#xE3;o</h2>
-    <div class="field"><label for="data">Data</label><input type="date" id="data"></div>
-    <div class="field"><label for="decisoes">Decis&#xF5;es tomadas</label><textarea id="decisoes" placeholder="O que ficou decidido&#x2026;"></textarea></div>
-    <div class="field"><label for="responsaveis">Respons&#xE1;veis</label><input type="text" id="responsaveis" placeholder="Quem fica respons&#xE1;vel"></div>
-    <div class="field"><label for="prazos">Prazos</label><input type="text" id="prazos" placeholder="Datas-limite"></div>
-    <div class="field"><label for="obs">Observa&#xE7;&#xF5;es</label><textarea id="obs" placeholder="Notas adicionais (opcional)"></textarea></div>
-    <button class="save" id="btnSave">Guardar ata</button>
-  </div>
+  <button class="newbtn" id="btnNew"><i data-lu="plus"></i> Nova ata</button>
   <div class="card" id="cardLista">
     <h2 style="margin:0 0 10px;">Atas arquivadas</h2>
     <div id="lista"><div class="status">A carregar&#x2026;</div></div>
   </div>
 </main>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2>Nova ata de reuni&#xE3;o</h2>
+      <button class="modal-x" id="btnClose" aria-label="Fechar"><i data-lu="x"></i></button>
+    </div>
+    <div class="row2">
+      <div class="field"><label for="titulo">T&#xED;tulo</label><input type="text" id="titulo" placeholder="Ex: Reuni&#xE3;o de equipa"></div>
+      <div class="field"><label for="data">Data</label><input type="date" id="data"></div>
+    </div>
+    <div class="field">
+      <label for="fonte">Conte&#xFA;do dos slides</label>
+      <p class="hint">Abre os teus Google Slides, seleciona tudo (Ctrl/Cmd+A), copia e cola aqui em baixo. Depois toca em "Gerar ata".</p>
+      <textarea id="fonte" class="bigpaste" placeholder="Cola aqui o texto dos slides da reuni&#xE3;o&#x2026;"></textarea>
+    </div>
+    <button class="genbtn" id="btnGen" type="button"><i data-lu="sparkles"></i> Gerar ata a partir dos slides</button>
+    <div class="gen-status" id="genStatus"></div>
+    <div class="field">
+      <label for="ata">Ata (rev&#xEA; e edita &#xE0; vontade)</label>
+      <textarea id="ata" class="bigpaste" placeholder="Aqui aparece a ata resumida em t&#xF3;picos. Podes escrever ou corrigir diretamente."></textarea>
+    </div>
+    <button class="save" id="btnSave">Guardar ata</button>
+  </div>
+</div>
 
 <script>
 "use strict";
@@ -126,6 +166,13 @@ function fmtDataHora(iso){ var d=new Date(iso); if(isNaN(d)) return String(iso||
 function fmtData(s){ var d=new Date((s||'')+'T00:00:00'); if(isNaN(d)){ d=new Date(s); } return isNaN(d)?String(s||''):d.toLocaleDateString('pt-PT'); }
 function today(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
 function linha(lbl,val){ return val?('<div><b>'+lbl+':</b> '+esc(val)+'</div>'):''; }
+
+function corpoAta(d){
+  // formato novo (v2): campo 'ata' com o texto resumido
+  if(d.ata){ return esc(d.ata); }
+  // retrocompat: atas antigas com campos separados
+  return (linha('Decis\u00F5es',d.decisoes)+linha('Respons\u00E1veis',d.responsaveis)+linha('Prazos',d.prazos)+linha('Observa\u00E7\u00F5es',d.obs))||'\u2014';
+}
 function render(){
   const l=document.getElementById('lista'); l.innerHTML='';
   if(!DADOS.length){ l.innerHTML='<div class="status">Ainda n\u00E3o h\u00E1 atas.</div>'; return; }
@@ -133,12 +180,15 @@ function render(){
     .sort(function(a,b){ return new Date(b.ts)-new Date(a.ts); })
     .forEach(function(o){
       var d=o.d||{};
-      var corpo=linha('Decis\u00F5es',d.decisoes)+linha('Respons\u00E1veis',d.responsaveis)+linha('Prazos',d.prazos)+linha('Observa\u00E7\u00F5es',d.obs);
+      var titulo=(d.titulo&&d.titulo.trim())?d.titulo.trim():('Reuni\u00E3o \u2014 '+fmtData(d.data||o.ts));
       var row=document.createElement('div'); row.className='aviso';
-      row.innerHTML='<div class="info"><div class="av-t">Reuni\u00E3o \u2014 '+esc(fmtData(d.data||o.ts))+'</div><div class="av-d">'+(corpo||'\u2014')+'</div></div><button class="del"><i data-lu="x" data-sz="14"></i></button>';
-      row.querySelector('.del').onclick=function(){ apagar(o.id); };
+      row.innerHTML='<div class="info"><div class="av-t">'+esc(titulo)+'</div><div class="av-m">'+esc(fmtData(d.data||o.ts))+'</div><div class="av-d">'+corpoAta(d)+'</div></div>'+
+        '<div class="acts"><button class="prt" title="Imprimir"><i data-lu="printer" data-sz="15"></i></button><button class="del2" title="Apagar"><i data-lu="trash-2" data-sz="15"></i></button></div>';
+      row.querySelector('.del2').onclick=function(){ apagar(o.id); };
+      row.querySelector('.prt').onclick=function(){ window.print(); };
       l.appendChild(row);
     });
+  if(window.lucideRepl) window.lucideRepl();
 }
 function carregar(){
   if(!BACKEND){ document.getElementById('lista').innerHTML='<div class="status">Sem liga\u00E7\u00E3o \u00E0 nuvem.</div>'; return; }
@@ -147,16 +197,56 @@ function carregar(){
     else{ document.getElementById('lista').innerHTML='<div class="status">A nuvem ainda n\u00E3o est\u00E1 ativa.</div>'; }
   }).catch(function(){ document.getElementById('lista').innerHTML='<div class="status">Sem liga\u00E7\u00E3o. Recarrega.</div>'; });
 }
-var _d=document.getElementById('data'); if(_d) _d.value=today();
+
+/* ---- organiza\u00E7\u00E3o local (sem IA): estrutura o texto colado em t\u00F3picos ----
+   Assume cada slide separado por linha(s) em branco: 1\u00AA linha do bloco = t\u00EDtulo, restantes = pontos. */
+function limparBullet(l){ return String(l).replace(/^[\u2022\u2023\u25AA\u25CF\u25E6\-\*\u2013\u2014>]+\s*/,'').trim(); }
+function organizarLocal(txt){
+  var blocos=String(txt||'').replace(/\r/g,'').split(/\n\s*\n+/);
+  var out=[];
+  blocos.forEach(function(bl){
+    var linhas=bl.split(/\n/).map(function(s){return s.trim();}).filter(Boolean);
+    if(!linhas.length) return;
+    var titulo=limparBullet(linhas[0]);
+    if(titulo) out.push('\u25A0 '+titulo);
+    for(var i=1;i<linhas.length;i++){ var p=limparBullet(linhas[i]); if(p) out.push('   \u2022 '+p); }
+    out.push('');
+  });
+  var r=out.join('\n').replace(/\n{3,}/g,'\n\n').trim();
+  return r || String(txt||'').trim();
+}
+
+/* ---- gerar ata: tenta IA (backend) e cai para organiza\u00E7\u00E3o local ---- */
+function setGenStatus(txt,cls){ var e=document.getElementById('genStatus'); e.textContent=txt||''; e.className='gen-status'+(cls?' '+cls:''); }
+document.getElementById('btnGen').addEventListener('click',function(){
+  var fonte=document.getElementById('fonte').value.trim();
+  if(!fonte){ alert('Cola primeiro o conte\u00FAdo dos slides.'); return; }
+  var btn=this; btn.disabled=true; setGenStatus('A resumir com IA\u2026','ai');
+  var fallback=function(){ document.getElementById('ata').value=organizarLocal(fonte); setGenStatus('Organizado automaticamente (resumo por IA ainda n\u00E3o ligado).',''); btn.disabled=false; };
+  if(!BACKEND){ fallback(); return; }
+  var feito=false; var t=setTimeout(function(){ if(!feito){ feito=true; fallback(); } },20000);
+  fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action:'resumir_ata', texto:fonte})})
+    .then(function(r){return r.json();}).then(function(j){
+      if(feito) return; feito=true; clearTimeout(t); btn.disabled=false;
+      if(j && j.ok && j.resumo){ document.getElementById('ata').value=String(j.resumo).trim(); setGenStatus('Resumo criado por IA \u2713','ok'); }
+      else { fallback(); }
+    }).catch(function(){ if(feito) return; feito=true; clearTimeout(t); fallback(); });
+});
+
+/* ---- guardar ata ---- */
 document.getElementById('btnSave').addEventListener('click',function(){
-  var p={ data:document.getElementById('data').value||today(), decisoes:document.getElementById('decisoes').value.trim(), responsaveis:document.getElementById('responsaveis').value.trim(), prazos:document.getElementById('prazos').value.trim(), obs:document.getElementById('obs').value.trim() };
-  if(!p.decisoes && !p.responsaveis && !p.obs){ alert('Preenche pelo menos as decis\u00F5es tomadas.'); return; }
+  var data=document.getElementById('data').value||today();
+  var titulo=document.getElementById('titulo').value.trim();
+  var ata=document.getElementById('ata').value.trim();
+  if(!ata){ alert('A ata est\u00E1 vazia. Gera a partir dos slides ou escreve o resumo.'); return; }
   if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
+  var payload={ v:2, data:data, titulo:titulo, ata:ata };
   const btn=this; btn.disabled=true; btn.textContent='A guardar\u2026';
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body:JSON.stringify({action:'nota_add', seccao:SEC, autor:'Reuni\u00E3o '+p.data, texto:JSON.stringify(p)})})
+    body:JSON.stringify({action:'nota_add', seccao:SEC, autor:(titulo||('Reuni\u00E3o '+data)), texto:JSON.stringify(payload)})})
     .then(r=>r.json()).then(function(j){
-      if(j&&j.ok){ ['decisoes','responsaveis','prazos','obs'].forEach(function(id){ document.getElementById(id).value=''; }); document.getElementById('data').value=today(); carregar(); }
+      if(j&&j.ok){ resetForm(); carregar(); closeModal(); }
       else throw new Error('erro');
     }).catch(function(){ alert('N\u00E3o foi poss\u00EDvel guardar. Tenta de novo.'); })
     .then(function(){ btn.disabled=false; btn.textContent='Guardar ata'; });
@@ -167,6 +257,17 @@ function apagar(id){
     .then(r=>r.json()).then(function(){ DADOS=DADOS.filter(x=>String(x.id)!==String(id)); render(); })
     .catch(function(){ alert('N\u00E3o foi poss\u00EDvel apagar.'); });
 }
+
+/* ---- popup ---- */
+var modal=document.getElementById('modal');
+function resetForm(){ document.getElementById('titulo').value=''; document.getElementById('fonte').value=''; document.getElementById('ata').value=''; document.getElementById('data').value=today(); setGenStatus(''); }
+function openModal(){ resetForm(); modal.classList.add('open'); setTimeout(function(){ var t=document.getElementById('titulo'); if(t) t.focus(); },50); }
+function closeModal(){ modal.classList.remove('open'); }
+document.getElementById('btnNew').addEventListener('click',openModal);
+document.getElementById('btnClose').addEventListener('click',closeModal);
+modal.addEventListener('click',function(e){ if(e.target===modal) closeModal(); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+
 carregar();
 </script>
 </body>
