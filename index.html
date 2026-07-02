@@ -92,9 +92,12 @@
   .tile-badge{position:absolute;top:-7px;right:-7px;min-width:24px;height:24px;padding:0 6px;background:#e11d2b;color:#fff;border-radius:999px;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.3);border:2px solid #fff;transform-origin:center;}
 
   /* Pesquisa global */
-  .search-wrap{margin:14px 0 2px;}
-  #searchBox{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);box-shadow:var(--shadow);}
+  .search-wrap{margin:14px 0 2px;position:relative;}
+  .search-ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);line-height:0;color:var(--muted);pointer-events:none;}
+  .search-ic svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+  #searchBox{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:13px 14px 13px 42px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);box-shadow:var(--shadow);}
   #searchBox:focus{outline:none;border-color:var(--accent);}
+  #searchBox:focus + .search-ic,.search-wrap:focus-within .search-ic{color:var(--accent);}
   .section.hidden,.tile.hidden{display:none !important;}
   #noResults{display:none;text-align:center;color:var(--muted);font-size:14px;padding:30px 10px;}
   /* Aniversarios */
@@ -177,7 +180,7 @@
   <div id="evalBanner"></div>
   <div id="taskBanner"></div>
   <div id="thuBanner"></div>
-  <div class="search-wrap"><input type="search" id="searchBox" placeholder="&#x1F50E; Procurar formul&#xE1;rio, gui&#xE3;o ou imprim&#xED;vel&#x2026;" autocomplete="off"></div>
+  <div class="search-wrap"><span class="search-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span><input type="search" id="searchBox" placeholder="Procurar formul&#xE1;rio, gui&#xE3;o ou imprim&#xED;vel&#x2026;" autocomplete="off"></div>
   <div id="portal"><div class="section"><div class="sk-grid"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div></div></div>
   <div id="noResults">Nada encontrado. Tenta outra palavra.</div>
   <footer>Sport Zone &#xB7; Vasco da Gama &#x2014; Portal de Gest&#xE3;o de Loja</footer>
