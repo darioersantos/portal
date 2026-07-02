@@ -73,6 +73,13 @@
   .aviso .av-d{font-size:13.5px;color:var(--ink);margin-top:4px;white-space:pre-wrap;word-break:break-word;line-height:1.5;}
   .aviso .av-m{font-size:12px;color:var(--muted);margin-top:6px;}
   .aviso .del{background:none;border:none;color:var(--neg);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex:none;padding:2px 4px;}
+  .aviso .acts{display:flex;gap:2px;flex:none;align-items:center;}
+  .aviso .edt{background:none;border:none;color:var(--accent-dark);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex:none;padding:2px 4px;}
+  .aviso.editing{display:block;}
+  .aviso.editing .field{margin-bottom:10px;}
+  .edt-actions{display:flex;gap:8px;margin-top:4px;}
+  .edt-actions .ed-save{flex:1;box-shadow:none;padding:12px;font-size:15px;}
+  .edt-actions .ed-cancel{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 16px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;color:var(--ink);flex:none;}
   .seg{display:flex;gap:8px;flex-wrap:wrap;}
   .seg button{flex:1;min-width:90px;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:11px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
   .seg button.sel.tipo-pont{background:var(--pos);border-color:transparent;color:#fff;}
@@ -143,8 +150,9 @@ function render(){
     .sort(function(a,b){ return new Date(b.ts)-new Date(a.ts); })
     .forEach(function(o){
       var row=document.createElement('div'); row.className='aviso';
-      row.innerHTML='<div class="info"><div class="av-t">'+esc(o.colab||'\u2014')+' <span class="pill '+clsTipo(o.tipo)+'">'+esc(o.tipo||'')+'</span></div><div class="av-m">'+esc(fmtData(o.data))+(o.obs?' \u00B7 '+esc(o.obs):'')+(o.por?' \u00B7 por '+esc(o.por):'')+'</div></div><button class="del"><i data-lu="x" data-sz="14"></i></button>';
+      row.innerHTML='<div class="info"><div class="av-t">'+esc(o.colab||'\u2014')+' <span class="pill '+clsTipo(o.tipo)+'">'+esc(o.tipo||'')+'</span></div><div class="av-m">'+esc(fmtData(o.data))+(o.obs?' \u00B7 '+esc(o.obs):'')+(o.por?' \u00B7 por '+esc(o.por):'')+'</div></div><div class="acts"><button class="edt" title="Editar"><i data-lu="pen-line" data-sz="14"></i></button><button class="del" title="Apagar"><i data-lu="x" data-sz="14"></i></button></div>';
       row.querySelector('.del').onclick=function(){ apagar(o.id); };
+      row.querySelector('.edt').onclick=function(){ editarRow(o,row); };
       l.appendChild(row);
     });
 }
@@ -176,6 +184,53 @@ function apagar(id){
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_del', id:id})})
     .then(r=>r.json()).then(function(){ DADOS=DADOS.filter(x=>String(x.id)!==String(id)); render(); })
     .catch(function(){ alert('N\u00E3o foi poss\u00EDvel apagar.'); });
+}
+function editarRow(o,row){
+  // Nao ha 'nota_edit' no backend: editar = criar nova versao (nota_add) + apagar a antiga (nota_del).
+  row.classList.add('editing');
+  row.innerHTML=
+    '<div class="edt-box">'+
+      '<div class="field"><label>Colaborador</label><select class="ed-colab" data-staff data-ph="Colaborador"></select></div>'+
+      '<div class="field"><label>Tipo</label><div class="seg ed-seg">'+
+        '<button type="button" data-t="Atraso" class="tipo-atraso">Atraso</button>'+
+        '<button type="button" data-t="Falta" class="tipo-abs">Falta</button>'+
+        '<button type="button" data-t="Justifica\u00E7\u00E3o" class="tipo-just">Justifica\u00E7\u00E3o</button>'+
+      '</div></div>'+
+      '<div class="field"><label>Data</label><input type="date" class="ed-data"></div>'+
+      '<div class="field"><label>Observa\u00E7\u00F5es</label><textarea class="ed-obs" placeholder="Motivo, detalhes\u2026"></textarea></div>'+
+      '<div class="field"><label>Registado por</label><select class="ed-por" data-staff data-area="sup" data-ph="Quem regista"></select></div>'+
+      '<div class="edt-actions"><button type="button" class="save ed-save">Guardar altera\u00E7\u00F5es</button><button type="button" class="ed-cancel">Cancelar</button></div>'+
+    '</div>';
+  // pre-seleciona os nomes atuais (opcao temporaria; o SZfillStaff preserva sel.value ao preencher)
+  var selC=row.querySelector('.ed-colab');
+  if(o.colab){ var oc=document.createElement('option'); oc.value=o.colab; oc.textContent=o.colab; selC.appendChild(oc); selC.value=o.colab; }
+  var selP=row.querySelector('.ed-por');
+  if(o.por){ var op=document.createElement('option'); op.value=o.por; op.textContent=o.por; selP.appendChild(op); selP.value=o.por; }
+  if(window.SZinitStaff) window.SZinitStaff(row);
+  row.querySelector('.ed-data').value=o.data||today();
+  row.querySelector('.ed-obs').value=o.obs||'';
+  var tsel=o.tipo||'';
+  var seg=row.querySelector('.ed-seg');
+  seg.querySelectorAll('button').forEach(function(b){ b.classList.toggle('sel', b.dataset.t===tsel); });
+  seg.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; tsel=b.dataset.t; seg.querySelectorAll('button').forEach(function(x){ x.classList.toggle('sel', x===b); }); });
+  row.querySelector('.ed-cancel').onclick=function(){ render(); };
+  row.querySelector('.ed-save').onclick=function(){
+    var colab=(selC&&selC.value)||'';
+    var data=row.querySelector('.ed-data').value||today();
+    var obs=row.querySelector('.ed-obs').value.trim();
+    var por=(selP&&selP.value)||'';
+    if(!colab){ alert('Escolhe o colaborador.'); return; }
+    if(!tsel){ alert('Escolhe o tipo (atraso, falta ou justifica\u00E7\u00E3o).'); return; }
+    if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
+    var btn=this; btn.disabled=true; btn.textContent='A guardar\u2026';
+    fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({action:'nota_add', seccao:SEC, autor:colab, texto:JSON.stringify({data:data,tipo:tsel,obs:obs,por:por})})})
+      .then(function(r){return r.json();}).then(function(j){
+        if(!(j&&j.ok)) throw new Error('add');
+        return fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_del', id:o.id})}).then(function(r){return r.json();});
+      }).then(function(){ carregar(); })
+      .catch(function(){ alert('N\u00E3o foi poss\u00EDvel guardar. Tenta de novo.'); btn.disabled=false; btn.textContent='Guardar altera\u00E7\u00F5es'; });
+  };
 }
 carregar();
 </script>
