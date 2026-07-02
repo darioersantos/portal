@@ -160,16 +160,16 @@
   <div class="card">
     <h2><span class="n">2</span> Custos de envio</h2>
     <div class="guiao">
-      <div class="sit"><i data-lu="check"></i> T&#xEA;xtil, cal&#xE7;ado e acess&#xF3;rios &#x2014; acima de 30&#x20AC;</div>
+      <div class="sit"><i data-lu="check"></i> T&#xEA;xtil, cal&#xE7;ado e acess&#xF3;rios &#x2014; acima de 45&#x20AC;</div>
       <div class="step"><span class="lbl">Domic&#xED;lio</span><span class="txt"><b>Gratuito</b></span></div>
       <div class="step"><span class="lbl">Em loja</span><span class="txt"><b>Gratuito</b></span></div>
     </div>
     <div class="guiao">
-      <div class="sit"><i data-lu="receipt"></i> T&#xEA;xtil, cal&#xE7;ado e acess&#xF3;rios &#x2014; abaixo de 30&#x20AC;</div>
+      <div class="sit"><i data-lu="receipt"></i> T&#xEA;xtil, cal&#xE7;ado e acess&#xF3;rios &#x2014; abaixo de 45&#x20AC;</div>
       <div class="step"><span class="lbl">Domic&#xED;lio</span><span class="txt"><b>2,99&#x20AC;</b></span></div>
       <div class="step"><span class="lbl">Em loja</span><span class="txt"><b>Gratuito</b></span></div>
     </div>
-    <p class="hint">Dica: se o cliente estiver perto dos 30&#x20AC;, sugere juntar mais um artigo &#x2014; a partir de 30&#x20AC; o envio ao domic&#xED;lio fica gr&#xE1;tis.</p>
+    <p class="hint">Dica: se o cliente estiver perto dos 45&#x20AC;, sugere juntar mais um artigo &#x2014; a partir de 45&#x20AC; o envio ao domic&#xED;lio fica gr&#xE1;tis.</p>
   </div>
 
   <div class="card">
@@ -186,7 +186,7 @@
     <h2><i data-lu="check"></i> Resumo</h2>
     <ul>
       <li>Domic&#xED;lio em <b>Portugal Continental: 3&#x2013;4 dias &#xFA;teis</b>.</li>
-      <li>Envio: <b>&gt;30&#x20AC; gr&#xE1;tis</b> &#xB7; <b>&lt;30&#x20AC; 2,99&#x20AC;</b> &#xB7; <b>em loja sempre gr&#xE1;tis</b>.</li>
+      <li>Envio: <b>&gt;45&#x20AC; gr&#xE1;tis</b> &#xB7; <b>&lt;45&#x20AC; 2,99&#x20AC;</b> &#xB7; <b>em loja sempre gr&#xE1;tis</b>.</li>
       <li><b>Troca ou devolu&#xE7;&#xE3;o em qualquer loja</b> de Portugal Continental.</li>
       <li>No fim do turno, <b>aponta as vendas online na Superliga</b>.</li>
     </ul>
@@ -200,7 +200,7 @@
     </div>
     <div class="field"><label for="data">Data da forma&#xE7;&#xE3;o</label><input type="date" id="data"></div>
 
-    <label class="declara"><input type="checkbox" id="declaro"><span>Declaro que recebi e compreendi esta forma&#xE7;&#xE3;o de <b>Venda de Sprays</b>.</span></label>
+    <label class="declara"><input type="checkbox" id="declaro"><span>Declaro que recebi e compreendi esta forma&#xE7;&#xE3;o de <b>Venda de Onlines</b>.</span></label>
 
     <div class="sig-label"><i data-lu="pen-line"></i> Assinatura do colaborador</div>
     <div class="sig-wrap">
@@ -283,10 +283,10 @@ function imprimirObj(o){
   var html='<div class="ph-top"><h1>Plano Formativo Interno \u2014 Sport Zone Vasco da Gama</h1><p>Registo de forma\u00E7\u00E3o</p></div>';
   html+='<div class="ptopic">\uD83C\uDF10 '+esc(o.topico||TOPICO)+'</div>';
   html+='<h2>Conte\u00FAdo abordado</h2><ul>'+
-    '<li><b>Regra n\u00BA1:</b> sapatilhas novas saem sempre com prote\u00E7\u00E3o \u2014 abrir sempre o tema na venda de cal\u00E7ado.</li>'+
-    '<li><b>3 sprays Ignyten:</b> Aqua Repel (impermeabiliza), Super Clean (limpa), Odor Free (tira odores).</li>'+
-    '<li><b>Modo de uso</b> de cada spray e <b>gui\u00F5es de venda</b> (Abrir \u2192 Explicar \u2192 Fechar).</li>'+
-    '<li><b>Obje\u00E7\u00F5es:</b> "\u00E9 caro", "fa\u00E7o com produtos de casa", "n\u00E3o preciso".</li>'+
+    '<li><b>Entrega ao domic\u00EDlio</b> em Portugal Continental: prazo de 3 a 4 dias \u00FAteis.</li>'+
+    '<li><b>Portes:</b> encomenda superior a 45\u20AC gr\u00E1tis; inferior a 45\u20AC 2,99\u20AC; entrega em loja gr\u00E1tis.</li>'+
+    '<li><b>Trocas e devolu\u00E7\u00F5es</b> em qualquer loja de Portugal Continental.</li>'+
+    '<li><b>Registo:</b> apontar sempre as vendas online na Superliga no fim do turno.</li>'+
     '</ul>';
   html+='<table><tbody>'+
     '<tr><td class="k">Colaborador</td><td class="v">'+esc(o.colaborador||'\u2014')+'</td></tr>'+
