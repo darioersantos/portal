@@ -78,8 +78,9 @@
   .seg button.sel.tipo-pont{background:var(--pos);border-color:transparent;color:#fff;}
   .seg button.sel.tipo-atraso{background:#d97706;border-color:transparent;color:#fff;}
   .seg button.sel.tipo-abs{background:var(--neg);border-color:transparent;color:#fff;}
+  .seg button.sel.tipo-just{background:#2563eb;border-color:transparent;color:#fff;}
   .pill{display:inline-block;font-size:11px;font-weight:800;padding:2px 9px;border-radius:999px;color:#fff;vertical-align:1px;}
-  .pill.tipo-pont{background:var(--pos);} .pill.tipo-atraso{background:#d97706;} .pill.tipo-abs{background:var(--neg);}
+  .pill.tipo-pont{background:var(--pos);} .pill.tipo-atraso{background:#d97706;} .pill.tipo-abs{background:var(--neg);} .pill.tipo-just{background:#2563eb;}
   .selnames{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;}
   .selnames .chip{background:var(--accent-soft);color:var(--accent-ink);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:7px;}
   .selnames .chip b{cursor:pointer;color:var(--neg);font-size:14px;}
@@ -107,6 +108,7 @@
     <div class="field"><label>Tipo</label><div class="seg" id="tipoSeg">
       <button type="button" data-t="Atraso" class="tipo-atraso">Atraso</button>
       <button type="button" data-t="Falta" class="tipo-abs">Falta</button>
+      <button type="button" data-t="Justifica&#xE7;&#xE3;o" class="tipo-just">Justifica&#xE7;&#xE3;o</button>
     </div></div>
     <div class="field"><label for="data">Data</label><input type="date" id="data"></div>
     <div class="field"><label for="obs">Observa&#xE7;&#xF5;es</label><textarea id="obs" placeholder="Motivo, detalhes&#x2026;"></textarea></div>
@@ -128,7 +130,7 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','
 function fmtDataHora(iso){ var d=new Date(iso); if(isNaN(d)) return String(iso||''); return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
 function fmtData(s){ var d=new Date((s||'')+'T00:00:00'); if(isNaN(d)){ d=new Date(s); } return isNaN(d)?String(s||''):d.toLocaleDateString('pt-PT'); }
 function today(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
-function clsTipo(t){ return t==='Atraso'?'tipo-atraso':(t==='Pontualidade'?'tipo-pont':'tipo-abs'); }
+function clsTipo(t){ return t==='Atraso'?'tipo-atraso':(t==='Justifica\u00E7\u00E3o'?'tipo-just':(t==='Pontualidade'?'tipo-pont':'tipo-abs')); }
 var selNames=[], tipoSel='';
 function pintaSel(){ var box=document.getElementById('selNames'); box.innerHTML=''; selNames.forEach(function(nm){ var c=document.createElement('span'); c.className='chip'; c.innerHTML=esc(nm)+' <b>\u00D7</b>'; c.querySelector('b').onclick=function(){ selNames=selNames.filter(function(x){return x!==nm;}); pintaSel(); }; box.appendChild(c); }); }
 document.getElementById('colab').addEventListener('change',function(){ var v=this.value; if(v && selNames.indexOf(v)<0){ selNames.push(v); pintaSel(); } this.value=''; });
@@ -158,7 +160,7 @@ document.getElementById('btnSave').addEventListener('click',function(){
   var obs=document.getElementById('obs').value.trim();
   var autor=document.getElementById('autor').value.trim();
   if(!selNames.length){ alert('Escolhe pelo menos um colaborador.'); return; }
-  if(!tipoSel){ alert('Escolhe o tipo (atraso ou falta).'); return; }
+  if(!tipoSel){ alert('Escolhe o tipo (atraso, falta ou justifica\u00E7\u00E3o).'); return; }
   if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
   const btn=this; btn.disabled=true; btn.textContent='A guardar\u2026';
   var reqs=selNames.map(function(nome){ return fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
