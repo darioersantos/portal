@@ -102,6 +102,15 @@
   #bdayBanner .bday .ic{font-size:28px;flex:none;}
   #bdayBanner .bday .txt{flex:1;min-width:0;font-size:14.5px;line-height:1.35;font-weight:700;}
   #bdayBanner .bday .txt b{font-weight:800;}
+  /* popup de anivers&#xE1;rio (1x por dia por dispositivo) */
+  #bdayPopup{position:fixed;inset:0;z-index:900;background:rgba(26,19,3,.55);display:none;align-items:center;justify-content:center;padding:20px;}
+  #bdayPopup.open{display:flex;}
+  #bdayPopup .bp-card{background:#fff;border-radius:20px;box-shadow:0 16px 50px rgba(0,0,0,.35);max-width:420px;width:100%;padding:26px 22px;text-align:center;animation:cardin .3s ease;}
+  #bdayPopup .bp-ic{font-size:52px;line-height:1;}
+  #bdayPopup h2{margin:10px 0 6px;font-size:20px;color:var(--accent-dark);}
+  #bdayPopup p{margin:0 0 18px;font-size:14.5px;color:var(--muted);line-height:1.5;}
+  #bdayPopup p b{color:var(--ink);}
+  #bdayPopup button{width:100%;background:var(--accent);color:#fff;border:none;border-radius:13px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(230,98,0,.3);}
 
   footer{text-align:center;color:var(--muted);font-size:11px;margin-top:24px;}
 
@@ -337,6 +346,19 @@ function checkBirthdays(){
     else{ txt='Hoje fazem anos: <b>'+nomes.join('</b>, <b>')+'</b>. N\u00E3o te esque\u00E7as de dar os parab\u00E9ns!'; }
     var box=document.getElementById('bdayBanner');
     box.innerHTML='<div class="bday"><span class="ic">\uD83C\uDF82</span><span class="txt">'+txt+'</span></div>';
+    // POPUP de anivers\u00E1rio: aparece 1x por dia em cada dispositivo
+    try{
+      var hojeKey=hoje.getFullYear()+'-'+(hm+1)+'-'+hd;
+      if(localStorage.getItem('bdayPopupSeen')!==hojeKey){
+        var pop=document.createElement('div'); pop.id='bdayPopup';
+        pop.innerHTML='<div class="bp-card"><div class="bp-ic">\uD83C\uDF82\uD83C\uDF89</div><h2>Temos anivers\u00E1rio!</h2><p>'+txt+'</p><button type="button">Dar os parab\u00E9ns \uD83C\uDF88</button></div>';
+        document.body.appendChild(pop);
+        var fecha=function(){ pop.classList.remove('open'); try{ localStorage.setItem('bdayPopupSeen',hojeKey); }catch(e){} setTimeout(function(){ if(pop.parentNode) pop.parentNode.removeChild(pop); },250); };
+        pop.querySelector('button').addEventListener('click',fecha);
+        pop.addEventListener('click',function(e){ if(e.target===pop) fecha(); });
+        setTimeout(function(){ pop.classList.add('open'); },30);
+      }
+    }catch(e){}
   }).catch(function(){});
 }
 checkBirthdays();
