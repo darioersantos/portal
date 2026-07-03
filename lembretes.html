@@ -86,6 +86,15 @@
   #btnPrio.on{background:var(--neg);border-color:var(--neg);color:#fff;}
   .ed-prio{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--neg);margin-top:8px;cursor:pointer;}
   .ed-prio input{width:16px;height:16px;accent-color:var(--neg);}
+  /* tarefa IMPORTANTE: cart&#xE3;o amarelo */
+  .note.imp{background:#fffbeb;border-color:#fde68a;border-left-color:#eab308;}
+  .note.prio.imp{background:#fff1ef;border-color:#f6c9c2;border-left-color:var(--neg);}
+  .imptag{display:inline-flex;align-items:center;gap:5px;background:#eab308;color:#3f2d00;font-size:10px;font-weight:800;border-radius:999px;padding:2px 9px;text-transform:uppercase;letter-spacing:.03em;margin-bottom:7px;}
+  .imptag .flagsvg{width:11px;height:11px;stroke:#3f2d00;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+  #btnImp .flagsvg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+  #btnImp.on{background:#eab308;border-color:#eab308;color:#3f2d00;}
+  .ed-imp{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:#a16207;margin-top:8px;cursor:pointer;}
+  .ed-imp input{width:16px;height:16px;accent-color:#eab308;}
 
   .note .comentar{background:#fff;border:1.5px solid var(--line);color:var(--accent-dark);border-radius:9px;padding:7px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;}
   .note .coments{margin-top:8px;}
@@ -177,6 +186,7 @@
         <select id="autor" data-staff data-ph="Quem far&#xE1; a tarefa (opcional)"></select>
         <select id="seccao"></select>
         <button id="btnPrio" type="button" class="sec-btn icon-only" title="Marcar como priorit&#xE1;ria" aria-label="Priorit&#xE1;ria"><svg class="flagsvg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg></button>
+        <button id="btnImp" type="button" class="sec-btn icon-only" title="Marcar como importante" aria-label="Importante"><svg class="flagsvg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg></button>
         <button id="btnMic" type="button" class="sec-btn icon-only" title="Ditar por voz" aria-label="Ditar por voz"><svg class="micsvg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg></button>
         <button id="btnCamara" type="button" class="sec-btn icon-only" title="C&#xE2;mara" aria-label="Tirar foto"><i data-lu="camera" data-sz="18"></i></button>
         <button id="btnGaleria" type="button" class="sec-btn icon-only" title="Galeria" aria-label="Galeria"><i data-lu="image" data-sz="18"></i></button>
@@ -217,8 +227,10 @@ function pendentes(){ return NOTAS.filter(n=>!isDone(n)).length; }
 function semBy(raw){ return String(raw||'').replace(/^\[\[BY:[^\]]*\]\]/,''); }
 function parteBy(raw){ var m=String(raw||'').match(/^\[\[BY:([^\]]*)\]\]/); return m?m[1]:''; }
 const PRIOMARK='[[PRIO]]';
+const IMPMARK='[[IMP]]';
 function temPrio(raw){ return semBy(raw).indexOf(PRIOMARK)===0; }
-function parteTexto(raw){ raw=semBy(raw); if(raw.indexOf(PRIOMARK)===0) raw=raw.slice(PRIOMARK.length); var i=raw.indexOf(IMGSEP); return i>=0?raw.slice(0,i):raw; }
+function temImp(raw){ var s=semBy(raw); if(s.indexOf(PRIOMARK)===0) s=s.slice(PRIOMARK.length); return s.indexOf(IMPMARK)===0; }
+function parteTexto(raw){ raw=semBy(raw); if(raw.indexOf(PRIOMARK)===0) raw=raw.slice(PRIOMARK.length); if(raw.indexOf(IMPMARK)===0) raw=raw.slice(IMPMARK.length); var i=raw.indexOf(IMGSEP); return i>=0?raw.slice(0,i):raw; }
 function parteFoto(raw){ raw=semBy(raw); var i=raw.indexOf(IMGSEP); return i>=0?raw.slice(i+IMGSEP.length):''; }
 
 function preencherSeccoes(){
@@ -233,20 +245,22 @@ function render(){
     let itens=NOTAS.filter(n=>n.seccao===s.k);
     if(!itens.length) return;
     any=true;
-    itens.sort(function(a,b){ const da=isDone(a),db=isDone(b); if(da!==db) return da?1:-1; const pa=temPrio(a.texto),pb=temPrio(b.texto); if(pa!==pb) return pa?-1:1; return new Date(b.data)-new Date(a.data); });
+    itens.sort(function(a,b){ const da=isDone(a),db=isDone(b); if(da!==db) return da?1:-1; const pa=temPrio(a.texto),pb=temPrio(b.texto); if(pa!==pb) return pa?-1:1; const ia=temImp(a.texto),ib=temImp(b.texto); if(ia!==ib) return ia?-1:1; return new Date(b.data)-new Date(a.data); });
     const grp=document.createElement('div'); grp.className='grp';
     const porFazer=itens.filter(n=>!isDone(n)).length;
     grp.innerHTML='<div class="grp-h"><i data-lu="'+s.lu+'" data-sz="16"></i> '+esc(s.nm)+' <span class="grp-c">'+porFazer+' por fazer</span></div>';
     itens.forEach(function(n){
       const done=isDone(n);
       const prio=temPrio(n.texto);
+      const imp=temImp(n.texto);
       const txt=parteTexto(n.texto), img=parteFoto(n.texto), criador=parteBy(n.texto);
       const coms=COMENTARIOS.filter(function(x){return x.parent===String(n.id);}).sort(function(a,b){return new Date(a.data)-new Date(b.data);});
       let comsHtml='';
       coms.forEach(function(cm){ comsHtml+='<div class="com"><span class="com-t">'+esc(cm.texto)+'</span><span class="com-m"><i data-lu="message-circle" data-sz="13"></i> '+(cm.autor?esc(cm.autor)+' \u00B7 ':'')+fmtData(cm.data)+' <button class="com-del" data-id="'+esc(cm.id)+'"><i data-lu="x" data-sz="13"></i></button></span></div>'; });
-      const c=document.createElement('div'); c.className='note'+(done?' done':'')+(prio&&!done?' prio':'');
+      const c=document.createElement('div'); c.className='note'+(done?' done':'')+(prio&&!done?' prio':'')+(imp&&!done?' imp':'');
       c.innerHTML=(done?'<span class="feito"><i data-lu="check" data-sz="14"></i> Conclu\u00EDdo</span><br>':'')+
         (prio&&!done?'<span class="priotag"><svg class="flagsvg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg> Priorit\u00E1ria</span><br>':'')+
+        (imp&&!done?'<span class="imptag"><svg class="flagsvg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg> Importante</span><br>':'')+
         (txt?'<div class="txt">'+esc(txt)+'</div>':'')+
         (img?'<img class="thumb" alt="foto">':'')+
         '<div class="meta">'+(criador?'\u270D\uFE0F Criada por <b>'+esc(criador)+'</b> \u00B7 ':'')+(n.autor?'\uD83D\uDC64 para <b>'+esc(n.autor)+'</b> \u00B7 ':'')+fmtData(n.data)+
@@ -265,6 +279,7 @@ function render(){
           '<textarea class="ed-txt"></textarea>'+
           '<select class="ed-autor" data-staff data-ph="Para quem (opcional)"></select>'+
           '<label class="ed-prio"><input type="checkbox" class="ed-prio-cb"> Tarefa priorit\u00E1ria</label>'+
+          '<label class="ed-imp"><input type="checkbox" class="ed-imp-cb"> Tarefa importante</label>'+
           '<div class="edit-row"><button class="ed-save" type="button">Guardar</button><button class="ed-cancel" type="button">Cancelar</button></div>'+
         '</div>';
       if(img){ const th=c.querySelector('.thumb'); th.src=img; th.onclick=function(){ abrirFoto(img); }; }
@@ -276,10 +291,10 @@ function render(){
       c.querySelector('.editar').onclick=function(){
         const open=ebox.style.display==='none';
         ebox.style.display=open?'block':'none';
-        if(open){ const et=ebox.querySelector('.ed-txt'); et.value=txt; const ea=ebox.querySelector('.ed-autor'); if(ea) ea.value=n.autor||''; ebox.querySelector('.ed-prio-cb').checked=prio; et.focus(); }
+        if(open){ const et=ebox.querySelector('.ed-txt'); et.value=txt; const ea=ebox.querySelector('.ed-autor'); if(ea) ea.value=n.autor||''; ebox.querySelector('.ed-prio-cb').checked=prio; ebox.querySelector('.ed-imp-cb').checked=imp; et.focus(); }
       };
       ebox.querySelector('.ed-cancel').onclick=function(){ ebox.style.display='none'; };
-      ebox.querySelector('.ed-save').onclick=function(){ const ea=ebox.querySelector('.ed-autor'); salvarEdicao(n, ebox.querySelector('.ed-txt').value, ea?ea.value:'', this, ebox.querySelector('.ed-prio-cb').checked); };
+      ebox.querySelector('.ed-save').onclick=function(){ const ea=ebox.querySelector('.ed-autor'); salvarEdicao(n, ebox.querySelector('.ed-txt').value, ea?ea.value:'', this, ebox.querySelector('.ed-prio-cb').checked, ebox.querySelector('.ed-imp-cb').checked); };
       c.querySelector('.cb-send').onclick=function(){ enviarComentario(n.id, c.querySelector('.cb-txt').value, c.querySelector('.cb-nome').value, this); };
       c.querySelectorAll('.com-del').forEach(function(b){ b.onclick=function(){ apagarComentario(b.dataset.id); }; });
       grp.appendChild(c);
@@ -366,13 +381,13 @@ function imprimir(){
   SECS.forEach(function(s){
     const itens=NOTAS.filter(function(n){return n.seccao===s.k && !isDone(n);});
     if(!itens.length) return;
-    itens.sort(function(a,b){ const pa=temPrio(a.texto),pb=temPrio(b.texto); if(pa!==pb) return pa?-1:1; return new Date(a.data)-new Date(b.data); });
+    itens.sort(function(a,b){ const pa=temPrio(a.texto),pb=temPrio(b.texto); if(pa!==pb) return pa?-1:1; const ia=temImp(a.texto),ib=temImp(b.texto); if(ia!==ib) return ia?-1:1; return new Date(a.data)-new Date(b.data); });
     html+='<h2>'+esc(s.nm)+'</h2><ul>';
     itens.forEach(function(n){
       total++;
       const t=parteTexto(n.texto).trim() || '(foto)';
       const foto=parteFoto(n.texto);
-      html+='<li><span class="box"></span><span>'+(temPrio(n.texto)?'<b style="color:#dc2626">[PRIORIT\u00C1RIA]</b> ':'')+esc(t)+(n.autor?' <i>\u2014 '+esc(n.autor)+'</i>':'')+'</span>'+(foto?'<img class="pthumb" src="'+foto+'">':'')+'</li>';
+      html+='<li><span class="box"></span><span>'+(temPrio(n.texto)?'<b style="color:#dc2626">[PRIORIT\u00C1RIA]</b> ':'')+(temImp(n.texto)?'<b style="color:#a16207">[IMPORTANTE]</b> ':'')+esc(t)+(n.autor?' <i>\u2014 '+esc(n.autor)+'</i>':'')+'</span>'+(foto?'<img class="pthumb" src="'+foto+'">':'')+'</li>';
     });
     html+='</ul>';
   });
@@ -388,12 +403,12 @@ document.getElementById('btnAdd').addEventListener('click',function(){
   const seccao=document.getElementById('seccao').value;
   if(!texto && !pendingFoto){ alert('Escreve a tarefa ou anexa uma foto.'); return; }
   if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
-  const textoFinal = (criadoPor ? '[[BY:'+criadoPor+']]' : '') + (prioSel ? PRIOMARK : '') + texto + (pendingFoto ? IMGSEP+pendingFoto : '');
+  const textoFinal = (criadoPor ? '[[BY:'+criadoPor+']]' : '') + (prioSel ? PRIOMARK : '') + (impSel ? IMPMARK : '') + texto + (pendingFoto ? IMGSEP+pendingFoto : '');
   const btn=this; btn.disabled=true; btn.textContent='A guardar\u2026';
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify({action:'nota_add', seccao:seccao, autor:autor, texto:textoFinal})})
     .then(r=>r.json()).then(function(j){
-      if(j&&j.ok){ document.getElementById('texto').value=''; pendingFoto=''; setPrio(false); mostrarPrev(); carregar(); closeModal(); }
+      if(j&&j.ok){ document.getElementById('texto').value=''; pendingFoto=''; setPrio(false); setImp(false); mostrarPrev(); carregar(); closeModal(); }
       else throw new Error('erro');
     })
     .catch(function(){ alert('N\u00E3o foi poss\u00EDvel guardar. Tenta de novo.'); })
@@ -417,13 +432,14 @@ function apagar(id){
     .catch(function(){ alert('N\u00E3o foi poss\u00EDvel apagar. Tenta de novo.'); });
 }
 
-function salvarEdicao(n, newText, newAutor, btn, prio){
+function salvarEdicao(n, newText, newAutor, btn, prio, imp){
   newText=String(newText||'').trim();
   const criador=parteBy(n.texto), foto=parteFoto(n.texto), seccao=n.seccao;
   if(prio===undefined) prio=temPrio(n.texto);
+  if(imp===undefined) imp=temImp(n.texto);
   if(!newText && !foto){ alert('A tarefa n\u00E3o pode ficar vazia.'); return; }
   if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
-  const textoFinal=(criador?'[[BY:'+criador+']]':'')+(prio?PRIOMARK:'')+newText+(foto?IMGSEP+foto:'');
+  const textoFinal=(criador?'[[BY:'+criador+']]':'')+(prio?PRIOMARK:'')+(imp?IMPMARK:'')+newText+(foto?IMGSEP+foto:'');
   const oldId=String(n.id);
   const coms=COMENTARIOS.filter(function(x){return x.parent===oldId;});
   const oldIds=NOTAS.map(function(x){return String(x.id);});
@@ -473,6 +489,10 @@ function apagarComentario(id){
 var prioSel=false;
 function setPrio(v){ prioSel=!!v; var b=document.getElementById('btnPrio'); if(b) b.classList.toggle('on',prioSel); }
 document.getElementById('btnPrio').addEventListener('click',function(){ setPrio(!prioSel); });
+/* importante (bandeira amarela no popup) */
+var impSel=false;
+function setImp(v){ impSel=!!v; var b=document.getElementById('btnImp'); if(b) b.classList.toggle('on',impSel); }
+document.getElementById('btnImp').addEventListener('click',function(){ setImp(!impSel); });
 
 /* popup de cria\u00E7\u00E3o */
 var modal=document.getElementById('modal');
