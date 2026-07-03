@@ -61,6 +61,20 @@
   .aniv .del{background:none;border:none;color:var(--neg);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
   .mes{font-size:12px;font-weight:800;color:var(--accent-ink);text-transform:uppercase;letter-spacing:.04em;margin:14px 2px 2px;}
   .status{text-align:center;color:var(--muted);font-size:13px;padding:16px;}
+  .cal{border:1.5px solid var(--line);border-radius:14px;padding:10px 8px;background:#fff;-webkit-user-select:none;user-select:none;}
+  .cal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .cal-top button{background:var(--accent-soft);color:var(--accent-ink);border:none;border-radius:9px;width:36px;height:36px;font-size:20px;font-weight:800;cursor:pointer;font-family:inherit;line-height:1;}
+  .cal-top .mlabel{font-weight:800;font-size:15px;text-transform:capitalize;}
+  .cal-wd{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px;}
+  .cal-wd span{text-align:center;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;touch-action:none;}
+  .cal-grid .d{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;border-radius:9px;cursor:pointer;color:var(--ink);}
+  .cal-grid .d.mut{visibility:hidden;cursor:default;}
+  .cal-grid .d.blocked{color:#cfc7bb;text-decoration:line-through;cursor:not-allowed;}
+  .cal-grid .d.today{box-shadow:inset 0 0 0 2px var(--accent-soft);}
+  .cal-grid .d.range{background:var(--accent-soft);color:var(--accent-ink);border-radius:4px;}
+  .cal-grid .d.edge{background:var(--accent);color:#fff;border-radius:9px;}
+  .cal-sum{font-size:13px;color:var(--accent-ink);font-weight:700;margin-top:8px;text-align:center;background:var(--accent-soft);border-radius:10px;padding:9px;}
 </style>
 </head>
 <body>
@@ -82,10 +96,12 @@
   <div class="card" id="cardForm">
     <h2 id="formTitle">Pedido de f&#xE9;rias</h2>
     <div class="field"><label for="nome">Colaborador</label><select id="nome" data-staff data-ph="Seleciona o teu nome"></select></div>
-    <div class="row2">
-      <div class="field"><label for="ini">Data de in&#xED;cio</label><input type="date" id="ini"></div>
-      <div class="field"><label for="fim">Data de fim</label><input type="date" id="fim"></div>
+    <div class="field">
+      <label>Per&#xED;odo de f&#xE9;rias <span style="color:var(--muted);font-weight:600;">(arrasta ou toca no in&#xED;cio e no fim)</span></label>
+      <div class="cal" id="cal"></div>
+      <div class="cal-sum" id="calSum">Toca no dia de in&#xED;cio e depois no dia de fim.</div>
     </div>
+    <input type="hidden" id="ini"><input type="hidden" id="fim">
     <div class="field"><label for="obs">Observa&#xE7;&#xF5;es (opcional)</label><textarea id="obs" placeholder="Algo a acrescentar?"></textarea></div>
     <div class="warn"><i data-lu="lock" data-sz="16"></i> A empresa bloqueia per&#xED;odo de f&#xE9;rias entre 15 de dezembro a 7 de janeiro.</div>
     <button class="save" id="btnSave">Enviar pedido</button>
@@ -144,6 +160,7 @@ document.getElementById('btnSave').addEventListener('click',function(){
     body:JSON.stringify({action:'nota_add', seccao:SEC, autor:nome, texto:JSON.stringify({ini:ini,fim:fim,obs:obs})})})
     .then(r=>r.json()).then(function(j){
       if(j&&j.ok){ document.getElementById('ini').value=''; document.getElementById('fim').value=''; document.getElementById('obs').value=''; var nn=document.getElementById('nome'); if(nn) nn.value='';
+        selStart=null; selEnd=null; awaitingEnd=false; if(document.getElementById('calGrid')){ paintSelection(); atualizaSum(); }
         if(MANAGER){ carregar(); } else { document.getElementById('cardForm').style.display='none'; document.getElementById('cardThanks').style.display='block'; window.scrollTo(0,0); } }
       else throw new Error('erro');
     }).catch(function(){ alert('N\u00e3o foi poss\u00edvel enviar. Tenta de novo.'); })
@@ -156,6 +173,85 @@ function apagar(id){
     .then(r=>r.json()).then(function(){ DADOS=DADOS.filter(x=>String(x.id)!==String(id)); render(); })
     .catch(function(){ alert('N\u00e3o foi poss\u00edvel apagar.'); });
 }
+/* ---------- calend\u00E1rio de sele\u00E7\u00E3o (arrastar / tocar) ---------- */
+var calRef=new Date(); calRef.setDate(1);
+var selStart=null, selEnd=null, awaitingEnd=false;
+var dragging=false, moved=false, dragAnchor=null, lastOver=null;
+function ymd(dt){ return dt.getFullYear()+'-'+('0'+(dt.getMonth()+1)).slice(-2)+'-'+('0'+dt.getDate()).slice(-2); }
+function parseYmd(s){ var d=new Date(s+'T00:00:00'); return isNaN(d)?null:d; }
+function isBlockedYmd(s){ var d=parseYmd(s); return d?bloqueado(d):false; }
+function orderSel(a,b){ if(parseYmd(b)<parseYmd(a)){ var t=a; a=b; b=t; } return [a,b]; }
+function inRange(s){ if(!selStart||!selEnd) return false; var d=parseYmd(s); return d>=parseYmd(selStart) && d<=parseYmd(selEnd); }
+function diffDays(a,b){ return Math.round((parseYmd(b)-parseYmd(a))/86400000); }
+function setInputs(){ document.getElementById('ini').value=selStart||''; document.getElementById('fim').value=selEnd||''; atualizaSum(); }
+function atualizaSum(){
+  var el=document.getElementById('calSum'); if(!el) return;
+  if(selStart&&selEnd){ var n=diffDays(selStart,selEnd)+1; el.innerHTML='<b>'+pd(selStart)+'</b> &rarr; <b>'+pd(selEnd)+'</b> &middot; '+n+' dia'+(n>1?'s':''); }
+  else if(selStart){ el.textContent='In\u00EDcio: '+pd(selStart)+' \u2014 escolhe o dia de fim.'; }
+  else { el.textContent='Toca no dia de in\u00EDcio e depois no dia de fim.'; }
+}
+function paintSelection(){
+  var grid=document.getElementById('calGrid'); if(!grid) return;
+  grid.querySelectorAll('.d[data-d]').forEach(function(cell){
+    var s=cell.dataset.d; cell.classList.remove('edge','range');
+    if(cell.classList.contains('blocked')) return;
+    if(s===selStart||s===selEnd) cell.classList.add('edge');
+    else if(inRange(s)) cell.classList.add('range');
+  });
+}
+function applyRange(a,b){ var o=orderSel(a,b); selStart=o[0]; selEnd=o[1]; awaitingEnd=false; setInputs(); paintSelection(); }
+function tapDay(s){
+  if(isBlockedYmd(s)) return;
+  if(!selStart || (selStart&&selEnd)){ selStart=s; selEnd=null; awaitingEnd=true; }
+  else if(awaitingEnd){ var o=orderSel(selStart,s); selStart=o[0]; selEnd=o[1]; awaitingEnd=false; }
+  setInputs(); paintSelection();
+}
+function wireGrid(){
+  var grid=document.getElementById('calGrid'); if(!grid) return;
+  grid.addEventListener('pointerdown',function(e){
+    var cell=e.target.closest? e.target.closest('.d[data-d]') : null; if(!cell) return;
+    var s=cell.dataset.d; if(isBlockedYmd(s)) return;
+    e.preventDefault(); dragging=true; moved=false; dragAnchor=s; lastOver=s;
+    try{ grid.setPointerCapture(e.pointerId); }catch(_){}
+  });
+  grid.addEventListener('pointermove',function(e){
+    if(!dragging) return;
+    var el=document.elementFromPoint(e.clientX,e.clientY);
+    var cell=(el&&el.closest)? el.closest('.d[data-d]') : null; if(!cell) return;
+    var s=cell.dataset.d; if(isBlockedYmd(s)) return;
+    if(s!==lastOver){ lastOver=s; moved=true; applyRange(dragAnchor,s); }
+  });
+  grid.addEventListener('pointerup',function(e){
+    if(!dragging) return; dragging=false;
+    try{ grid.releasePointerCapture(e.pointerId); }catch(_){}
+    if(!moved) tapDay(dragAnchor);
+  });
+}
+function renderCal(){
+  var box=document.getElementById('cal'); if(!box) return;
+  var y=calRef.getFullYear(), m=calRef.getMonth();
+  var meses=['Janeiro','Fevereiro','Mar\u00E7o','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  var wds=['Seg','Ter','Qua','Qui','Sex','S\u00E1b','Dom'];
+  var startWd=(new Date(y,m,1).getDay()+6)%7;
+  var dim=new Date(y,m+1,0).getDate();
+  var todayS=ymd(new Date());
+  var h='<div class="cal-top"><button type="button" id="calPrev" aria-label="M\u00EAs anterior">&#8249;</button><span class="mlabel">'+meses[m]+' '+y+'</span><button type="button" id="calNext" aria-label="M\u00EAs seguinte">&#8250;</button></div>';
+  h+='<div class="cal-wd">'+wds.map(function(w){return '<span>'+w+'</span>';}).join('')+'</div><div class="cal-grid" id="calGrid">';
+  for(var i=0;i<startWd;i++){ h+='<div class="d mut"></div>'; }
+  for(var day=1;day<=dim;day++){
+    var s=ymd(new Date(y,m,day)); var cls='d';
+    if(isBlockedYmd(s)) cls+=' blocked';
+    if(s===todayS) cls+=' today';
+    h+='<div class="'+cls+'" data-d="'+s+'">'+day+'</div>';
+  }
+  h+='</div>';
+  box.innerHTML=h;
+  document.getElementById('calPrev').onclick=function(){ calRef.setMonth(calRef.getMonth()-1); renderCal(); };
+  document.getElementById('calNext').onclick=function(){ calRef.setMonth(calRef.getMonth()+1); renderCal(); };
+  wireGrid(); paintSelection();
+}
+renderCal();
+
 if(MANAGER){ carregar(); }
 else{ document.getElementById('cardLista').style.display='none'; var _hb=document.getElementById('homeBtn'); if(_hb) _hb.style.display='none'; }
 </script>
