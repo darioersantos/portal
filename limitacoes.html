@@ -97,6 +97,7 @@
   </div>
   <div class="card" id="cardLista">
     <h2 style="margin:0 0 10px;">Limita&#xE7;&#xF5;es de hor&#xE1;rio</h2>
+    <button class="chips" id="btnExport" type="button" style="display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent-ink);border:none;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:8px;"><i data-lu="download" data-sz="14"></i> Exportar (Excel/Sheets)</button>
     <div id="lista"><div class="status">A carregar&#x2026;</div></div>
   </div>
 </main>
@@ -161,6 +162,19 @@ function apagar(id){
     .then(r=>r.json()).then(function(){ DADOS=DADOS.filter(x=>String(x.id)!==String(id)); render(); })
     .catch(function(){ alert('N\u00e3o foi poss\u00edvel apagar.'); });
 }
+function csvCel(v){ v=(v==null?'':String(v)); if(/[";\n]/.test(v)){ v='"'+v.replace(/"/g,'""')+'"'; } return v; }
+function exportarCsv(){
+  if(!DADOS.length){ alert('Ainda n\u00e3o h\u00e1 limita\u00e7\u00f5es para exportar.'); return; }
+  var linhas=[['Colaborador','Dias','Turnos','Observa\u00e7\u00f5es'].map(csvCel).join(';')];
+  DADOS.slice().sort(function(a,b){ return String(a.autor||'').localeCompare(String(b.autor||'')); }).forEach(function(n){
+    var d={}; try{ d=JSON.parse(n.texto||'{}'); }catch(e){}
+    linhas.push([n.autor||'', (d.dias||[]).join(', '), (d.turnos||[]).join(', '), d.obs||''].map(csvCel).join(';'));
+  });
+  var blob=new Blob([String.fromCharCode(0xFEFF)+linhas.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='limitacoes_horario.csv'; document.body.appendChild(a); a.click(); a.remove();
+}
+var _be=document.getElementById('btnExport'); if(_be) _be.addEventListener('click',exportarCsv);
+
 if(MANAGER){ carregar(); }
 else{ document.getElementById('cardLista').style.display='none'; var _hb=document.getElementById('homeBtn'); if(_hb) _hb.style.display='none'; document.getElementById('formTitle').textContent='Regista a tua limita\u00e7\u00e3o de hor\u00e1rio'; }
 </script>
