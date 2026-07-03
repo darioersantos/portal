@@ -104,6 +104,16 @@
 </header>
 
 <main>
+  <!-- Link para partilhar (dire&#xE7;&#xE3;o) -->
+  <div class="card" id="shareBox" style="display:none;background:linear-gradient(135deg,#ffffff,#fff7ed);border:1.5px solid var(--accent-soft);">
+    <div style="font-weight:800;font-size:15px;margin-bottom:4px;"><i data-lu="link" data-sz="16"></i> Link para o staff pedir folgas</div>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 10px;">Envia este link &#xE0; equipa para pedirem trocas de folga. S&#xF3; abre esta p&#xE1;gina &mdash; n&#xE3;o d&#xE1; acesso ao resto da app.</p>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <input id="shareUrl" readonly onclick="this.select()" style="flex:1;min-width:180px;border:1.5px solid var(--line);border-radius:10px;padding:11px;font-size:13px;background:#fff;color:var(--ink);">
+      <button class="save" id="btnCopy" style="flex:none;width:auto;padding:12px 18px;display:inline-flex;align-items:center;justify-content:center;gap:6px;line-height:1;"><i data-lu="copy" data-sz="15"></i> Copiar</button>
+    </div>
+  </div>
+
   <div class="card" id="cardForm">
     <h2 id="formTitle">Pedido de troca de folga</h2>
     <div class="field"><label for="nome">Colaborador</label><select id="nome" data-staff data-ph="Seleciona o teu nome"></select></div>
@@ -120,7 +130,10 @@
   <div class="card" id="cardLista">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
       <h2 style="margin:0;">Pedidos de folga</h2>
-      <button id="btnRefresh" type="button" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--accent-soft);color:var(--accent-ink);border:none;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;"><i data-lu="refresh-cw" data-sz="14"></i> Atualizar</button>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button id="btnExport" type="button" style="display:none;align-items:center;justify-content:center;gap:6px;background:var(--accent-soft);color:var(--accent-ink);border:none;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;"><i data-lu="download" data-sz="14"></i> Exportar</button>
+        <button id="btnRefresh" type="button" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--accent-soft);color:var(--accent-ink);border:none;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;"><i data-lu="refresh-cw" data-sz="14"></i> Atualizar</button>
+      </div>
     </div>
     <div class="fg-legend"><span class="badge analise">Em an&#xE1;lise</span><span class="badge validado">Validado</span><span class="badge recusado">Recusado</span></div>
     <div id="lista" style="margin-top:6px;"><div class="status">A carregar&#x2026;</div></div>
@@ -142,7 +155,12 @@ function pd(s){ var d=new Date(s); return isNaN(d)?'':d.toLocaleDateString('pt-P
 function render(){
   var l=byId('lista'); l.innerHTML='';
   if(!DADOS.length){ l.innerHTML='<div class="status">Ainda n\u00e3o h\u00e1 pedidos de folga.</div>'; return; }
-  DADOS.slice().sort(function(a,b){ return new Date(b.data||0)-new Date(a.data||0); }).forEach(function(n){
+  DADOS.slice().sort(function(a,b){
+    var da=parseD(a), db=parseD(b);
+    var ra=(da.status==='analise'||!da.status)?0:1, rb=(db.status==='analise'||!db.status)?0:1;
+    if(ra!==rb) return ra-rb;
+    return new Date(b.data||0)-new Date(a.data||0);
+  }).forEach(function(n){
     var d=parseD(n); var st=(d.status&&STATUS[d.status])?d.status:'analise';
     var card=document.createElement('div'); card.className='fg-card '+st;
     var h='<div class="fg-head"><span class="fg-nome">'+esc(n.autor||'\u2014')+'</span><span class="badge '+st+'">'+STATUS[st]+'</span></div>';
@@ -214,8 +232,36 @@ function apagar(id){
 }
 byId('btnRefresh').addEventListener('click',carregar);
 
+/* exportar historico para Excel/Google Sheets (CSV) */
+function csvCel(v){ v=(v==null?'':String(v)); if(/[";\n]/.test(v)){ v='"'+v.replace(/"/g,'""')+'"'; } return v; }
+function exportarCsv(){
+  if(!DADOS.length){ alert('Ainda nao ha pedidos de folga para exportar.'); return; }
+  var linhas=[['Data','Colaborador','Pedido','Observacoes','Estado','Nota do supervisor'].map(csvCel).join(';')];
+  DADOS.slice().sort(function(a,b){ return new Date(a.data||0)-new Date(b.data||0); }).forEach(function(n){
+    var d=parseD(n); var st=(d.status&&STATUS[d.status])?STATUS[d.status]:'Em analise';
+    linhas.push([pd(n.data), n.autor||'', d.pedido||'', d.obs||'', st, d.supNota||''].map(csvCel).join(';'));
+  });
+  var blob=new Blob([String.fromCharCode(0xFEFF)+linhas.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='pedidos_folgas.csv'; document.body.appendChild(a); a.click(); a.remove();
+}
+var _bex=byId('btnExport'); if(_bex) _bex.addEventListener('click',exportarCsv);
+
 carregar();
-if(!MANAGER){ var _hb=byId('homeBtn'); if(_hb) _hb.style.display='none'; }
+if(MANAGER){
+  var _link=location.href.split('?')[0].split('#')[0];
+  var su=byId('shareUrl'); if(su){ su.value=_link; byId('shareBox').style.display='block'; }
+  var bx=byId('btnExport'); if(bx) bx.style.display='inline-flex';
+  var bc=byId('btnCopy'); if(bc){ bc.onclick=function(){
+    function done(){ var t=bc.innerHTML; bc.innerHTML='<i data-lu="check" data-sz="15"></i> Copiado!'; if(window.SZlucide)window.SZlucide(); setTimeout(function(){ bc.innerHTML=t; if(window.SZlucide)window.SZlucide(); },1600); }
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(_link).then(done,function(){ try{ su.select(); document.execCommand('copy'); }catch(e){} done(); }); }
+    else { try{ su.select(); document.execCommand('copy'); }catch(e){} done(); }
+  }; }
+}
+else{
+  var _hb=byId('homeBtn'); if(_hb) _hb.style.display='none';
+  /* link de staff: nao dar acesso ao resto da app (desativa navegacao pelo logotipo) */
+  var _lg=document.querySelector('.logo'); if(_lg&&_lg.parentNode){ var _c=_lg.cloneNode(true); _lg.parentNode.replaceChild(_c,_lg); _c.style.cursor='default'; }
+}
 </script>
 </body>
 </html>
