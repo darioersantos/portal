@@ -39,3 +39,39 @@ window.BACKEND_URL = "https://script.google.com/macros/s/AKfycbxGaFY8bv7lJcI2Wbg
     return realFetch(url, opts);
   };
 })();
+
+/* -----------------------------------------------------------------------------
+   Navegacao para o inicio (SEM botao Home):
+   - esconde o antigo botao Home em TODAS as paginas
+   - voltar ao menu: arrastar da BORDA ESQUERDA do ecra para a direita,
+     ou tocar no LOGOTIPO (que faz um efeito ao tocar)
+----------------------------------------------------------------------------- */
+(function(){
+  if(typeof document==='undefined') return;
+  var isIndex = /(^|\/)(index\.html?)?$/.test(location.pathname); // '/', '/index.html', '/portal/', etc.
+  try{
+    var st=document.createElement('style');
+    st.textContent='.icon-btn[href="index.html"],#homeBtn{display:none!important;}'
+      +'.logo{cursor:pointer;-webkit-tap-highlight-color:transparent;}'
+      +'@keyframes szLogoPulse{0%{transform:scale(1);}45%{transform:scale(.8);}100%{transform:scale(1);}}'
+      +'.logo.sz-press{animation:szLogoPulse .45s ease;}';
+    (document.head||document.documentElement).appendChild(st);
+  }catch(e){}
+  if(isIndex) return; // no menu principal nao ha "voltar"
+  function irInicio(){ location.href='index.html'; }
+  document.addEventListener('DOMContentLoaded', function(){
+    var logo=document.querySelector('.logo');
+    if(logo){ logo.addEventListener('click', function(){ logo.classList.add('sz-press'); setTimeout(irInicio, 230); }); }
+  });
+  // gesto: comecar junto a BORDA ESQUERDA (<=32px) e arrastar para a direita
+  var x0=null,y0=null,t0=0;
+  document.addEventListener('touchstart', function(e){
+    if(e.touches.length!==1){ x0=null; return; }
+    var t=e.touches[0]; x0=(t.clientX<=32)?t.clientX:null; y0=t.clientY; t0=Date.now();
+  }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    if(x0===null) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0; x0=null;
+    if(dt<700 && dx>80 && Math.abs(dy)<55){ irInicio(); }
+  }, {passive:true});
+})();
