@@ -112,7 +112,7 @@
 </header>
 
 <main>
-  <p class="intro">Controlo do alarmado em loja. Marca as zonas verificadas em cada marca.</p>
+  <p class="intro">Controlo do alarmado em loja. Marca o que verificaste em cada marca.</p>
 
   <div class="card">
     <div class="field">
@@ -126,10 +126,6 @@
   </div>
 
   <div id="grupos"></div>
-
-  <div class="card total-card">
-    <div class="trow"><span>Zonas verificadas</span><b id="tTot">0</b></div>
-  </div>
 
   <div class="actions">
     <button class="btn save" id="btnSave" type="button"><i data-lu="save"></i> Guardar verifica&#xE7;&#xE3;o</button>
@@ -220,7 +216,7 @@ function construir(){
   });
 }
 function somaTotal(d){ var s=0; var c=d.checks||{}; for(var k in c){ if(c.hasOwnProperty(k)) s+=c[k].length; } return s; }
-function totais(){ document.getElementById('tTot').textContent=somaTotal(st); }
+function totais(){ var e=document.getElementById('tTot'); if(e) e.textContent=somaTotal(st); }
 
 function pinta(){
   document.getElementById('nome').value=st.nome||'';
