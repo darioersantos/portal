@@ -90,7 +90,8 @@
   .adm-row .det a{color:var(--accent-dark);font-weight:700;}
   .adm-row .del{background:none;border:none;color:var(--neg);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex:none;}
   .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
-  .toolbar button{background:var(--accent-soft);color:var(--accent-ink);border:none;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .toolbar button{background:var(--accent-soft);color:var(--accent-ink);border:none;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;line-height:1;}
+  .toolbar button i,.toolbar button svg{flex:none;}
 </style>
 </head>
 <body>
@@ -109,12 +110,22 @@
 </header>
 
 <main>
+  <!-- Link para partilhar (dire&#xE7;&#xE3;o) -->
+  <div class="card" id="shareBox" style="display:none;background:linear-gradient(135deg,#ffffff,#fff7ed);border:1.5px solid var(--accent-soft);">
+    <div style="font-weight:800;font-size:15px;margin-bottom:4px;"><i data-lu="link" data-sz="16"></i> Link para enviar aos candidatos</div>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 10px;">Envia este link a quem vais contratar. S&#xF3; abre o formul&#xE1;rio de admiss&#xE3;o &mdash; n&#xE3;o d&#xE1; acesso ao resto da app.</p>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <input id="shareUrl" readonly onclick="this.select()" style="flex:1;min-width:180px;border:1.5px solid var(--line);border-radius:10px;padding:11px;font-size:13px;background:#fff;color:var(--ink);">
+      <button class="save" id="btnCopy" style="flex:none;width:auto;padding:12px 18px;"><i data-lu="copy" data-sz="15"></i> Copiar</button>
+    </div>
+  </div>
+
   <!-- PASSO 1: capa -->
   <div class="card" id="step1">
     <div class="cover">
       <div class="big">Formul&#xE1;rio de Admiss&#xE3;o</div>
       <div class="sub">Sport Zone &middot; Vasco da Gama</div>
-      <div class="note">Preenche todos os teus dados. No fim podes anexar a <b>fotografia</b> e, se aplic&#xE1;vel, o <b>t&#xED;tulo de resid&#xEA;ncia</b> &mdash; os ficheiros ficam guardados em seguran&#xE7;a.</div>
+      <div class="note">Preenche todos os teus dados. A <b>fotografia do rosto &eacute; obrigat&oacute;ria</b>; o <b>t&iacute;tulo de resid&ecirc;ncia</b> apenas para n&atilde;o-portugueses.<br><br>Estes dados s&atilde;o usados <b>&uacute;nica e exclusivamente para efeitos de contrata&ccedil;&atilde;o</b> e ser&atilde;o <b>apagados posteriormente</b>.</div>
     </div>
     <button class="save" id="btnStart" style="margin-top:14px;">Come&#xE7;ar <i data-lu="arrow-right" data-sz="16"></i></button>
   </div>
@@ -164,7 +175,7 @@
 
     <div class="grp-title" style="margin-top:16px;">Ficheiros</div>
     <div class="field">
-      <label>Fotografia do rosto</label>
+      <label>Fotografia do rosto <span class="req">*</span></label>
       <div class="file-box">
         <button type="button" class="file-btn" id="btnFoto"><i data-lu="camera" data-sz="16"></i> Escolher fotografia</button>
         <input type="file" id="inpFoto" accept="image/*">
@@ -278,6 +289,7 @@ byId('btnSend').onclick=function(){
   if(!BACKEND){ alert('Sem liga\u00e7\u00e3o \u00e0 nuvem.'); return; }
   var d=recolher(); var falta=validar(d);
   if(falta){ alert('Falta preencher: '+falta); return; }
+  if(!fotoFiles.length){ alert('Anexa a fotografia do rosto \u2014 \u00E9 obrigat\u00F3ria.'); return; }
   var files=[];
   fotoFiles.forEach(function(f){ files.push({tipo:'foto',nome:f.nome,mime:f.mime,b64:f.b64}); });
   docFiles.forEach(function(f){ files.push({tipo:'doc',nome:f.nome,mime:f.mime,b64:f.b64}); });
@@ -324,8 +336,21 @@ byId('btnCsv').onclick=function(){
 };
 byId('btnRefresh').onclick=carregar;
 
-if(MANAGER){ carregar(); }
-else{ byId('cardLista').style.display='none'; var _hb=byId('homeBtn'); if(_hb) _hb.style.display='none'; }
+if(MANAGER){
+  carregar();
+  var _link=location.href.split('?')[0].split('#')[0];
+  var su=byId('shareUrl'); if(su){ su.value=_link; byId('shareBox').style.display='block'; }
+  var bc=byId('btnCopy'); if(bc){ bc.onclick=function(){
+    function done(){ var t=bc.innerHTML; bc.innerHTML='<i data-lu="check" data-sz="15"></i> Copiado!'; if(window.SZlucide)window.SZlucide(); setTimeout(function(){ bc.innerHTML=t; if(window.SZlucide)window.SZlucide(); },1600); }
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(_link).then(done,function(){ try{ su.select(); document.execCommand('copy'); }catch(e){} done(); }); }
+    else { try{ su.select(); document.execCommand('copy'); }catch(e){} done(); }
+  }; }
+}
+else{
+  byId('cardLista').style.display='none'; var _hb=byId('homeBtn'); if(_hb) _hb.style.display='none';
+  /* link de candidatura: n&atilde;o dar acesso ao resto da app (desativa navega&ccedil;&atilde;o pelo logotipo) */
+  var _lg=document.querySelector('.logo'); if(_lg&&_lg.parentNode){ var _c=_lg.cloneNode(true); _lg.parentNode.replaceChild(_c,_lg); _c.style.cursor='default'; }
+}
 </script>
 </body>
 </html>
