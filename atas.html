@@ -177,7 +177,7 @@
   #codeGate{position:fixed;inset:0;z-index:500;background:linear-gradient(135deg,#FF8100,#E66200);display:flex;align-items:center;justify-content:center;padding:20px;}
   #codeGate.hidden{display:none;}
   .cg-card{background:#fff;border-radius:20px;box-shadow:0 14px 44px rgba(0,0,0,.3);padding:26px 22px;width:100%;max-width:340px;text-align:center;}
-  .cg-ic{font-size:40px;line-height:1;}
+  .cg-ic{line-height:0;color:var(--accent-dark);}
   .cg-card h2{margin:8px 0 2px;font-size:22px;color:var(--accent-dark);}
   .cg-card p{margin:0 0 16px;color:var(--muted);font-size:14px;}
   .cg-card input{width:100%;text-align:center;letter-spacing:6px;font-size:22px;border:1.5px solid var(--line);border-radius:12px;padding:13px;font-family:inherit;box-sizing:border-box;color:var(--ink);background:#fff;}
@@ -191,7 +191,7 @@
 
 <div id="codeGate">
   <div class="cg-card">
-    <div class="cg-ic">&#x1F512;</div>
+    <div class="cg-ic"><i data-lu="lock" data-sz="40"></i></div>
     <h2>Reuni&#xF5;es</h2>
     <p>Introduz o c&#xF3;digo de acesso.</p>
     <input type="password" inputmode="numeric" id="cgInput" placeholder="C&#xF3;digo" autocomplete="off">
