@@ -37,6 +37,7 @@ window.PORTAL_LINKS = {
   limitacoes_horario:"limitacoes.html",
   satisfacao_staff:  "satisfacao.html",
   ferias:            "ferias.html",
+  folgas:            "folgas.html",
 
   /* ---- Plano Formativo (em breve) ---- */
   pf_atendimento:    "atendimento_cliente.html",
