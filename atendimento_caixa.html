@@ -192,7 +192,8 @@
     <button class="btn reset" id="histBack" type="button" style="width:auto;margin-bottom:12px;">&#x2190; Voltar</button>
     <div class="card" style="padding:16px;">
       <div style="font-weight:800;font-size:16px;"><i data-lu="history"></i> Hist&#xF3;rico de atendimentos</div>
-      <p style="margin:6px 0 0;color:var(--muted);font-size:13px;">Avalia&#xE7;&#xF5;es guardadas. Toca em Imprimir para reimprimir.</p>
+      <p style="margin:6px 0 10px;color:var(--muted);font-size:13px;">Avalia&#xE7;&#xF5;es guardadas. Toca em Imprimir para reimprimir.</p>
+      <button class="av-print" id="btnExport" type="button" style="margin-bottom:6px;"><i data-lu="download" data-sz="14"></i> Exportar (Excel/Sheets)</button>
       <div id="av-list"></div>
     </div>
   </div>
@@ -398,6 +399,31 @@ function apagarHist(id){
 }
 document.getElementById('btnHistView').addEventListener('click',abrirHist);
 document.getElementById('histBack').addEventListener('click',function(){ document.body.classList.remove('av-hist'); });
+
+/* ---------- exportar para Excel/Google Sheets (CSV) ---------- */
+function csvCel(v){ v=(v==null?'':String(v)); if(/[";\n]/.test(v)){ v='"'+v.replace(/"/g,'""')+'"'; } return v; }
+function valResp(d,p){
+  var a=d.ans&&d.ans[p.k];
+  if(p.t==='multi'){ return Array.isArray(a)?a.join(', '):''; }
+  return a?rotulo(a):'';
+}
+function exportarCsv(){
+  if(!AV.length){ alert('Ainda n\u00E3o h\u00E1 atendimentos para exportar.'); return; }
+  var cab=['Data','Colaborador','Avaliado por'];
+  QUESTOES.forEach(function(p){ cab.push(p.n); });
+  cab.push('Respondidas','Feedback');
+  var linhas=[cab.map(csvCel).join(';')];
+  AV.slice().sort(function(a,b){ return new Date((a.d&&a.d.data)||a.ts)-new Date((b.d&&b.d.data)||b.ts); }).forEach(function(h){
+    var d=h.d||{};
+    var lin=[d.data||'', d.colaborador||'', d.avaliador||''];
+    QUESTOES.forEach(function(p){ lin.push(valResp(d,p)); });
+    lin.push(d.respondidas==null?nRespondidas(d):d.respondidas, d.feedback||'');
+    linhas.push(lin.map(csvCel).join(';'));
+  });
+  var blob=new Blob([String.fromCharCode(0xFEFF)+linhas.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='atendimento_caixa.csv'; document.body.appendChild(a); a.click(); a.remove();
+}
+document.getElementById('btnExport').addEventListener('click',exportarCsv);
 
 /* ---------- arranque ---------- */
 pinta(); construir(); totais();
