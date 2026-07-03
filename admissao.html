@@ -34,7 +34,8 @@
   .card h2{font-size:15px;margin:0 0 12px;font-weight:800;}
   .field{margin-bottom:12px;}
   .field label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px;}
-  .field input,.field select{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);}
+  .field input,.field select{width:100%;min-width:0;max-width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);}
+  .field input[type=date]{-webkit-appearance:none;appearance:none;min-height:49px;}
   .field input:focus{outline:none;border-color:var(--accent);}
   .row2{display:flex;gap:10px;flex-wrap:wrap;}
   .row2 .field{flex:1;min-width:140px;}
@@ -116,7 +117,7 @@
     <p style="color:var(--muted);font-size:13px;margin:0 0 10px;">Envia este link a quem vais contratar. S&#xF3; abre o formul&#xE1;rio de admiss&#xE3;o &mdash; n&#xE3;o d&#xE1; acesso ao resto da app.</p>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
       <input id="shareUrl" readonly onclick="this.select()" style="flex:1;min-width:180px;border:1.5px solid var(--line);border-radius:10px;padding:11px;font-size:13px;background:#fff;color:var(--ink);">
-      <button class="save" id="btnCopy" style="flex:none;width:auto;padding:12px 18px;"><i data-lu="copy" data-sz="15"></i> Copiar</button>
+      <button class="save" id="btnCopy" style="flex:none;width:auto;padding:12px 18px;display:inline-flex;align-items:center;justify-content:center;gap:6px;line-height:1;"><i data-lu="copy" data-sz="15"></i> Copiar</button>
     </div>
   </div>
 
@@ -125,14 +126,14 @@
     <div class="cover">
       <div class="big">Formul&#xE1;rio de Admiss&#xE3;o</div>
       <div class="sub">Sport Zone &middot; Vasco da Gama</div>
-      <div class="note">Preenche todos os teus dados. A <b>fotografia do rosto &eacute; obrigat&oacute;ria</b>; o <b>t&iacute;tulo de resid&ecirc;ncia</b> apenas para n&atilde;o-portugueses.<br><br>Estes dados s&atilde;o usados <b>&uacute;nica e exclusivamente para efeitos de contrata&ccedil;&atilde;o</b> e ser&atilde;o <b>apagados posteriormente</b>.</div>
+      <div class="note">Preenche todos os teus dados. A <b>fotografia do rosto &eacute; obrigat&oacute;ria</b>; o <b>t&iacute;tulo de resid&ecirc;ncia</b> apenas para n&atilde;o-portugueses.<br><br>Os dados recolhidos destinam-se <b>exclusivamente ao processo de recrutamento e sele&ccedil;&atilde;o</b>, s&atilde;o tratados com <b>total confidencialidade</b> e ser&atilde;o <b>eliminados ap&oacute;s a conclus&atilde;o do processo</b>, em conformidade com o RGPD.</div>
     </div>
     <button class="save" id="btnStart" style="margin-top:14px;">Come&#xE7;ar <i data-lu="arrow-right" data-sz="16"></i></button>
   </div>
 
   <!-- PASSO 2: dados -->
   <div class="card" id="step2" style="display:none;">
-    <div class="prog">P&#xE1;gina 2 de 2 &middot; Preenche os teus dados</div>
+    <div class="prog">Preenche os teus dados</div>
 
     <div class="grp-title">Dados pessoais</div>
     <div class="field"><label>Nome completo <span class="req">*</span></label><input id="f_nome" autocomplete="name"></div>
@@ -140,7 +141,7 @@
       <div class="field"><label>N&#xBA; telem&#xF3;vel <span class="req">*</span></label><input id="f_telemovel" inputmode="tel" autocomplete="tel"></div>
       <div class="field"><label>Email <span class="req">*</span></label><input id="f_email" inputmode="email" autocomplete="email"></div>
     </div>
-    <div class="field"><label>Morada completa + cidade <span class="req">*</span></label><input id="f_morada" autocomplete="street-address"></div>
+    <div class="field"><label>Morada completa + cidade <span class="req">*</span></label><textarea id="f_morada" rows="2" autocomplete="street-address" placeholder="Rua, n&#xBA;, andar, c&#xF3;digo postal e cidade" style="min-height:62px;"></textarea></div>
     <div class="row2">
       <div class="field"><label>C&#xF3;digo postal <span class="req">*</span></label><input id="f_codPostal" placeholder="0000-000"></div>
       <div class="field"><label>Nacionalidade <span class="req">*</span></label><input id="f_nacionalidade"></div>
