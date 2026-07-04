@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FF8100">
+<title>Folha de Reserva &#xB7; Sport Zone Vasco da Gama</title>
+<script>if(sessionStorage.getItem('portalOK')!=='1')location.replace('index.html');</script>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#f6f5f3;color:#1a1303;-webkit-text-size-adjust:100%;}
+
+  /* ---- Barra superior (s&#xF3; no ecr&#xE3;) ---- */
+  .toolbar{position:sticky;top:0;z-index:50;background:linear-gradient(135deg,#FF8100,#E66200);color:#fff;
+           padding:calc(12px + env(safe-area-inset-top)) 16px 12px;box-shadow:0 2px 12px rgba(230,98,0,.28);
+           display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .tb-back{background:rgba(255,255,255,.18);color:#fff;border:none;border-radius:10px;padding:9px 13px;
+           font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+  .tb-ttl{font-size:16px;font-weight:800;flex:1;min-width:120px;}
+  .tb-ctrl{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border-radius:12px;padding:5px 8px;}
+  .tb-ctrl span{font-size:13px;font-weight:700;}
+  .stp{width:34px;height:34px;border:none;border-radius:9px;background:#fff;color:#E06E00;font-size:20px;font-weight:800;
+       cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;}
+  #qtd{min-width:20px;text-align:center;font-size:16px;font-weight:800;}
+  .tb-print{background:#fff;color:#E06E00;border:none;border-radius:11px;padding:10px 16px;font-size:15px;font-weight:800;
+            cursor:pointer;display:inline-flex;align-items:center;gap:7px;box-shadow:0 3px 10px rgba(0,0,0,.15);}
+  .hint{width:100%;font-size:12px;font-weight:600;opacity:.92;margin-top:2px;}
+
+  /* ---- &#xC1;rea imprim&#xED;vel ---- */
+  #sheet{padding:14px;}
+  .page{background:#fff;display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+        max-width:1040px;margin:0 auto 22px;box-shadow:0 2px 14px rgba(26,19,3,.10);}
+
+  .slip{border:1px dashed #9a9a9a;padding:9px 11px;min-height:150px;display:flex;flex-direction:column;}
+  .wm{text-align:center;font-size:16px;letter-spacing:1.5px;line-height:1;margin-top:2px;}
+  .wm b{font-weight:800;}
+  .wm span{font-weight:400;}
+  .rule{border-bottom:1.6px solid #000;margin:4px 8px 6px;}
+  .ttl{text-align:center;font-weight:800;font-size:11px;letter-spacing:.4px;margin-bottom:8px;}
+  .fld{display:flex;align-items:flex-end;gap:4px;font-size:9.5px;margin-top:7px;}
+  .fld .lbl{font-weight:700;white-space:nowrap;}
+  .fld .ln{flex:1;border-bottom:1px solid #000;height:11px;}
+
+  @media (max-width:640px){
+    .page{grid-template-columns:repeat(2,1fr);}
+  }
+
+  /* ---- Impress&#xE3;o: 4 col x 7 linhas por folha A4 ---- */
+  @media print{
+    @page{size:A4 portrait;margin:8mm;}
+    body{background:#fff;}
+    .toolbar{display:none !important;}
+    #sheet{padding:0;}
+    .page{grid-template-columns:repeat(4,1fr);max-width:none;margin:0;box-shadow:none;
+          page-break-after:always;break-after:page;}
+    .page:last-child{page-break-after:auto;break-after:auto;}
+    .slip{min-height:0;height:calc((297mm - 16mm)/7);overflow:hidden;
+          -webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .wm{font-size:14px;}
+    .ttl{font-size:10px;margin-bottom:5px;}
+    .fld{font-size:9px;margin-top:5px;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="toolbar">
+    <a class="tb-back" href="index.html">&#8592; Voltar</a>
+    <div class="tb-ttl">Folha de Reserva</div>
+    <div class="tb-ctrl">
+      <span>Folhas:</span>
+      <button class="stp" id="menos" type="button" aria-label="Menos folhas">&#8722;</button>
+      <span id="qtd">1</span>
+      <button class="stp" id="mais" type="button" aria-label="Mais folhas">+</button>
+    </div>
+    <button class="tb-print" id="imprimir" type="button">&#128424;&#65039; Imprimir</button>
+    <div class="hint">Cada folha imprime 28 tal&#xF5;es (4 colunas &times; 7 linhas) em A4.</div>
+  </div>
+
+  <div id="sheet"></div>
+
+<script>
+  var POR_FOLHA = 28;
+  var folhas = 1;
+
+  var SLIP =
+    '<div class="wm"><span>SPORT</span> <b>ZONE</b></div>' +
+    '<div class="rule"></div>' +
+    '<div class="ttl">RESERVA SPORTZONE</div>' +
+    '<div class="fld"><span class="lbl">Nome do cliente:</span><span class="ln"></span></div>' +
+    '<div class="fld"><span class="lbl">Artigo:</span><span class="ln"></span></div>' +
+    '<div class="fld"><span class="lbl">Data da reserva (m&aacute;x 1 dia):</span><span class="ln"></span></div>' +
+    '<div class="fld"><span class="lbl">Assinatura operador:</span><span class="ln"></span></div>' +
+    '<div class="fld"><span class="lbl">Assinatura colaborador:</span><span class="ln"></span></div>';
+
+  function construir(){
+    var host = document.getElementById('sheet');
+    host.innerHTML = '';
+    for(var p=0; p<folhas; p++){
+      var page = document.createElement('div');
+      page.className = 'page';
+      var html = '';
+      for(var i=0; i<POR_FOLHA; i++){
+        html += '<div class="slip">' + SLIP + '</div>';
+      }
+      page.innerHTML = html;
+      host.appendChild(page);
+    }
+    document.getElementById('qtd').textContent = folhas;
+  }
+
+  document.getElementById('mais').addEventListener('click', function(){
+    if(folhas < 20){ folhas++; construir(); }
+  });
+  document.getElementById('menos').addEventListener('click', function(){
+    if(folhas > 1){ folhas--; construir(); }
+  });
+  document.getElementById('imprimir').addEventListener('click', function(){
+    window.print();
+  });
+
+  construir();
+</script>
+</body>
+</html>
