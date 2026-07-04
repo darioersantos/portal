@@ -176,7 +176,7 @@ function apagar(id){
 /* ---------- calend\u00E1rio de sele\u00E7\u00E3o (arrastar / tocar) ---------- */
 var calRef=new Date(); calRef.setDate(1);
 var selStart=null, selEnd=null, awaitingEnd=false;
-var dragging=false, moved=false, dragAnchor=null, lastOver=null;
+var dragging=false, moved=false, dragAnchor=null, lastOver=null, startX=0, startY=0;
 function ymd(dt){ return dt.getFullYear()+'-'+('0'+(dt.getMonth()+1)).slice(-2)+'-'+('0'+dt.getDate()).slice(-2); }
 function parseYmd(s){ var d=new Date(s+'T00:00:00'); return isNaN(d)?null:d; }
 function isBlockedYmd(s){ var d=parseYmd(s); return d?bloqueado(d):false; }
@@ -186,9 +186,9 @@ function diffDays(a,b){ return Math.round((parseYmd(b)-parseYmd(a))/86400000); }
 function setInputs(){ document.getElementById('ini').value=selStart||''; document.getElementById('fim').value=selEnd||''; atualizaSum(); }
 function atualizaSum(){
   var el=document.getElementById('calSum'); if(!el) return;
-  if(selStart&&selEnd){ var n=diffDays(selStart,selEnd)+1; el.innerHTML='<b>'+pd(selStart)+'</b> &rarr; <b>'+pd(selEnd)+'</b> &middot; '+n+' dia'+(n>1?'s':''); }
-  else if(selStart){ el.textContent='In\u00EDcio: '+pd(selStart)+' \u2014 escolhe o dia de fim.'; }
-  else { el.textContent='Toca no dia de in\u00EDcio e depois no dia de fim.'; }
+  if(selStart&&selEnd&&selStart!==selEnd){ var n=diffDays(selStart,selEnd)+1; el.innerHTML='<b>'+pd(selStart)+'</b> &rarr; <b>'+pd(selEnd)+'</b> &middot; '+n+' dias'; }
+  else if(selStart){ el.innerHTML='<b>'+pd(selStart)+'</b> &middot; toca outra vez para apagar'; }
+  else { el.textContent='Toca no dia. Arrasta para escolher v\u00E1rios dias.'; }
 }
 function paintSelection(){
   var grid=document.getElementById('calGrid'); if(!grid) return;
@@ -202,20 +202,21 @@ function paintSelection(){
 function applyRange(a,b){ var o=orderSel(a,b); selStart=o[0]; selEnd=o[1]; awaitingEnd=false; setInputs(); paintSelection(); }
 function tapDay(s){
   if(isBlockedYmd(s)) return;
-  if(!selStart || (selStart&&selEnd)){ selStart=s; selEnd=null; awaitingEnd=true; }
-  else if(awaitingEnd){ var o=orderSel(selStart,s); selStart=o[0]; selEnd=o[1]; awaitingEnd=false; }
-  setInputs(); paintSelection();
+  if(selStart===s && selEnd===s){ selStart=null; selEnd=null; }   /* tocar no dia j\u00E1 escolhido -> apaga */
+  else { selStart=s; selEnd=s; }                                  /* toque = 1 dia (arrastar = v\u00E1rios) */
+  awaitingEnd=false; setInputs(); paintSelection();
 }
 function wireGrid(){
   var grid=document.getElementById('calGrid'); if(!grid) return;
   grid.addEventListener('pointerdown',function(e){
     var cell=e.target.closest? e.target.closest('.d[data-d]') : null; if(!cell) return;
     var s=cell.dataset.d; if(isBlockedYmd(s)) return;
-    e.preventDefault(); dragging=true; moved=false; dragAnchor=s; lastOver=s;
+    e.preventDefault(); dragging=true; moved=false; dragAnchor=s; lastOver=s; startX=e.clientX; startY=e.clientY;
     try{ grid.setPointerCapture(e.pointerId); }catch(_){}
   });
   grid.addEventListener('pointermove',function(e){
     if(!dragging) return;
+    if(!moved && Math.abs(e.clientX-startX)<14 && Math.abs(e.clientY-startY)<14) return;
     var el=document.elementFromPoint(e.clientX,e.clientY);
     var cell=(el&&el.closest)? el.closest('.d[data-d]') : null; if(!cell) return;
     var s=cell.dataset.d; if(isBlockedYmd(s)) return;
