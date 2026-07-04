@@ -52,7 +52,6 @@ window.PORTAL_LINKS = {
   atas:              "atas.html",
   pontualidade:      "pontualidade.html",
   caderno:           "caderno.html",
-  passwords:         "",
   competencias:      "competencias.html"
 
 };
