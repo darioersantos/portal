@@ -22,7 +22,7 @@ window.PORTAL_LINKS = {
   daily_float:       "https://drive.google.com/file/d/1a2M2paNeZ-AfyZizaz_AQ2uF_F8AezZS/view",
   movimento_cofre:   "https://drive.google.com/file/d/1kVAZK4xFZatdyjZASaj4wb73vGjqVcpB/view",
   vdl:               "",
-  folha_reserva:     "",
+  folha_reserva:     "folha_reserva.html",
   folha_elogio:      "",
 
   /* ---- Formularios ---- */
