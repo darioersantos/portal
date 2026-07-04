@@ -203,8 +203,7 @@ const SECTIONS = [
     {k:'atas',         ic:'file-text',       nm:'Reuni\u00F5es'},
     {k:'pontualidade', ic:'calendar-days',   nm:'Atrasos e Faltas'},
     {k:'caderno',      ic:'book-open',       nm:'Caderno de Acompanhamento'},
-    {k:'competencias', ic:'bar-chart-3',     nm:'Mapa de Compet\u00EAncias'},
-    {k:'passwords',    ic:'key-round',       nm:'Lista de Passwords'}
+    {k:'competencias', ic:'bar-chart-3',     nm:'Mapa de Compet\u00EAncias'}
   ]},
   { t:'Plano Formativo Interno', items:[
     {k:'pf_atendimento', ic:'users',       nm:'Atendimento ao cliente'},
@@ -346,8 +345,8 @@ function checkBirthdays(){
     });
     if(!nomes.length) return;
     var txt;
-    if(nomes.length===1){ txt='Hoje <b>'+nomes[0]+'</b> faz anos. N\u00E3o te esque\u00E7as de dar os parab\u00E9ns!'; }
-    else{ txt='Hoje fazem anos: <b>'+nomes.join('</b>, <b>')+'</b>. N\u00E3o te esque\u00E7as de dar os parab\u00E9ns!'; }
+    if(nomes.length===1){ txt='Hoje <b>'+nomes[0]+'</b> faz anos! \uD83C\uDF89'; }
+    else{ txt='Hoje fazem anos: <b>'+nomes.join('</b>, <b>')+'</b>! \uD83C\uDF89'; }
     var box=document.getElementById('bdayBanner');
     box.innerHTML='<div class="bday"><span class="ic">\uD83C\uDF82</span><span class="txt">'+txt+'</span></div>';
     // POPUP de anivers\u00E1rio: aparece 1x por dia em cada dispositivo
