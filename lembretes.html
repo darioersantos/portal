@@ -256,14 +256,33 @@ function render(){
   const l=document.getElementById('lista'); l.innerHTML='';
   let any=false;
   SECS.forEach(function(s){
-    let itens=NOTAS.filter(n=>n.seccao===s.k);
+    let itens=NOTAS.filter(n=>n.seccao===s.k && !schLabel(n.texto));
     if(!itens.length) return;
     any=true;
     itens.sort(function(a,b){ const da=isDone(a),db=isDone(b); if(da!==db) return da?1:-1; const pa=temPrio(a.texto),pb=temPrio(b.texto); if(pa!==pb) return pa?-1:1; const ia=temImp(a.texto),ib=temImp(b.texto); if(ia!==ib) return ia?-1:1; return new Date(b.data)-new Date(a.data); });
     const grp=document.createElement('div'); grp.className='grp';
     const porFazer=itens.filter(n=>!isDone(n)).length;
     grp.innerHTML='<div class="grp-h"><i data-lu="'+s.lu+'" data-sz="16"></i> '+esc(s.nm)+' <span class="grp-c">'+porFazer+' por fazer</span></div>';
-    itens.forEach(function(n){
+    itens.forEach(function(n){ grp.appendChild(makeCard(n)); });
+    l.appendChild(grp);
+  });
+  // Todas as tarefas agendadas ficam agrupadas num unico grupo no final da pagina
+  var agend=NOTAS.filter(function(n){ return schLabel(n.texto); });
+  if(agend.length){
+    any=true;
+    agend.sort(function(a,b){ const da=isDone(a),db=isDone(b); if(da!==db) return da?1:-1; return new Date(b.data)-new Date(a.data); });
+    const grp=document.createElement('div'); grp.className='grp';
+    const porFazer=agend.filter(function(n){return !isDone(n);}).length;
+    grp.innerHTML='<div class="grp-h"><i data-lu="calendar-clock" data-sz="16"></i> Agendadas <span class="grp-c">'+porFazer+' por fazer</span></div>';
+    agend.forEach(function(n){ grp.appendChild(makeCard(n)); });
+    l.appendChild(grp);
+  }
+  if(!any){ l.innerHTML='<div class="empty">Sem tarefas. Escreve a primeira acima.</div>'; }
+  atualizarBadge();
+  if(window.SZinitStaff) SZinitStaff();
+}
+
+function makeCard(n){
       const done=isDone(n);
       const prio=temPrio(n.texto);
       const imp=temImp(n.texto);
@@ -312,13 +331,7 @@ function render(){
       ebox.querySelector('.ed-save').onclick=function(){ const ea=ebox.querySelector('.ed-autor'); salvarEdicao(n, ebox.querySelector('.ed-txt').value, ea?ea.value:'', this, ebox.querySelector('.ed-prio-cb').checked, ebox.querySelector('.ed-imp-cb').checked); };
       c.querySelector('.cb-send').onclick=function(){ enviarComentario(n.id, c.querySelector('.cb-txt').value, c.querySelector('.cb-nome').value, this); };
       c.querySelectorAll('.com-del').forEach(function(b){ b.onclick=function(){ apagarComentario(b.dataset.id); }; });
-      grp.appendChild(c);
-    });
-    l.appendChild(grp);
-  });
-  if(!any){ l.innerHTML='<div class="empty">Sem tarefas. Escreve a primeira acima.</div>'; }
-  atualizarBadge();
-  if(window.SZinitStaff) SZinitStaff();
+      return c;
 }
 
 function atualizarBadge(){
