@@ -120,6 +120,12 @@
   .hbadge{animation:saltita 1.4s ease-in-out infinite;}
 
   /* Impressao: lista de tarefas por fazer */
+  .sch-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .sch-lbl{font-size:12.5px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:5px;}
+  .sch-days{display:flex;gap:5px;flex-wrap:wrap;}
+  .sch-chip{border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:6px 11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .schtag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;color:#8a4500;background:#fff2df;border-radius:999px;padding:2px 9px;}
   #printArea{display:none;}
   @media print{
     @page{size:A4;margin:16mm 14mm;}
@@ -192,6 +198,7 @@
         <button id="btnGaleria" type="button" class="sec-btn icon-only" title="Galeria" aria-label="Galeria"><i data-lu="image" data-sz="18"></i></button>
         <button id="btnAdd">&#xFF0B; Adicionar</button>
       </div>
+      <div class="sch-row"><span class="sch-lbl"><i data-lu="calendar-clock" data-sz="15"></i> Repetir (opcional):</span><div class="sch-days" id="schDays"></div></div>
       <input type="file" id="fileCamara" accept="image/*" capture="environment" style="display:none">
       <input type="file" id="fileGaleria" accept="image/*" style="display:none">
       <div id="fotoPrev"></div>
@@ -228,9 +235,15 @@ function semBy(raw){ return String(raw||'').replace(/^\[\[BY:[^\]]*\]\]/,''); }
 function parteBy(raw){ var m=String(raw||'').match(/^\[\[BY:([^\]]*)\]\]/); return m?m[1]:''; }
 const PRIOMARK='[[PRIO]]';
 const IMPMARK='[[IMP]]';
-function temPrio(raw){ return semBy(raw).indexOf(PRIOMARK)===0; }
-function temImp(raw){ var s=semBy(raw); if(s.indexOf(PRIOMARK)===0) s=s.slice(PRIOMARK.length); return s.indexOf(IMPMARK)===0; }
-function parteTexto(raw){ raw=semBy(raw); if(raw.indexOf(PRIOMARK)===0) raw=raw.slice(PRIOMARK.length); if(raw.indexOf(IMPMARK)===0) raw=raw.slice(IMPMARK.length); var i=raw.indexOf(IMGSEP); return i>=0?raw.slice(0,i):raw; }
+const WDIAS=['Dom','Seg','Ter','Qua','Qui','Sex','S\u00E1b'];
+function semSch(raw){ return semBy(raw).replace(/^\[\[SCH:[0-9,]*\]\]/,''); }
+function parteSch(raw){ var m=semBy(raw).match(/^\[\[SCH:([0-9,]*)\]\]/); return m?m[1].split(',').filter(function(x){return x!=='';}).map(Number):[]; }
+function schRawMark(raw){ var m=semBy(raw).match(/^(\[\[SCH:[0-9,]*\]\])/); return m?m[1]:''; }
+function schLabel(raw){ var d=parteSch(raw); return d.length?d.map(function(x){return WDIAS[x];}).join(', '):''; }
+function dueToday(raw){ var d=parteSch(raw); if(!d.length) return true; return d.indexOf(new Date().getDay())>=0; }
+function temPrio(raw){ return semSch(raw).indexOf(PRIOMARK)===0; }
+function temImp(raw){ var s=semSch(raw); if(s.indexOf(PRIOMARK)===0) s=s.slice(PRIOMARK.length); return s.indexOf(IMPMARK)===0; }
+function parteTexto(raw){ raw=semSch(raw); if(raw.indexOf(PRIOMARK)===0) raw=raw.slice(PRIOMARK.length); if(raw.indexOf(IMPMARK)===0) raw=raw.slice(IMPMARK.length); var i=raw.indexOf(IMGSEP); return i>=0?raw.slice(0,i):raw; }
 function parteFoto(raw){ raw=semBy(raw); var i=raw.indexOf(IMGSEP); return i>=0?raw.slice(i+IMGSEP.length):''; }
 
 function preencherSeccoes(){
@@ -261,6 +274,7 @@ function render(){
       c.innerHTML=(done?'<span class="feito"><i data-lu="check" data-sz="14"></i> Conclu\u00EDdo</span><br>':'')+
         (prio&&!done?'<span class="priotag"><svg class="flagsvg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg> Priorit\u00E1ria</span><br>':'')+
         (imp&&!done?'<span class="imptag"><svg class="flagsvg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg> Importante</span><br>':'')+
+        (schLabel(n.texto)&&!done?'<span class="schtag"><i data-lu="calendar-clock" data-sz="12"></i> Repete: '+esc(schLabel(n.texto))+'</span><br>':'')+
         (txt?'<div class="txt">'+esc(txt)+'</div>':'')+
         (img?'<img class="thumb" alt="foto">':'')+
         '<div class="meta">'+(criador?'\u270D\uFE0F Criada por <b>'+esc(criador)+'</b> \u00B7 ':'')+(n.autor?'\uD83D\uDC64 para <b>'+esc(n.autor)+'</b> \u00B7 ':'')+fmtData(n.data)+
@@ -379,7 +393,7 @@ function imprimir(){
   let html='<h1>Tarefas do dia</h1><div class="pdia">'+esc(hoje)+'</div><div class="psub">Sport Zone &middot; Vasco da Gama</div>';
   let total=0;
   SECS.forEach(function(s){
-    const itens=NOTAS.filter(function(n){return n.seccao===s.k && !isDone(n);});
+    const itens=NOTAS.filter(function(n){return n.seccao===s.k && !isDone(n) && dueToday(n.texto);});
     if(!itens.length) return;
     itens.sort(function(a,b){ const pa=temPrio(a.texto),pb=temPrio(b.texto); if(pa!==pb) return pa?-1:1; const ia=temImp(a.texto),ib=temImp(b.texto); if(ia!==ib) return ia?-1:1; return new Date(a.data)-new Date(b.data); });
     html+='<h2>'+esc(s.nm)+'</h2><ul>';
@@ -403,12 +417,12 @@ document.getElementById('btnAdd').addEventListener('click',function(){
   const seccao=document.getElementById('seccao').value;
   if(!texto && !pendingFoto){ alert('Escreve a tarefa ou anexa uma foto.'); return; }
   if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
-  const textoFinal = (criadoPor ? '[[BY:'+criadoPor+']]' : '') + (prioSel ? PRIOMARK : '') + (impSel ? IMPMARK : '') + texto + (pendingFoto ? IMGSEP+pendingFoto : '');
+  const textoFinal = (criadoPor ? '[[BY:'+criadoPor+']]' : '') + schMark() + (prioSel ? PRIOMARK : '') + (impSel ? IMPMARK : '') + texto + (pendingFoto ? IMGSEP+pendingFoto : '');
   const btn=this; btn.disabled=true; btn.textContent='A guardar\u2026';
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify({action:'nota_add', seccao:seccao, autor:autor, texto:textoFinal})})
     .then(r=>r.json()).then(function(j){
-      if(j&&j.ok){ document.getElementById('texto').value=''; pendingFoto=''; setPrio(false); setImp(false); mostrarPrev(); carregar(); closeModal(); }
+      if(j&&j.ok){ document.getElementById('texto').value=''; pendingFoto=''; setPrio(false); setImp(false); schSel=[]; buildSchDays(); mostrarPrev(); carregar(); closeModal(); }
       else throw new Error('erro');
     })
     .catch(function(){ alert('N\u00E3o foi poss\u00EDvel guardar. Tenta de novo.'); })
@@ -439,7 +453,7 @@ function salvarEdicao(n, newText, newAutor, btn, prio, imp){
   if(imp===undefined) imp=temImp(n.texto);
   if(!newText && !foto){ alert('A tarefa n\u00E3o pode ficar vazia.'); return; }
   if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
-  const textoFinal=(criador?'[[BY:'+criador+']]':'')+(prio?PRIOMARK:'')+(imp?IMPMARK:'')+newText+(foto?IMGSEP+foto:'');
+  const textoFinal=(criador?'[[BY:'+criador+']]':'')+schRawMark(n.texto)+(prio?PRIOMARK:'')+(imp?IMPMARK:'')+newText+(foto?IMGSEP+foto:'');
   const oldId=String(n.id);
   const coms=COMENTARIOS.filter(function(x){return x.parent===oldId;});
   const oldIds=NOTAS.map(function(x){return String(x.id);});
@@ -493,6 +507,18 @@ document.getElementById('btnPrio').addEventListener('click',function(){ setPrio(
 var impSel=false;
 function setImp(v){ impSel=!!v; var b=document.getElementById('btnImp'); if(b) b.classList.toggle('on',impSel); }
 document.getElementById('btnImp').addEventListener('click',function(){ setImp(!impSel); });
+
+var schSel=[];
+function schMark(){ return schSel.length?'[[SCH:'+schSel.slice().sort(function(a,b){return a-b;}).join(',')+']]':''; }
+function buildSchDays(){
+  var box=document.getElementById('schDays'); if(!box) return; box.innerHTML='';
+  [1,2,3,4,5,6,0].forEach(function(d){
+    var b=document.createElement('button'); b.type='button'; b.className='sch-chip'+(schSel.indexOf(d)>=0?' on':''); b.textContent=WDIAS[d];
+    b.onclick=function(){ var i=schSel.indexOf(d); if(i>=0){ schSel.splice(i,1); b.classList.remove('on'); } else { schSel.push(d); b.classList.add('on'); } };
+    box.appendChild(b);
+  });
+}
+buildSchDays();
 
 /* popup de cria\u00E7\u00E3o */
 var modal=document.getElementById('modal');
