@@ -88,6 +88,7 @@
   .ed-prio input{width:16px;height:16px;accent-color:var(--neg);}
   /* tarefa IMPORTANTE: cart&#xE3;o amarelo */
   .note.imp{background:#fffbeb;border-color:#fde68a;border-left-color:#eab308;}
+  .note.sched{background:#faf5ff;border-color:#e9d5ff;border-left-color:#9333ea;}
   .note.prio.imp{background:#fff1ef;border-color:#f6c9c2;border-left-color:var(--neg);}
   .imptag{display:inline-flex;align-items:center;gap:5px;background:#eab308;color:#3f2d00;font-size:10px;font-weight:800;border-radius:999px;padding:2px 9px;text-transform:uppercase;letter-spacing:.03em;margin-bottom:7px;}
   .imptag .flagsvg{width:11px;height:11px;stroke:#3f2d00;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round;}
@@ -123,9 +124,9 @@
   .sch-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;}
   .sch-lbl{font-size:12.5px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:5px;}
   .sch-days{display:flex;gap:5px;flex-wrap:wrap;}
-  .sch-chip{border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:6px 11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
-  .sch-chip.on{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .schtag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;color:#8a4500;background:#fff2df;border-radius:999px;padding:2px 9px;}
+  .add .sch-chip{border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:6px 11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .add .sch-chip.on{background:#9333ea;border-color:#9333ea;color:#fff;}
+  .schtag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;color:#7e22ce;background:#f3e8ff;border-radius:999px;padding:2px 9px;}
   #printArea{display:none;}
   @media print{
     @page{size:A4;margin:16mm 14mm;}
@@ -198,7 +199,7 @@
         <button id="btnGaleria" type="button" class="sec-btn icon-only" title="Galeria" aria-label="Galeria"><i data-lu="image" data-sz="18"></i></button>
         <button id="btnAdd">&#xFF0B; Adicionar</button>
       </div>
-      <div class="sch-row"><span class="sch-lbl"><i data-lu="calendar-clock" data-sz="15"></i> Repetir (opcional):</span><div class="sch-days" id="schDays"></div></div>
+      <div class="sch-row"><span class="sch-lbl"><i data-lu="calendar-clock" data-sz="15"></i> Agendar (opcional):</span><div class="sch-days" id="schDays"></div></div>
       <input type="file" id="fileCamara" accept="image/*" capture="environment" style="display:none">
       <input type="file" id="fileGaleria" accept="image/*" style="display:none">
       <div id="fotoPrev"></div>
@@ -270,11 +271,11 @@ function render(){
       const coms=COMENTARIOS.filter(function(x){return x.parent===String(n.id);}).sort(function(a,b){return new Date(a.data)-new Date(b.data);});
       let comsHtml='';
       coms.forEach(function(cm){ comsHtml+='<div class="com"><span class="com-t">'+esc(cm.texto)+'</span><span class="com-m"><i data-lu="message-circle" data-sz="13"></i> '+(cm.autor?esc(cm.autor)+' \u00B7 ':'')+fmtData(cm.data)+' <button class="com-del" data-id="'+esc(cm.id)+'"><i data-lu="x" data-sz="13"></i></button></span></div>'; });
-      const c=document.createElement('div'); c.className='note'+(done?' done':'')+(prio&&!done?' prio':'')+(imp&&!done?' imp':'');
+      const c=document.createElement('div'); c.className='note'+(done?' done':'')+(prio&&!done?' prio':'')+(imp&&!done?' imp':'')+(schLabel(n.texto)&&!done?' sched':'');
       c.innerHTML=(done?'<span class="feito"><i data-lu="check" data-sz="14"></i> Conclu\u00EDdo</span><br>':'')+
         (prio&&!done?'<span class="priotag"><svg class="flagsvg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg> Priorit\u00E1ria</span><br>':'')+
         (imp&&!done?'<span class="imptag"><svg class="flagsvg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg> Importante</span><br>':'')+
-        (schLabel(n.texto)&&!done?'<span class="schtag"><i data-lu="calendar-clock" data-sz="12"></i> Repete: '+esc(schLabel(n.texto))+'</span><br>':'')+
+        (schLabel(n.texto)&&!done?'<span class="schtag"><i data-lu="calendar-clock" data-sz="12"></i> Agendada: '+esc(schLabel(n.texto))+'</span><br>':'')+
         (txt?'<div class="txt">'+esc(txt)+'</div>':'')+
         (img?'<img class="thumb" alt="foto">':'')+
         '<div class="meta">'+(criador?'\u270D\uFE0F Criada por <b>'+esc(criador)+'</b> \u00B7 ':'')+(n.autor?'\uD83D\uDC64 para <b>'+esc(n.autor)+'</b> \u00B7 ':'')+fmtData(n.data)+
