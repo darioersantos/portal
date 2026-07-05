@@ -64,6 +64,13 @@
   .grp{margin:18px 0;}
   .grp-h{font-size:13px;font-weight:800;color:var(--accent-ink);text-transform:uppercase;letter-spacing:.04em;margin:0 2px 8px;display:flex;align-items:center;gap:8px;}
   .grp-h .grp-c{background:var(--accent-soft);color:var(--accent-ink);border-radius:999px;padding:1px 9px;font-size:12px;}
+  /* Acordeao das tarefas agendadas */
+  .grp-acc-h{cursor:pointer;user-select:none;-webkit-user-select:none;background:#faf5ff;border:1px solid #e9d5ff;border-radius:12px;padding:10px 12px;margin:0 2px;color:#7e22ce;}
+  .acc-chev{width:0;height:0;flex:none;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid currentColor;border-right:0;}
+  .grp-acc.open .grp-acc-h{margin-bottom:8px;}
+  .grp-acc.open .acc-chev{border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid currentColor;border-bottom:0;}
+  .acc-body{display:none;}
+  .grp-acc.open .acc-body{display:block;}
 
   .note{position:relative;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:14px;box-shadow:var(--shadow);padding:13px 15px;margin:10px 0;}
   .note .txt{font-size:15px;white-space:pre-wrap;word-break:break-word;}
@@ -271,10 +278,14 @@ function render(){
   if(agend.length){
     any=true;
     agend.sort(function(a,b){ const da=isDone(a),db=isDone(b); if(da!==db) return da?1:-1; return new Date(b.data)-new Date(a.data); });
-    const grp=document.createElement('div'); grp.className='grp';
+    const grp=document.createElement('div'); grp.className='grp grp-acc';
     const porFazer=agend.filter(function(n){return !isDone(n);}).length;
-    grp.innerHTML='<div class="grp-h"><i data-lu="calendar-clock" data-sz="16"></i> Agendadas <span class="grp-c">'+porFazer+' por fazer</span></div>';
-    agend.forEach(function(n){ grp.appendChild(makeCard(n)); });
+    const head=document.createElement('div'); head.className='grp-h grp-acc-h';
+    head.innerHTML='<span class="acc-chev"></span><i data-lu="calendar-clock" data-sz="16"></i> Agendadas <span class="grp-c">'+porFazer+' por fazer</span>';
+    const body=document.createElement('div'); body.className='acc-body';
+    agend.forEach(function(n){ body.appendChild(makeCard(n)); });
+    head.addEventListener('click', function(){ grp.classList.toggle('open'); });
+    grp.appendChild(head); grp.appendChild(body);
     l.appendChild(grp);
   }
   if(!any){ l.innerHTML='<div class="empty">Sem tarefas. Escreve a primeira acima.</div>'; }
