@@ -49,6 +49,7 @@ window.PORTAL_LINKS = {
   pf_provadores:     "provadores.html",
 
   /* ---- Outros ---- */
+  consumiveis:       "consumiveis.html",
   atas:              "atas.html",
   pontualidade:      "pontualidade.html",
   caderno:           "caderno.html",
