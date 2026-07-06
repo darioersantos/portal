@@ -121,19 +121,18 @@
   <div class="card" id="shareBox" style="display:none;background:linear-gradient(135deg,#ffffff,#fff7ed);border:1.5px solid var(--accent-soft);">
     <div style="font-weight:800;font-size:15px;margin-bottom:4px;"><i data-lu="link" data-sz="16"></i> Link para o staff pedir folgas</div>
     <p style="color:var(--muted);font-size:13px;margin:0 0 10px;">Envia este link &#xE0; equipa para pedirem trocas de folga. S&#xF3; abre esta p&#xE1;gina &mdash; n&#xE3;o d&#xE1; acesso ao resto da app.</p>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <input id="shareUrl" readonly onclick="this.select()" style="flex:1;min-width:180px;border:1.5px solid var(--line);border-radius:10px;padding:11px;font-size:13px;background:#fff;color:var(--ink);">
-      <button class="save" id="btnCopy" style="flex:none;width:auto;padding:12px 18px;display:inline-flex;align-items:center;justify-content:center;gap:6px;line-height:1;"><i data-lu="copy" data-sz="15"></i> Copiar</button>
-    </div>
+    <input id="shareUrl" readonly style="display:none">
+    <button class="save" id="btnCopy" style="width:100%;padding:13px;display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1;"><i data-lu="link" data-sz="16"></i> Link de partilha</button>
   </div>
 
   <div class="card" id="cardForm">
-    <h2 id="formTitle">Pedido de troca de folga</h2>
+    <h2 id="formTitle">Pedido de folga</h2>
+    <div style="background:var(--accent-soft);color:var(--accent-ink);border-radius:10px;padding:10px 12px;font-size:13px;font-weight:600;margin-bottom:14px;line-height:1.4;">Isto &#xE9; um <b>pedido de folga</b> e fica <b>sujeito a aprova&#xE7;&#xE3;o</b> do supervisor.</div>
     <div class="field"><label for="nome">Colaborador</label><select id="nome" data-staff data-ph="Seleciona o teu nome"></select></div>
     <div class="field">
       <label>Dia(s) pretendido(s) <span style="color:var(--neg);font-weight:800;">*</span></label>
       <div class="cal" id="cal"></div>
-      <div class="cal-sum" id="calSum">Toca no dia pretendido (ou arrasta para v&#xE1;rios dias).</div>
+      <div class="cal-sum" id="calSum">Toca no dia pretendido.</div>
     </div>
     <input type="hidden" id="ini"><input type="hidden" id="fim">
     <div class="field"><label for="obs">Observa&#xE7;&#xF5;es (opcional)</label><textarea id="obs" placeholder="Algo a acrescentar?"></textarea></div>
@@ -142,7 +141,7 @@
   <div class="card" id="cardThanks" style="display:none;text-align:center;">
     <div style="font-size:48px;line-height:1;color:var(--pos);"><i data-lu="check"></i></div>
     <h2 style="margin:12px 0 4px;">Pedido enviado!</h2>
-    <p style="color:var(--muted);margin:0;">O supervisor vai analisar. Podes acompanhar o estado em baixo.</p>
+    <p style="color:var(--muted);margin:0;">O supervisor vai analisar o teu pedido. Fica sujeito a aprova&#xE7;&#xE3;o.</p>
     <button class="save" id="btnOutro" style="margin-top:16px;">Novo pedido</button>
   </div>
   <div class="card" id="cardLista">
@@ -226,7 +225,7 @@ byId('btnSave').addEventListener('click',function(){
       if(j&&j.ok){
         selDays={}; byId('obs').value=''; var nn=byId('nome'); if(nn) nn.value='';
         if(byId('calGrid')){ paintSelection(); atualizaSum(); }
-        if(MANAGER){ carregar(); } else { byId('cardForm').style.display='none'; byId('cardThanks').style.display='block'; window.scrollTo(0,0); carregar(); } }
+        if(MANAGER){ carregar(); } else { byId('cardForm').style.display='none'; byId('cardThanks').style.display='block'; window.scrollTo(0,0); } }
       else throw new Error('erro');
     }).catch(function(){ alert('N\u00e3o foi poss\u00edvel enviar. Tenta de novo.'); })
     .then(function(){ btn.disabled=false; btn.textContent='Enviar pedido'; });
@@ -310,8 +309,8 @@ function renderCal(){
 }
 renderCal();
 
-carregar();
 if(MANAGER){
+  carregar();
   var _link=location.href.split('?')[0].split('#')[0];
   var su=byId('shareUrl'); if(su){ su.value=_link; byId('shareBox').style.display='block'; }
   var bx=byId('btnExport'); if(bx) bx.style.display='inline-flex';
@@ -322,6 +321,7 @@ if(MANAGER){
   }; }
 }
 else{
+  var _cl=byId('cardLista'); if(_cl) _cl.style.display='none';
   var _hb=byId('homeBtn'); if(_hb) _hb.style.display='none';
   /* link de staff: nao dar acesso ao resto da app (desativa navegacao pelo logotipo) */
   var _lg=document.querySelector('.logo'); if(_lg&&_lg.parentNode){ var _c=_lg.cloneNode(true); _lg.parentNode.replaceChild(_c,_lg); _c.style.cursor='default'; }
