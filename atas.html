@@ -95,7 +95,11 @@
   .modal-head h2{margin:0;font-size:18px;font-weight:800;color:var(--accent-dark);}
   .modal-x{background:#f4efe9;border:none;color:var(--muted);border-radius:10px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;}
   .modal-x i{width:18px;height:18px;}
-  .bigpaste{min-height:130px;}
+  textarea.bigpaste{min-height:45vh;}
+  .micbtn{display:inline-flex;align-items:center;gap:7px;background:var(--accent-soft);color:var(--accent-ink);border:none;border-radius:10px;padding:9px 14px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:8px;}
+  .micbtn svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+  .micbtn.rec{background:var(--neg);color:#fff;animation:micpulse 1s infinite;}
+  @keyframes micpulse{0%,100%{opacity:1;}50%{opacity:.55;}}
   .hint{font-size:12px;color:var(--muted);margin:0 2px 8px;line-height:1.4;}
   .genbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;border:1.5px solid var(--accent);color:var(--accent-dark);border-radius:13px;padding:13px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin:2px 0 6px;}
   .genbtn:disabled{opacity:.6;}
@@ -226,16 +230,17 @@
 <div class="modal-overlay" id="modal">
   <div class="modal-card">
     <div class="modal-head">
-      <h2>Nova reuni&#xE3;o / forma&#xE7;&#xE3;o</h2>
+      <h2>Nova reuni&#xE3;o</h2>
       <button class="modal-x" id="btnClose" aria-label="Fechar"><i data-lu="x"></i></button>
     </div>
     <div class="row2">
-      <div class="field"><label for="titulo">T&#xED;tulo</label><input type="text" id="titulo" placeholder="Ex: Forma&#xE7;&#xE3;o de atendimento"></div>
+      <div class="field"><label for="titulo">T&#xED;tulo</label><input type="text" id="titulo" placeholder="Ex: Reuni&#xE3;o de equipa"></div>
       <div class="field"><label for="data">Data</label><input type="date" id="data"></div>
     </div>
     <div class="field">
       <label for="fonte">Conte&#xFA;do</label>
-      <p class="hint">Escreve ou cola o teu texto. Deixa uma <b>linha em branco</b> entre assuntos e a app separa em t&#xF3;picos (a 1&#xAA; linha de cada bloco &#xE9; o t&#xED;tulo). Para for&#xE7;ar um t&#xED;tulo, come&#xE7;a a linha com <code>#</code>.</p>
+      <p class="hint">Escreve, cola ou <b>dita por voz</b>. Deixa uma <b>linha em branco</b> entre assuntos e a app separa em t&#xF3;picos (a 1&#xAA; linha de cada bloco &#xE9; o t&#xED;tulo). Para for&#xE7;ar um t&#xED;tulo, come&#xE7;a a linha com <code>#</code>.</p>
+      <button id="atasMic" type="button" class="micbtn" title="Ditar por voz" aria-label="Ditar por voz"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg> Ditar</button>
       <textarea id="fonte" class="bigpaste" placeholder="# Introdu&#xE7;&#xE3;o&#10;O que vamos falar hoje&#x2026;&#10;&#10;Objetivos da loja&#10;- Ponto 1&#10;- Ponto 2"></textarea>
     </div>
     <button class="save" id="btnStart"><i data-lu="book-open"></i> Apresentar</button>
@@ -507,7 +512,7 @@ document.getElementById('aSave').addEventListener('click',function(){
 /* ---- imprimir comprovativo ---- */
 function imprimir(titulo, d){
   var tops=parseTopicos(conteudoDe(d));
-  var html='<h1>'+esc(titulo)+'</h1><div class="pdate">Reuni\u00E3o / forma\u00E7\u00E3o \u2014 '+esc(fmtData(d.data))+'</div>';
+  var html='<h1>'+esc(titulo)+'</h1><div class="pdate">Reuni\u00E3o \u2014 '+esc(fmtData(d.data))+'</div>';
   tops.forEach(function(t){ html+='<div class="ptop">'+(t.titulo?'<h3>'+esc(t.titulo)+'</h3>':'')+(t.corpoText?'<div class="c">'+esc(t.corpoText)+'</div>':'')+'</div>'; });
   var pres=(d.presencas||[]);
   if(pres.length){
@@ -545,6 +550,27 @@ document.addEventListener('keydown',function(e){ if(e.key!=='Escape') return; if
   document.getElementById('cgOk').addEventListener('click',tenta);
   inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); tenta(); } });
   setTimeout(function(){ try{ inp.focus(); }catch(e){} },120);
+})();
+
+/* ---- Ditar por voz (conte\u00FAdo da reuni\u00E3o) ---- */
+(function(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var btn=document.getElementById('atasMic');
+  if(!SR||!btn){ if(btn) btn.style.display='none'; return; }
+  var rec=null, ligado=false;
+  btn.addEventListener('click',function(){
+    if(ligado){ try{ rec.stop(); }catch(e){} return; }
+    rec=new SR(); rec.lang='pt-PT'; rec.interimResults=false; rec.continuous=true;
+    var ta=document.getElementById('fonte');
+    rec.onstart=function(){ ligado=true; btn.classList.add('rec'); };
+    rec.onend=function(){ ligado=false; btn.classList.remove('rec'); };
+    rec.onerror=function(){ ligado=false; btn.classList.remove('rec'); };
+    rec.onresult=function(ev){
+      var s=''; for(var i=ev.resultIndex;i<ev.results.length;i++){ if(ev.results[i].isFinal) s+=ev.results[i][0].transcript; }
+      if(s){ ta.value=(ta.value?ta.value.replace(/\s*$/,'')+' ':'')+s.trim(); }
+    };
+    try{ rec.start(); }catch(e){ ligado=false; btn.classList.remove('rec'); }
+  });
 })();
 
 carregar();
