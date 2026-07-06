@@ -12,6 +12,7 @@ window.PORTAL_LINKS = {
   superliga: "http://manager9yc.github.io/superliga/",
   contagem:  "cofre.html",
   lembretes: "lembretes.html",
+  notas:     "notas.html",
   checklists: "checklists.html",
 
   /* ---- Templates ---- */
