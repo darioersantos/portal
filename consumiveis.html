@@ -77,7 +77,8 @@
   .acts{margin-left:auto;display:flex;gap:6px;}
   .acts button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 11px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-family:inherit;color:var(--ink);transition:transform .1s;}
   .acts button:active{transform:scale(.94);}
-  .acts .enc-btn{background:var(--pos);border-color:var(--pos);color:#fff;}
+  .acts .enc-btn{background:#fff;border-color:#cbd5c0;color:var(--ink);}
+  .acts .enc-btn:active{background:#f4faf6;}
   .acts .del{color:var(--neg);border-color:#f3d0d0;}
 
   /* Acordeao dos ja encomendados */
@@ -213,7 +214,7 @@
       +   '<span class="acts">'
       +     (done
               ? '<button class="re-btn" data-act="reabrir" data-id="'+esc(n.id)+'"><i data-lu="rotate-ccw" data-sz="14"></i> Repor</button>'
-              : '<button class="enc-btn" data-act="encomendar" data-id="'+esc(n.id)+'"><i data-lu="check" data-sz="14"></i> Encomendado</button>')
+              : '<button class="enc-btn" data-act="encomendar" data-id="'+esc(n.id)+'"><i data-lu="check" data-sz="14"></i> Marcar encomendado</button>')
       +     '<button class="del" data-act="apagar" data-id="'+esc(n.id)+'" title="Apagar"><i data-lu="x" data-sz="14"></i></button>'
       +   '</span>'
       + '</div></div>';
