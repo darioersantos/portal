@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1f3d1a">
+<title>Garrafas Volta &#xB7; Sport Zone Vasco da Gama</title>
+<script>if(sessionStorage.getItem('portalOK')!=='1')location.replace('index.html');</script>
+<style>
+  :root{
+    --dark:#1f3d1a; --dark2:#274d1f; --green:#3f8f2b; --lime:#8cc63f; --lime2:#a4d65e;
+    --cream:#f7f6ee; --ink:#20301a;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#eceae0;color:var(--ink);-webkit-text-size-adjust:100%;}
+
+  /* ---- Barra superior (s&#xF3; no ecr&#xE3;) ---- */
+  .toolbar{position:sticky;top:0;z-index:50;background:linear-gradient(135deg,#3f8f2b,#1f3d1a);color:#fff;
+           padding:calc(12px + env(safe-area-inset-top)) 16px 12px;box-shadow:0 2px 12px rgba(31,61,26,.3);
+           display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .tb-back{background:rgba(255,255,255,.18);color:#fff;border:none;border-radius:10px;padding:9px 13px;
+           font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+  .tb-ttl{font-size:16px;font-weight:800;flex:1;min-width:120px;}
+  .tb-ctrl{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border-radius:12px;padding:5px 8px;}
+  .tb-ctrl span{font-size:13px;font-weight:700;}
+  .stp{width:34px;height:34px;border:none;border-radius:9px;background:#fff;color:#3f8f2b;font-size:20px;font-weight:800;
+       cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;}
+  #qtd{min-width:20px;text-align:center;font-size:16px;font-weight:800;}
+  .tb-print{background:#fff;color:#3f8f2b;border:none;border-radius:11px;padding:10px 16px;font-size:15px;font-weight:800;
+            cursor:pointer;display:inline-flex;align-items:center;gap:7px;box-shadow:0 3px 10px rgba(0,0,0,.15);}
+
+  #sheet{padding:16px;}
+  .poster{background:var(--cream);max-width:760px;margin:0 auto 22px;box-shadow:0 4px 18px rgba(26,19,3,.12);
+          padding:26px 28px 0;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+
+  /* Cabe&#xE7;alho VOLTA */
+  .phead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+  .volta-wrap{flex:1;}
+  .volta{display:flex;align-items:center;gap:6px;font-weight:900;font-size:64px;line-height:.9;color:var(--dark);letter-spacing:1px;}
+  .volta .rec{width:52px;height:52px;flex:none;}
+  .volta .rec svg{width:100%;height:100%;stroke:var(--lime);fill:none;stroke-width:2.2;}
+  .slogan{display:inline-block;background:var(--lime);color:var(--dark);font-style:italic;font-weight:800;
+          font-size:27px;padding:4px 16px;border-radius:6px;margin-top:8px;transform:rotate(-1.5deg);}
+  .badge{flex:none;width:120px;height:120px;border-radius:50%;background:var(--dark);color:#fff;
+         display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+         font-size:12.5px;font-weight:800;line-height:1.15;padding:8px;}
+  .badge .hp{margin-top:4px;line-height:0;}
+  .badge .hp svg{width:18px;height:18px;fill:var(--lime);stroke:none;}
+
+  /* Banner escuro */
+  .band{background:var(--dark);color:#fff;margin:18px -28px 0;padding:20px 28px;text-align:center;}
+  .band .l1{font-size:30px;font-weight:900;line-height:1.02;letter-spacing:.5px;}
+  .band .big{display:block;font-size:52px;line-height:.98;margin:2px 0;}
+  .band .l2{font-size:26px;font-weight:900;color:var(--lime);letter-spacing:.5px;}
+
+  /* Caixa convertido */
+  .convert{border:3px solid var(--lime);border-top:none;display:flex;margin:0 -28px;}
+  .convert .cL{flex:1.05;padding:18px 20px;border-right:3px solid var(--lime);}
+  .convert .cR{flex:1;padding:18px 20px;}
+  .cL .t1{font-size:19px;font-weight:900;color:var(--dark);line-height:1.1;}
+  .cL .t2{font-size:26px;font-weight:900;color:var(--green);line-height:1.02;margin:6px 0;}
+  .cL .t3{font-size:18px;font-weight:900;font-style:italic;color:var(--dark);display:flex;align-items:center;gap:8px;}
+  .cL .t3 svg{width:22px;height:22px;fill:var(--lime);}
+  .iconrow{display:flex;gap:10px;align-items:flex-end;justify-content:space-between;margin-bottom:12px;}
+  .iconrow svg{width:52px;height:46px;stroke:var(--green);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+  .cR .u1{font-size:20px;font-weight:900;color:var(--dark);line-height:1.1;}
+  .cR .u2{display:inline-block;background:var(--lime);color:var(--dark);font-size:12.5px;font-weight:800;
+          padding:5px 12px;border-radius:6px;margin-top:12px;}
+
+  /* Como funciona */
+  .how{text-align:center;font-size:22px;font-weight:900;color:var(--dark);letter-spacing:1px;margin:22px 0 14px;}
+  .steps{display:flex;align-items:flex-start;justify-content:space-between;gap:4px;padding-bottom:6px;}
+  .step{flex:1;text-align:center;position:relative;padding:0 4px;}
+  .step .num{width:22px;height:22px;border-radius:50%;background:var(--lime);color:var(--dark);font-weight:900;font-size:13px;
+             display:flex;align-items:center;justify-content:center;margin:0 auto 8px;}
+  .step .sico{width:56px;height:56px;border-radius:50%;background:#e9ecdd;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;}
+  .step .sico svg{width:30px;height:30px;stroke:var(--green);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .step .sico svg.fill{fill:var(--green);}
+  .step .st{font-size:14px;font-weight:900;color:var(--dark);text-transform:uppercase;}
+  .step .sd{font-size:11px;color:#3a4a30;margin-top:3px;line-height:1.35;}
+  .arrow{align-self:center;color:var(--green);font-size:22px;font-weight:900;flex:none;margin-top:34px;}
+
+  /* Rodap&#xE9; */
+  .foot{background:var(--dark);color:#fff;margin:20px -28px 0;padding:18px 28px;display:flex;align-items:center;
+        justify-content:space-between;gap:14px;}
+  .foot .fl{display:flex;align-items:center;gap:12px;}
+  .foot .fheart{width:34px;height:34px;flex:none;}
+  .foot .fheart svg{width:100%;height:100%;fill:none;stroke:var(--lime);stroke-width:2;}
+  .foot .ftxt{font-size:15px;font-weight:800;line-height:1.15;}
+  .foot .ftxt b{color:var(--lime);font-size:17px;}
+  .foot .fr{text-align:right;flex:none;}
+  .foot .fr .sz{font-weight:900;line-height:.82;}
+  .foot .fr .sz .s{font-size:17px;letter-spacing:2px;}
+  .foot .fr .sz .z{font-size:22px;}
+  .foot .fr .sub{color:var(--lime);font-size:10px;font-weight:800;margin-top:5px;letter-spacing:.3px;}
+
+  @media print{
+    @page{size:A4 portrait;margin:6mm;}
+    html,body{background:#fff;}
+    .toolbar{display:none !important;}
+    #sheet{padding:0;}
+    .poster{box-shadow:none;margin:0;max-width:none;page-break-after:always;}
+    .poster:last-child{page-break-after:auto;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="toolbar">
+    <a class="tb-back" href="index.html">&#8592; Voltar</a>
+    <div class="tb-ttl">Garrafas Volta</div>
+    <div class="tb-ctrl">
+      <span>Folhas:</span>
+      <button class="stp" id="menos" type="button" aria-label="Menos folhas">&#8722;</button>
+      <span id="qtd">1</span>
+      <button class="stp" id="mais" type="button" aria-label="Mais folhas">+</button>
+    </div>
+    <button class="tb-print" id="imprimir" type="button">&#128424;&#65039; Imprimir</button>
+  </div>
+
+  <div id="sheet"></div>
+
+<script>
+  var folhas = 1;
+
+  var REC='<path d="M7 19H4.8a1.8 1.8 0 0 1-1.55-2.66L7.2 9.5"/><path d="M11 19h8.2a1.8 1.8 0 0 0 1.55-2.66l-1.2-2.1"/><path d="m14 16-3 3 3 3"/><path d="M8.3 13.6 7.2 9.5 3.1 10.6"/><path d="m9.3 5.8 1.1-1.9A1.8 1.8 0 0 1 13.5 3.9l3.9 6.8"/><path d="m13.4 9.6 4.1 1.1 1.1-4.1"/>';
+  var HEART='<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 1 0-7.8 7.8l1.1 1L12 21.2l7.8-7.7 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>';
+  var POT='<path d="M4 9h16v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M2 9h20"/><path d="M2 11H1M22 11h1"/><path d="M8 9V7M16 9V7"/><path d="M7 6h10"/>';
+  var BOWL='<path d="M3 12h18a9 9 0 0 1-18 0z"/><path d="M9 5c0 1-1 1-1 2s1 1 1 2M13 4c0 1-1 1-1 2s1 1 1 2"/>';
+  var BOTTLE='<path d="M10 2h4v2.5l1 2V9l-1 1v9a2 2 0 0 1-2 2h0a2 2 0 0 1-2-2v-9L9 9V6.5l1-2z"/><path d="M9.5 13h5"/>';
+  var SOFA='<path d="M5 10V8a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v2"/><path d="M3 11a2 2 0 0 1 2 2v3h14v-3a2 2 0 1 1 4 0v4a2 2 0 0 1-2 2H3z"/><path d="M6 19v2M18 19v2"/>';
+  var BAG='<path d="M6 2 4 6v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6l-2-4z"/><path d="M4 6h16"/><path d="M10 10a2 2 0 0 0 4 0"/>';
+  var CART='<circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M2 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.5L21 8H5.2"/>';
+  function s(inner, cls){ return '<svg viewBox="0 0 24 24"'+(cls?' class="'+cls+'"':'')+'>'+inner+'</svg>'; }
+
+  var POSTER =
+    '<div class="phead"><div class="volta-wrap">' +
+      '<div class="volta">V<span class="rec">'+s(REC)+'</span>LTA</div>' +
+      '<div class="slogan">faz a diferen\u00E7a!</div>' +
+    '</div>' +
+    '<div class="badge">PEQUENAS A\u00C7\u00D5ES.<br>GRANDES<br>MUDAN\u00C7AS.<div class="hp">'+s(HEART,'fill')+'</div></div>' +
+    '</div>' +
+
+    '<div class="band"><div class="l1">DEVOLVE AS TUAS<span class="big">GARRAFAS,</span></div>' +
+      '<div class="l2">N\u00D3S GANHAMOS TODOS!</div></div>' +
+
+    '<div class="convert"><div class="cL">' +
+      '<div class="t1">O VALOR DAS GARRAFAS \u00C9</div>' +
+      '<div class="t2">CONVERTIDO EM COISAS PARA N\u00D3S,</div>' +
+      '<div class="t3">STAFF DA LOJA! '+s(HEART,'')+'</div>' +
+    '</div><div class="cR">' +
+      '<div class="iconrow">'+s(POT)+s(BOWL)+s(BOTTLE)+s(SOFA)+'</div>' +
+      '<div class="u1">UTENS\u00CDLIOS, COMIDA, BEBIDA, CONFORTO E MUITO MAIS!</div>' +
+      '<div class="u2">PARA O NOSSO DIA A DIA SER AINDA MELHOR!</div>' +
+    '</div></div>' +
+
+    '<div class="how">\u2014 COMO FUNCIONA? \u2014</div>' +
+    '<div class="steps">' +
+      '<div class="step"><div class="num">1</div><div class="sico">'+s(BOTTLE)+'</div><div class="st">Bebe</div><div class="sd">Desfruta da tua bebida.</div></div>' +
+      '<div class="arrow">&#8594;</div>' +
+      '<div class="step"><div class="num">2</div><div class="sico">'+s(BAG)+'</div><div class="st">Guarda</div><div class="sd">Guarda a garrafa neste saco.</div></div>' +
+      '<div class="arrow">&#8594;</div>' +
+      '<div class="step"><div class="num">3</div><div class="sico">'+s(REC)+'</div><div class="st">Devolve</div><div class="sd">Devolvemos as garrafas atrav\u00E9s do projeto Volta.</div></div>' +
+      '<div class="arrow">&#8594;</div>' +
+      '<div class="step"><div class="num">4</div><div class="sico">'+s(CART)+'</div><div class="st">Converte-se</div><div class="sd">O dinheiro \u00E9 convertido em coisas para os colaboradores da loja.</div></div>' +
+    '</div>' +
+
+    '<div class="foot"><div class="fl"><div class="fheart">'+s(HEART)+'</div>' +
+      '<div class="ftxt">JUNTOS, TORNAMOS A NOSSA LOJA UM LUGAR AINDA MELHOR <b>PARA N\u00D3S!</b></div></div>' +
+      '<div class="fr"><div class="sz"><div class="s">SPORT</div><div class="z">ZONE</div></div>' +
+      '<div class="sub">JUNTOS, SOMOS MAIS SUSTENT\u00C1VEIS.</div></div>' +
+    '</div>';
+
+  function construir(){
+    var host = document.getElementById('sheet');
+    host.innerHTML = '';
+    for(var p=0; p<folhas; p++){
+      var page = document.createElement('div');
+      page.className = 'poster';
+      page.innerHTML = POSTER;
+      host.appendChild(page);
+    }
+    document.getElementById('qtd').textContent = folhas;
+  }
+
+  document.getElementById('mais').addEventListener('click', function(){ if(folhas < 20){ folhas++; construir(); } });
+  document.getElementById('menos').addEventListener('click', function(){ if(folhas > 1){ folhas--; construir(); } });
+  document.getElementById('imprimir').addEventListener('click', function(){ window.print(); });
+
+  construir();
+</script>
+</body>
+</html>
