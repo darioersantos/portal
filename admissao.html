@@ -135,8 +135,8 @@
     <div style="font-weight:800;font-size:15px;margin-bottom:4px;"><i data-lu="link" data-sz="16"></i> Link para enviar aos candidatos</div>
     <p style="color:var(--muted);font-size:13px;margin:0 0 10px;">Envia este link a quem vais contratar. S&#xF3; abre o formul&#xE1;rio de admiss&#xE3;o &mdash; n&#xE3;o d&#xE1; acesso ao resto da app.</p>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <input id="shareUrl" readonly onclick="this.select()" style="flex:1;min-width:180px;border:1.5px solid var(--line);border-radius:10px;padding:11px;font-size:13px;background:#fff;color:var(--ink);">
-      <button class="save" id="btnCopy" style="flex:none;width:auto;padding:12px 18px;display:inline-flex;align-items:center;justify-content:center;gap:6px;line-height:1;"><i data-lu="copy" data-sz="15"></i> Copiar</button>
+      <input id="shareUrl" readonly style="display:none">
+      <button class="save" id="btnCopy" style="width:100%;padding:13px;display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1;"><i data-lu="link" data-sz="16"></i> Link de partilha</button>
     </div>
   </div>
 
@@ -237,7 +237,7 @@
   <!-- Hist&#xF3;rico (dire&#xE7;&#xE3;o) -->
   <div class="card" id="cardLista">
     <h2 style="margin:0 0 10px;">Candidaturas recebidas</h2>
-    <div class="toolbar"><button id="btnCsv"><i data-lu="download" data-sz="14"></i> Exportar (Excel/Sheets)</button><button id="btnRefresh"><i data-lu="refresh-cw" data-sz="14"></i> Atualizar</button></div>
+    <div class="toolbar"><button id="btnCsv"><i data-lu="download" data-sz="14"></i> Exportar</button><button id="btnRefresh"><i data-lu="refresh-cw" data-sz="14"></i> Atualizar</button></div>
     <div id="lista"><div class="status">A carregar&#x2026;</div></div>
   </div>
 </main>
