@@ -263,7 +263,7 @@ function render(){
   const l=document.getElementById('lista'); l.innerHTML='';
   let any=false;
   SECS.forEach(function(s){
-    let itens=NOTAS.filter(n=>n.seccao===s.k && !schLabel(n.texto));
+    let itens=NOTAS.filter(n=>n.seccao===s.k && (!schLabel(n.texto) || dueToday(n.texto)));
     if(!itens.length) return;
     any=true;
     itens.sort(function(a,b){ const da=isDone(a),db=isDone(b); if(da!==db) return da?1:-1; const pa=temPrio(a.texto),pb=temPrio(b.texto); if(pa!==pb) return pa?-1:1; const ia=temImp(a.texto),ib=temImp(b.texto); if(ia!==ib) return ia?-1:1; return new Date(b.data)-new Date(a.data); });
@@ -274,7 +274,7 @@ function render(){
     l.appendChild(grp);
   });
   // Todas as tarefas agendadas ficam agrupadas num unico grupo no final da pagina
-  var agend=NOTAS.filter(function(n){ return schLabel(n.texto); });
+  var agend=NOTAS.filter(function(n){ return schLabel(n.texto) && !dueToday(n.texto); });
   if(agend.length){
     any=true;
     agend.sort(function(a,b){ const da=isDone(a),db=isDone(b); if(da!==db) return da?1:-1; return new Date(b.data)-new Date(a.data); });
