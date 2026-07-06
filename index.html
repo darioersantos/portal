@@ -297,9 +297,11 @@ function updateNotifLembretes(){
     var n=j.notas.filter(function(x){return String(x.seccao).charAt(0)!=='_' && !isDone(x) && !/\[\[SCH:/.test(String(x.texto));}).length;
     var nMural=j.notas.filter(function(x){return String(x.seccao)==='_mural';}).length;
     var nNotas=j.notas.filter(function(x){return String(x.seccao)==='_apontamentos' && !isDone(x);}).length;
-    setBadge('lembretes', n);   /* Tarefas */
-    setBadge('mural', nMural);  /* Lembretes */
-    setBadge('notas', nNotas);  /* Notas */
+    var nEnc=j.notas.filter(function(x){return String(x.seccao)==='_consumivel' && !isDone(x);}).length;
+    setBadge('lembretes', n);        /* Tarefas */
+    setBadge('mural', nMural);       /* Lembretes */
+    setBadge('notas', nNotas);       /* Notas */
+    setBadge('consumiveis', nEnc);   /* Encomendas */
     var tb=document.getElementById('taskBanner');
     if(tb && n>0){
       var url=(window.PORTAL_LINKS&&window.PORTAL_LINKS['lembretes'])?window.PORTAL_LINKS['lembretes']:'lembretes.html';
