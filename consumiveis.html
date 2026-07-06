@@ -44,6 +44,10 @@
   .quick b{width:100%;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:1px;}
   .qchip{background:#fff;border:1.5px solid var(--line);color:var(--ink);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600;cursor:pointer;transition:all .12s;}
   .qchip:active{transform:scale(.95);} .qchip:hover{border-color:var(--accent);background:var(--accent-soft);}
+  .qchip.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .qchip.on:hover{background:var(--accent-dark);border-color:var(--accent-dark);}
+  .qchip.outros{border-style:dashed;color:var(--accent-dark);font-weight:700;}
+  .qchip .rmx{font-weight:800;margin-left:3px;opacity:.9;}
   .addbtn{width:100%;margin-top:2px;background:linear-gradient(135deg,#FF8100,#E66200);color:#fff;border:none;border-radius:14px;padding:14px;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(230,98,0,.3);transition:transform .12s,box-shadow .12s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;}
   .addbtn:active{transform:scale(.98);box-shadow:0 2px 8px rgba(230,98,0,.3);}
   .addbtn[disabled]{opacity:.6;}
@@ -59,9 +63,12 @@
   .grp-h{font-size:13px;font-weight:800;color:var(--accent-ink);text-transform:uppercase;letter-spacing:.04em;margin:0 2px 8px;display:flex;align-items:center;gap:8px;}
   .grp-h .c{background:var(--accent-soft);color:var(--accent-ink);border-radius:999px;padding:1px 9px;font-size:12px;}
 
-  .item{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:14px;box-shadow:var(--shadow);padding:13px 14px;margin-bottom:10px;animation:pop .28s ease both;}
+  .item{background:var(--card);border:1px solid var(--line);border-left:4px solid #eab308;border-radius:14px;box-shadow:var(--shadow);padding:13px 14px;margin-bottom:10px;animation:pop .28s ease both;}
   @keyframes pop{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:none;}}
   .item .nome{font-size:16px;font-weight:700;line-height:1.3;word-break:break-word;}
+  .st{display:inline-flex;align-items:center;gap:5px;border-radius:8px;padding:3px 9px;font-size:12px;font-weight:800;margin-bottom:8px;}
+  .st.pend{background:#fef9c3;color:#a16207;}
+  .st.enc{background:#dcfce7;color:#15803d;}
   .item.enc{border-left-color:var(--pos);background:#fbfefb;}
   .item.enc .nome{color:var(--muted);text-decoration:line-through;}
   .qt{display:inline-flex;align-items:center;gap:5px;margin-top:7px;background:#fff1e6;color:#b45309;border-radius:8px;padding:3px 9px;font-size:12.5px;font-weight:700;}
@@ -88,6 +95,15 @@
 
   #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#1a1303;color:#fff;padding:11px 18px;border-radius:999px;font-size:14px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:200;display:inline-flex;align-items:center;gap:8px;max-width:90vw;}
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .ov{position:fixed;inset:0;z-index:300;background:rgba(26,19,3,.5);display:none;align-items:center;justify-content:center;padding:20px;}
+  .ov.open{display:flex;}
+  .ov-card{background:#fff;border-radius:18px;padding:18px;width:100%;max-width:420px;box-shadow:0 12px 40px rgba(0,0,0,.28);}
+  .ov-card h3{margin:0 0 12px;font-size:16px;font-weight:800;}
+  .ov-card input{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);}
+  .ov-card input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+  .ov-row{display:flex;gap:10px;margin-top:14px;}
+  .ov-cancel{flex:1;background:#fff;border:1.5px solid var(--line);color:var(--ink);border-radius:12px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .ov-ok{flex:1;background:linear-gradient(135deg,#FF8100,#E66200);border:none;color:#fff;border-radius:12px;padding:12px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;}
 </style>
 </head>
 <body>
@@ -107,17 +123,10 @@
 
 <main>
   <div class="add-card">
-    <h2><i data-lu="plus" data-sz="18"></i> Registar consum&#xED;vel em falta</h2>
-    <div class="field">
-      <label>Consum&#xED;vel</label>
-      <input id="nome" type="text" placeholder="Ex.: Sacos de papel, rolos de POS...">
-    </div>
-    <div class="quick" id="quick"><b>Adi&#xE7;&#xE3;o r&#xE1;pida</b></div>
-    <div class="row2">
-      <div class="field"><label>Quantidade / nota (opcional)</label><input id="qt" type="text" placeholder="Ex.: 2 caixas, urgente"></div>
-      <div class="field"><label>Registado por</label><select id="por" data-staff data-ph="Quem registou (opcional)"></select></div>
-    </div>
-    <button class="addbtn" id="btnAdd" type="button"><i data-lu="plus" data-sz="18"></i> Adicionar &#xE0; lista</button>
+    <h2><i data-lu="plus" data-sz="18"></i> Registar consum&#xED;veis em falta</h2>
+    <div class="quick" id="quick"></div>
+    <div class="field"><label>Registado por</label><select id="por" data-staff data-area="sup" data-ph="Quem registou (opcional)"></select></div>
+    <button class="addbtn" id="btnAdd" type="button" disabled><i data-lu="plus" data-sz="18"></i> <span id="addLbl">Adicionar &#xE0; lista</span></button>
   </div>
 
   <div class="bar" id="bar" style="display:none">
@@ -131,11 +140,25 @@
 
 <div id="toast"></div>
 
+<div class="ov" id="outrosOv">
+  <div class="ov-card">
+    <h3>Outro consum&#xED;vel</h3>
+    <input id="outrosInp" type="text" placeholder="Escreve o que &#xE9; necess&#xE1;rio...">
+    <div class="ov-row">
+      <button class="ov-cancel" id="outrosCancel" type="button">Cancelar</button>
+      <button class="ov-ok" id="outrosOk" type="button">Adicionar</button>
+    </div>
+  </div>
+</div>
+
 <script>
   var BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
   var SEC='_consumivel';
   var ITENS=[];
-  var COMUNS=['Sacos de papel','Sacos de pl\u00E1stico','Rolos de POS','Etiquetas','Fita-cola','Papel higi\u00E9nico','Toalhetes de m\u00E3os','Sab\u00E3o das m\u00E3os','Sprays de limpeza','Sacos do lixo','Cabides','Alarmes / tags'];
+  var COMUNS=['Sacos de pl\u00E1stico','Rolos de POS','Etiquetas','Fita-cola','Papel higi\u00E9nico','Toalhetes de m\u00E3os','Sab\u00E3o das m\u00E3os','Sprays de limpeza','Sacos do lixo','Cabides','Alarmes / tags'];
+  var selCom={};      // consumiveis comuns selecionados: nome->true
+  var selCustom=[];   // consumiveis "outros" escritos a mao
+  function selecionados(){ return Object.keys(selCom).concat(selCustom); }
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function isDone(n){ return n.done===true || String(n.done).toLowerCase()==='true'; }
@@ -144,8 +167,31 @@
   function toast(msg){ var t=document.getElementById('toast'); t.innerHTML=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(function(){ t.classList.remove('show'); },2200); }
   function P(d){ return fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)}).then(function(r){return r.json();}); }
 
-  // chips de adicao rapida
-  (function(){ var q=document.getElementById('quick'); COMUNS.forEach(function(nm){ var b=document.createElement('button'); b.type='button'; b.className='qchip'; b.textContent=nm; b.onclick=function(){ var i=document.getElementById('nome'); i.value=nm; i.focus(); }; q.appendChild(b); }); })();
+  // chips (multi-seleccao). Toca em varios; "Outros" abre janela para escrever.
+  function atualizaBtn(){ var n=selecionados().length; var b=document.getElementById('btnAdd'); b.disabled=!n; document.getElementById('addLbl').textContent = n ? ('Adicionar \u00E0 lista ('+n+')') : 'Adicionar \u00E0 lista'; }
+  function buildQuick(){
+    var q=document.getElementById('quick'); q.innerHTML='<b>Toca no que est\u00E1 em falta (podes escolher v\u00E1rios)</b>';
+    COMUNS.forEach(function(nm){
+      var b=document.createElement('button'); b.type='button'; b.className='qchip'+(selCom[nm]?' on':''); b.textContent=nm;
+      b.onclick=function(){ if(selCom[nm]){ delete selCom[nm]; b.classList.remove('on'); } else { selCom[nm]=true; b.classList.add('on'); } atualizaBtn(); };
+      q.appendChild(b);
+    });
+    selCustom.forEach(function(nm,idx){
+      var b=document.createElement('button'); b.type='button'; b.className='qchip on'; b.innerHTML=esc(nm)+' <span class="rmx">\u00D7</span>';
+      b.onclick=function(){ selCustom.splice(idx,1); buildQuick(); atualizaBtn(); };
+      q.appendChild(b);
+    });
+    var o=document.createElement('button'); o.type='button'; o.className='qchip outros'; o.textContent='+ Outros';
+    o.onclick=abrirOutros;
+    q.appendChild(o);
+  }
+  function abrirOutros(){ document.getElementById('outrosInp').value=''; document.getElementById('outrosOv').classList.add('open'); setTimeout(function(){ document.getElementById('outrosInp').focus(); },50); }
+  function fecharOutros(){ document.getElementById('outrosOv').classList.remove('open'); }
+  document.getElementById('outrosCancel').onclick=fecharOutros;
+  document.getElementById('outrosOv').onclick=function(e){ if(e.target===this) fecharOutros(); };
+  document.getElementById('outrosOk').onclick=function(){ var v=(document.getElementById('outrosInp').value||'').trim(); if(!v) return; v=v.charAt(0).toUpperCase()+v.slice(1); selCustom.push(v); fecharOutros(); buildQuick(); atualizaBtn(); };
+  document.getElementById('outrosInp').addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); document.getElementById('outrosOk').click(); } });
+  buildQuick();
 
   function carregar(){
     if(!BACKEND){ document.getElementById('lista').innerHTML='<div class="status">Sem liga\u00E7\u00E3o \u00E0 nuvem (configura\u00E7\u00E3o em falta).</div>'; return; }
@@ -158,6 +204,7 @@
   function cardHTML(n){
     var p=parse(n.texto), done=isDone(n);
     return '<div class="item'+(done?' enc':'')+'">'
+      + '<span class="st '+(done?'enc':'pend')+'">'+(done?'<i data-lu="check" data-sz="12"></i> Encomendado':'<i data-lu="clock" data-sz="12"></i> Por encomendar')+'</span>'
       + '<div class="nome">'+esc(p.nome)+'</div>'
       + (p.qt?'<span class="qt">'+esc(p.qt)+'</span>':'')
       + '<div class="meta">'
@@ -225,24 +272,24 @@
   }
 
   function adicionar(){
-    var iN=document.getElementById('nome'), iQ=document.getElementById('qt'), iP=document.getElementById('por');
-    var nome=(iN.value||'').trim(); if(!nome){ iN.focus(); return; }
-    nome=nome.charAt(0).toUpperCase()+nome.slice(1);
-    // deteccao de duplicado por fazer
-    var dup=ITENS.some(function(n){ return !isDone(n) && parse(n.texto).nome.toLowerCase()===nome.toLowerCase(); });
-    if(dup){ toast('J\u00E1 est\u00E1 na lista'); iN.select(); return; }
-    var qt=(iQ.value||'').trim(), por=(iP.value||'').trim();
+    var nomes=selecionados(); if(!nomes.length) return;
     if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
-    var textoFinal=(por?'[[BY:'+por+']]':'')+(qt?'[[QT:'+qt+']]':'')+nome;
+    var por=(document.getElementById('por').value||'').trim();
+    var jaTem={}; ITENS.forEach(function(n){ if(!isDone(n)) jaTem[parse(n.texto).nome.toLowerCase()]=true; });
+    var novos=[]; nomes.forEach(function(nm){ var k=nm.toLowerCase(); if(!jaTem[k] && novos.map(function(x){return x.toLowerCase();}).indexOf(k)<0) novos.push(nm); });
+    var repetidos=nomes.length-novos.length;
+    if(!novos.length){ toast('J\u00E1 est\u00E3o todos na lista'); return; }
     var btn=document.getElementById('btnAdd'); btn.disabled=true;
-    P({action:'nota_add', seccao:SEC, autor:por, texto:textoFinal}).then(function(){
-      iN.value=''; iQ.value=''; btn.disabled=false; toast('<i data-lu="check" data-sz="15"></i> Adicionado \u00E0 lista'); iN.focus(); carregar();
+    var chain=Promise.resolve();
+    novos.forEach(function(nm){ var textoFinal=(por?'[[BY:'+por+']]':'')+nm; chain=chain.then(function(){ return P({action:'nota_add', seccao:SEC, autor:por, texto:textoFinal}); }); });
+    chain.then(function(){
+      selCom={}; selCustom=[]; buildQuick(); atualizaBtn();
+      toast('<i data-lu="check" data-sz="15"></i> '+novos.length+(novos.length===1?' consum\u00EDvel adicionado':' consum\u00EDveis adicionados')+(repetidos?(' \u2014 '+repetidos+' j\u00E1 existiam'):''));
+      carregar();
     }).catch(function(){ btn.disabled=false; toast('Falhou. Tenta novamente.'); });
   }
 
   document.getElementById('btnAdd').addEventListener('click', adicionar);
-  document.getElementById('nome').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); adicionar(); } });
-  document.getElementById('qt').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); adicionar(); } });
 
   // Copiar lista de encomenda para a area de transferencia (para enviar por WhatsApp/email)
   document.getElementById('btnCopy').addEventListener('click', function(){
