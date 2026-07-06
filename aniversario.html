@@ -34,7 +34,8 @@
   .card h2{font-size:15px;margin:0 0 12px;font-weight:800;}
   .field{margin-bottom:12px;}
   .field label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px;}
-  .field input,.field select{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);}
+  .field input,.field select{width:100%;min-width:0;max-width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);}
+  .field input[type=date]{-webkit-appearance:none;appearance:none;min-height:49px;}
   .field input:focus{outline:none;border-color:var(--accent);}
   .row2{display:flex;gap:10px;flex-wrap:wrap;}
   .row2 .field{flex:1;min-width:140px;}
