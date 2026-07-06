@@ -203,7 +203,7 @@ const SECTIONS = [
     {k:'superliga',  ic:'trophy',          nm:'Super Liga'}
   ]},
   { t:'Outros', items:[
-    {k:'consumiveis',  ic:'shopping-bag',    nm:'Consum\u00EDveis em Falta'},
+    {k:'consumiveis',  ic:'shopping-bag',    nm:'Encomendas'},
     {k:'checklists',   ic:'clipboard-check', nm:'Checklist Abertura/Fecho'},
     {k:'limpeza',      ic:'clipboard-list',  nm:'Checklist de Loja'},
     {k:'atas',         ic:'file-text',       nm:'Reuni\u00F5es'},
@@ -292,10 +292,14 @@ function updateNotifLembretes(){
   var B=(window.BACKEND_URL?String(window.BACKEND_URL).trim():''); if(!B) return;
   fetch(B+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){
     if(!j||!j.ok||!Array.isArray(j.notas)) return;
-    var n=j.notas.filter(function(x){return String(x.seccao).charAt(0)!=='_' && !(x.done===true||String(x.done).toLowerCase()==='true') && !/\[\[SCH:/.test(String(x.texto));}).length;
-    var tile=document.querySelector('.tile[data-key="lembretes"]');
-    if(tile && n>0){ var b=document.createElement('span'); b.className='tile-badge'; b.textContent=n>99?'99+':n; tile.appendChild(b); }
-    /* badge do Lembretes (mural) removido a pedido */
+    function isDone(x){ return x.done===true||String(x.done).toLowerCase()==='true'; }
+    function setBadge(key,c){ var t=document.querySelector('.tile[data-key="'+key+'"]'); if(!t) return; var old=t.querySelector('.tile-badge'); if(old) old.remove(); if(c>0){ var b=document.createElement('span'); b.className='tile-badge'; b.textContent=c>99?'99+':c; t.appendChild(b); } }
+    var n=j.notas.filter(function(x){return String(x.seccao).charAt(0)!=='_' && !isDone(x) && !/\[\[SCH:/.test(String(x.texto));}).length;
+    var nMural=j.notas.filter(function(x){return String(x.seccao)==='_mural';}).length;
+    var nNotas=j.notas.filter(function(x){return String(x.seccao)==='_apontamentos' && !isDone(x);}).length;
+    setBadge('lembretes', n);   /* Tarefas */
+    setBadge('mural', nMural);  /* Lembretes */
+    setBadge('notas', nNotas);  /* Notas */
     var tb=document.getElementById('taskBanner');
     if(tb && n>0){
       var url=(window.PORTAL_LINKS&&window.PORTAL_LINKS['lembretes'])?window.PORTAL_LINKS['lembretes']:'lembretes.html';
