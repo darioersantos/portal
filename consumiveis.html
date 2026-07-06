@@ -239,7 +239,7 @@
         html+='<div class="empty"><div class="ic"><i data-lu="check" data-sz="30"></i></div><h3>Nada por encomendar</h3><p>Todos os itens j\u00E1 foram encomendados.</p></div>';
       }
       if(enc.length){
-        html+='<div class="grp grp-acc"><div class="grp-h grp-acc-h" id="accH"><span class="acc-chev"></span><i data-lu="check" data-sz="16"></i> J\u00E1 encomendados <span class="c">'+enc.length+'</span></div><div class="acc-body">';
+        html+='<div class="grp grp-acc open"><div class="grp-h grp-acc-h" id="accH"><span class="acc-chev"></span><i data-lu="check" data-sz="16"></i> J\u00E1 encomendados <span class="c">'+enc.length+'</span></div><div class="acc-body">';
         enc.forEach(function(n){ html+=cardHTML(n); });
         html+='</div></div>';
       }
