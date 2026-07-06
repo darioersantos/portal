@@ -48,14 +48,14 @@
 
   /* ---- Impress&#xE3;o: 4 col x 7 linhas por folha A4 ---- */
   @media print{
-    @page{size:A4 portrait;margin:8mm;}
-    body{background:#fff;}
+    @page{size:A4 portrait;margin:0;}
+    html,body{background:#fff;margin:0;padding:0;}
     .toolbar{display:none !important;}
-    #sheet{padding:0;}
+    #sheet{padding:0;margin:0;}
     .page{grid-template-columns:repeat(4,1fr);max-width:none;margin:0;box-shadow:none;
           page-break-after:always;break-after:page;}
     .page:last-child{page-break-after:auto;break-after:auto;}
-    .slip{min-height:0;height:calc((297mm - 16mm)/7);overflow:hidden;
+    .slip{min-height:0;height:calc(297mm/7);overflow:hidden;
           -webkit-print-color-adjust:exact;print-color-adjust:exact;}
     .wm{font-size:14px;}
     .ttl{font-size:10px;margin-bottom:5px;}
