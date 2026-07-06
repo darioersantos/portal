@@ -24,7 +24,8 @@ window.PORTAL_LINKS = {
   movimento_cofre:   "https://drive.google.com/file/d/1kVAZK4xFZatdyjZASaj4wb73vGjqVcpB/view",
   vdl:               "",
   folha_reserva:     "folha_reserva.html",
-  folha_elogio:      "",
+  folha_elogio:      "folha_elogio.html",
+  garrafas:          "garrafas.html",
 
   /* ---- Formularios ---- */
   happyhour:         "happyhour.html",
