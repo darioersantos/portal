@@ -106,7 +106,7 @@
     #printArea{display:block;}
     #printArea .ph-head h1{font-size:18px;margin:0 0 2px;}
     #printArea .ph-date{font-size:13px;color:#222;margin-bottom:12px;}
-    #printArea h2{font-size:15px;margin:16px 0 6px;border-bottom:1.5px solid #000;padding-bottom:3px;}
+    #printArea h2{font-size:21px;margin:18px 0 6px;border-bottom:1.5px solid #000;padding-bottom:4px;}
     #printArea .ph-tasks{list-style:none;padding:0;margin:0;}
     #printArea .ph-tasks li{display:flex;align-items:center;gap:11px;font-size:13.5px;padding:6px 0;}
     #printArea .ph-tasks .bx{width:17px;height:17px;border:1.6px solid #000;border-radius:3px;flex:none;}
@@ -138,7 +138,10 @@
         <p>Sport Zone &#xB7; Vasco da Gama</p>
       </div>
     </div>
-    <a class="icon-btn" href="index.html" title="Menu principal" aria-label="Menu principal"><i data-lu="home"></i></a>
+    <div style="display:flex;gap:8px;flex:none;">
+      <button class="icon-btn" id="btnPrint" type="button" title="Imprimir lista de tarefas do dia" aria-label="Imprimir"><i data-lu="printer"></i></button>
+      <a class="icon-btn" href="index.html" title="Menu principal" aria-label="Menu principal"><i data-lu="home"></i></a>
+    </div>
   </div>
 </header>
 
@@ -161,7 +164,6 @@
     </div>
 
     <button class="submit" id="btnSubmit"><i data-lu="check"></i> Confirmar checklist</button>
-    <button class="printbtn" id="btnPrint" type="button"><i data-lu="printer"></i> Imprimir lista de tarefas do dia</button>
 
     <div id="histWrap">
       <h3><i data-lu="history" data-sz="15"></i> Registos da abertura/fecho</h3>
