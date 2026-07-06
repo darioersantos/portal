@@ -91,6 +91,20 @@
   .selnames{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;}
   .selnames .chip{background:var(--accent-soft);color:var(--accent-ink);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:7px;}
   .selnames .chip b{cursor:pointer;color:var(--neg);font-size:14px;}
+
+  #printArea{display:none;}
+  @media print{
+    header,main,#toast{display:none !important;}
+    #printArea{display:block !important;color:#000;font-size:13px;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    #printArea h1{font-size:22px;margin:0 0 2px;color:#000;}
+    #printArea .psub{font-size:12px;color:#555;margin-bottom:14px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #eee;page-break-inside:avoid;}
+    #printArea .tp{flex:none;font-size:11px;font-weight:800;padding:2px 9px;border-radius:999px;color:#fff;margin-top:2px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    #printArea .tp.tipo-pont{background:#15803d;} #printArea .tp.tipo-atraso{background:#d97706;} #printArea .tp.tipo-abs{background:#dc2626;} #printArea .tp.tipo-just{background:#2563eb;}
+    #printArea .bd{font-size:15px;line-height:1.4;}
+    #printArea .ob{font-size:12px;color:#555;}
+  }
 </style>
 </head>
 <body>
@@ -104,9 +118,13 @@
         <p>Sport Zone &#xB7; Vasco da Gama</p>
       </div>
     </div>
-    <a class="icon-btn" id="homeBtn" href="index.html" title="Menu principal" aria-label="Menu principal"><i data-lu="home"></i></a>
+    <div style="display:flex;gap:8px;flex:none;">
+      <button class="icon-btn" id="btnPrint" type="button" title="Imprimir hist&#xF3;rico" aria-label="Imprimir"><i data-lu="printer"></i></button>
+      <a class="icon-btn" id="homeBtn" href="index.html" title="Menu principal" aria-label="Menu principal"><i data-lu="home"></i></a>
+    </div>
   </div>
 </header>
+<div id="printArea"></div>
 
 <main>
   <div class="card" id="cardForm">
@@ -156,6 +174,16 @@ function render(){
       l.appendChild(row);
     });
 }
+function imprimir(){
+  var hoje=new Date().toLocaleDateString('pt-PT',{day:'2-digit',month:'long',year:'numeric'});
+  var arr=DADOS.map(function(n){ var d={}; try{d=JSON.parse(n.texto||'{}');}catch(e){} return {colab:n.autor, tipo:d.tipo||'', data:d.data||'', obs:d.obs||'', por:d.por||'', ts:d.data||n.data}; })
+    .sort(function(a,b){ return new Date(b.ts)-new Date(a.ts); });
+  var html='<h1>Atrasos e Faltas</h1><div class="psub">Sport Zone &middot; Vasco da Gama &middot; '+esc(hoje)+'</div>';
+  if(!arr.length){ html+='<p>Ainda n\u00E3o h\u00E1 registos.</p>'; }
+  else{ html+='<ul>'; arr.forEach(function(o){ html+='<li><span class="tp '+clsTipo(o.tipo)+'">'+esc(o.tipo||'')+'</span><span class="bd"><b>'+esc(o.colab||'\u2014')+'</b> &middot; '+esc(fmtData(o.data))+(o.obs?'<br><span class="ob">'+esc(o.obs)+'</span>':'')+(o.por?'<br><span class="ob">Registado por '+esc(o.por)+'</span>':'')+'</span></li>'; }); html+='</ul>'; }
+  document.getElementById('printArea').innerHTML=html; window.print();
+}
+var _bp=document.getElementById('btnPrint'); if(_bp) _bp.addEventListener('click',imprimir);
 function carregar(){
   if(!BACKEND){ document.getElementById('lista').innerHTML='<div class="status">Sem liga\u00E7\u00E3o \u00E0 nuvem.</div>'; return; }
   fetch(BACKEND+'?action=notas&t='+Date.now()).then(r=>r.json()).then(function(j){
