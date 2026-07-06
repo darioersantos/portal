@@ -93,6 +93,12 @@
 </header>
 
 <main>
+  <div class="card" id="shareBox" style="display:none;background:linear-gradient(135deg,#ffffff,#fff7ed);border:1.5px solid var(--accent-soft);">
+    <div style="font-weight:800;font-size:15px;margin-bottom:4px;"><i data-lu="link" data-sz="16"></i> Link para o staff pedir f&#xE9;rias</div>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 10px;">Envia este link &#xE0; equipa para pedirem f&#xE9;rias. S&#xF3; abre esta p&#xE1;gina &#x2014; n&#xE3;o d&#xE1; acesso ao resto da app.</p>
+    <input id="shareUrl" readonly style="display:none">
+    <button class="save" id="btnCopy" style="width:100%;padding:13px;display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1;"><i data-lu="link" data-sz="16"></i> Link de partilha</button>
+  </div>
   <div class="card" id="cardForm">
     <h2 id="formTitle">Pedido de f&#xE9;rias</h2>
     <div class="field"><label for="nome">Colaborador</label><select id="nome" data-staff data-ph="Seleciona o teu nome"></select></div>
@@ -253,8 +259,21 @@ function renderCal(){
 }
 renderCal();
 
-if(MANAGER){ carregar(); }
-else{ document.getElementById('cardLista').style.display='none'; var _hb=document.getElementById('homeBtn'); if(_hb) _hb.style.display='none'; }
+if(MANAGER){
+  carregar();
+  var _link=location.href.split('?')[0].split('#')[0];
+  var su=document.getElementById('shareUrl'); if(su){ su.value=_link; document.getElementById('shareBox').style.display='block'; }
+  var bc=document.getElementById('btnCopy'); if(bc){ bc.onclick=function(){
+    function done(){ var t=bc.innerHTML; bc.innerHTML='<i data-lu="check" data-sz="15"></i> Copiado!'; if(window.SZlucide)window.SZlucide(); setTimeout(function(){ bc.innerHTML=t; if(window.SZlucide)window.SZlucide(); },1600); }
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(_link).then(done,function(){ try{ su.select(); document.execCommand('copy'); }catch(e){} done(); }); }
+    else { try{ su.select(); document.execCommand('copy'); }catch(e){} done(); }
+  }; }
+}
+else{
+  document.getElementById('cardLista').style.display='none';
+  var _hb=document.getElementById('homeBtn'); if(_hb) _hb.style.display='none';
+  var _lg=document.querySelector('.logo'); if(_lg&&_lg.parentNode){ var _c=_lg.cloneNode(true); _lg.parentNode.replaceChild(_c,_lg); _c.style.cursor='default'; }
+}
 </script>
 </body>
 </html>
