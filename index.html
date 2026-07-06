@@ -290,9 +290,7 @@ function updateNotifLembretes(){
   var B=(window.BACKEND_URL?String(window.BACKEND_URL).trim():''); if(!B) return;
   fetch(B+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){
     if(!j||!j.ok||!Array.isArray(j.notas)) return;
-    var n=j.notas.filter(function(x){return String(x.seccao).charAt(0)!=='_' && !(x.done===true||String(x.done).toLowerCase()==='true') && !/\[\[SCH:/.test(String(x.texto));}).length;
-    var tile=document.querySelector('.tile[data-key="lembretes"]');
-    if(tile && n>0){ var b=document.createElement('span'); b.className='tile-badge'; b.textContent=n>99?'99+':n; tile.appendChild(b); }
+    /* badge vermelho das tarefas removido a pedido */
     // Mural de Avisos: bolinha com o n\u00BA de avisos
     var nm=j.notas.filter(function(x){return String(x.seccao)==='_mural';}).length;
     var tileM=document.querySelector('.tile[data-key="mural"]');
