@@ -37,6 +37,7 @@
   .field label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px;}
   .field select{width:100%;max-width:100%;min-width:0;box-sizing:border-box;-webkit-appearance:none;appearance:none;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);}
   .field textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);min-height:80px;resize:vertical;}
+  #texto{min-height:50vh;}
   .field textarea:focus,.field select:focus{outline:none;border-color:var(--accent);}
   .save{width:100%;background:var(--accent);color:#fff;border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(230,98,0,.3);display:flex;align-items:center;justify-content:center;gap:8px;}
   .save:disabled{opacity:.6;}
@@ -88,7 +89,7 @@
   <div class="card" id="cardForm">
     <h2>Novo apontamento</h2>
     <div class="field"><label for="texto">Nota</label><textarea id="texto" placeholder="Escreve aqui o apontamento&#x2026; (ex.: falar com o fornecedor, verificar montra, etc.)"></textarea></div>
-    <div class="field"><label for="autor">Escrito por</label><select id="autor" data-staff data-ph="Seleciona o teu nome"></select></div>
+    <div class="field"><label for="autor">Escrito por (equipa de dire&#xE7;&#xE3;o)</label><select id="autor" data-staff data-area="sup" data-ph="Seleciona (equipa de dire&#xE7;&#xE3;o)"></select></div>
     <button class="save" id="btnSave"><i data-lu="plus"></i> Guardar apontamento</button>
   </div>
   <div class="card">
