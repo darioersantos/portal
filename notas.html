@@ -47,7 +47,13 @@
   .nota .chk{flex:none;width:24px;height:24px;border:2px solid var(--line);border-radius:7px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:transparent;margin-top:1px;}
   .nota.done .chk{background:var(--pos);border-color:var(--pos);color:#fff;}
   .nota .info{flex:1;min-width:0;}
-  .nota .txt{font-size:15px;font-weight:600;white-space:pre-wrap;word-break:break-word;line-height:1.5;}
+  .nota .txt{font-size:15px;font-weight:600;word-break:break-word;line-height:1.5;}
+  .nota .txt .md-h{font-weight:800;color:var(--accent-ink);margin:8px 0 3px;line-height:1.25;}
+  .nota .txt .md-h:first-child{margin-top:0;}
+  .nota .txt .md-h1{font-size:17px;} .nota .txt .md-h2{font-size:16px;} .nota .txt .md-h3{font-size:15px;}
+  .nota .txt .md-ul{margin:3px 0;padding-left:20px;} .nota .txt .md-ul li{margin:2px 0;}
+  .nota .txt .md-p{margin:3px 0;} .nota .txt .md-sp{height:6px;} .nota .txt b{font-weight:800;}
+  .nota .txt .md-hr{border:none;border-top:1px solid var(--line);margin:9px 0;}
   .nota.done .txt{text-decoration:line-through;color:var(--muted);font-weight:500;}
   .nota .meta{font-size:12px;color:var(--muted);margin-top:6px;}
   .nota .del{background:none;border:none;color:var(--neg);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex:none;padding:2px 4px;}
@@ -62,6 +68,8 @@
     #printArea li{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #eee;page-break-inside:avoid;}
     #printArea .box{flex:none;width:17px;height:17px;border:1.6px solid #333;border-radius:3px;margin-top:2px;}
     #printArea .bd{font-size:15px;line-height:1.45;}
+    #printArea .bd .md-h{font-weight:800;margin:6px 0 2px;} #printArea .bd .md-h1{font-size:16px;} #printArea .bd .md-h2{font-size:15px;} #printArea .bd .md-h3{font-size:14px;}
+    #printArea .bd .md-ul{margin:2px 0;padding-left:18px;} #printArea .bd .md-p{margin:2px 0;} #printArea .bd .md-sp{height:4px;} #printArea .bd b{font-weight:800;} #printArea .bd .md-hr{border:none;border-top:1px solid #ccc;margin:6px 0;}
     #printArea .who{font-size:12px;color:#555;font-style:italic;}
   }
 </style>
@@ -106,6 +114,28 @@ const BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BAC
 const SEC='_apontamentos';
 let DADOS=[];
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+/* ---- markdown simples: aceita texto colado (emojis, **negrito**, #/##/### t\u00EDtulos, listas *,- ) e mostra bonito ---- */
+function mdInline(t){
+  t=t.replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>');
+  t=t.replace(/__([^_\n]+)__/g,'<b>$1</b>');
+  return t;
+}
+function mdToHtml(raw){
+  var lines=esc(String(raw||'')).split(/\r?\n/);
+  var out=[], inList=false;
+  function closeList(){ if(inList){ out.push('</ul>'); inList=false; } }
+  lines.forEach(function(ln){
+    if(/^\s*([-*_])\1{2,}\s*$/.test(ln)){ closeList(); out.push('<hr class="md-hr">'); return; }
+    var h=ln.match(/^\s*(#{1,6})\s+(.*)$/);
+    var b=ln.match(/^\s*[\*\-]\s+(.*)$/);
+    if(h){ closeList(); var lvl=Math.min(h[1].length,3); out.push('<div class="md-h md-h'+lvl+'">'+mdInline(h[2])+'</div>'); }
+    else if(b){ if(!inList){ out.push('<ul class="md-ul">'); inList=true; } out.push('<li>'+mdInline(b[1])+'</li>'); }
+    else if(ln.trim()===''){ closeList(); out.push('<div class="md-sp"></div>'); }
+    else { closeList(); out.push('<div class="md-p">'+mdInline(ln)+'</div>'); }
+  });
+  closeList();
+  return out.join('');
+}
 function isDone(n){ return n.done===true||String(n.done).toLowerCase()==='true'; }
 function fmtDataHora(iso){ var d=new Date(iso); if(isNaN(d)) return String(iso||''); return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
 
@@ -116,7 +146,7 @@ function render(){
     .forEach(function(n){
       var row=document.createElement('div'); row.className='nota'+(isDone(n)?' done':'');
       row.innerHTML='<button class="chk" title="Marcar como resolvido"><i data-lu="check" data-sz="15"></i></button>'+
-        '<div class="info"><div class="txt">'+esc(n.texto)+'</div><div class="meta">'+esc(n.autor||'')+(n.data?' \u00B7 '+esc(fmtDataHora(n.data)):'')+'</div></div>'+
+        '<div class="info"><div class="txt">'+mdToHtml(n.texto)+'</div><div class="meta">'+esc(n.autor||'')+(n.data?' \u00B7 '+esc(fmtDataHora(n.data)):'')+'</div></div>'+
         '<button class="del" title="Apagar"><i data-lu="trash-2" data-sz="15"></i></button>';
       row.querySelector('.chk').onclick=function(){ marcar(n, !isDone(n)); };
       row.querySelector('.del').onclick=function(){ apagar(n.id); };
@@ -165,7 +195,7 @@ function imprimir(){
   var abertos=DADOS.filter(function(n){ return !isDone(n); }).sort(function(a,b){ return new Date(a.data)-new Date(b.data); });
   var html='<h1>Apontamentos</h1><div class="psub">Sport Zone &middot; Vasco da Gama &middot; '+esc(hoje)+'</div>';
   if(!abertos.length){ html+='<p>N\u00E3o h\u00E1 apontamentos por resolver.</p>'; }
-  else{ html+='<ul>'; abertos.forEach(function(n){ html+='<li><span class="box"></span><span class="bd">'+esc(n.texto)+(n.autor?'<br><span class="who">&mdash; '+esc(n.autor)+'</span>':'')+'</span></li>'; }); html+='</ul>'; }
+  else{ html+='<ul>'; abertos.forEach(function(n){ html+='<li><span class="box"></span><span class="bd">'+mdToHtml(n.texto)+(n.autor?'<div class="who">&mdash; '+esc(n.autor)+'</div>':'')+'</span></li>'; }); html+='</ul>'; }
   document.getElementById('printArea').innerHTML=html; window.print();
 }
 document.getElementById('btnPrint').addEventListener('click', imprimir);
