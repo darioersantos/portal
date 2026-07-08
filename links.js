@@ -26,6 +26,7 @@ window.PORTAL_LINKS = {
   folha_reserva:     "folha_reserva.html",
   folha_elogio:      "folha_elogio.html",
   garrafas:          "garrafas.html",
+  superliga_registo: "superliga_registo.html",
 
   /* ---- Formularios ---- */
   happyhour:         "happyhour.html",
