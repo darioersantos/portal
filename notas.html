@@ -62,15 +62,17 @@
   @media print{
     header,main,#toast{display:none !important;}
     #printArea{display:block !important;color:#000;font-size:13px;padding:0;}
-    #printArea h1{font-size:22px;margin:0 0 2px;color:#000;}
+    #printArea h1{font-size:18px;margin:0 0 2px;color:#000;}
+    #printArea .pdia{font-size:25px;font-weight:800;color:#1a1303;margin:0 0 2px;text-transform:capitalize;}
     #printArea .psub{font-size:12px;color:#555;margin-bottom:14px;border-bottom:2px solid #FF8100;padding-bottom:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-    #printArea ul{list-style:none;margin:0;padding:0;}
-    #printArea li{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #eee;page-break-inside:avoid;}
-    #printArea .box{flex:none;width:17px;height:17px;border:1.6px solid #333;border-radius:3px;margin-top:2px;}
-    #printArea .bd{font-size:15px;line-height:1.45;}
-    #printArea .bd .md-h{font-weight:800;margin:6px 0 2px;} #printArea .bd .md-h1{font-size:16px;} #printArea .bd .md-h2{font-size:15px;} #printArea .bd .md-h3{font-size:14px;}
-    #printArea .bd .md-ul{margin:2px 0;padding-left:18px;} #printArea .bd .md-p{margin:2px 0;} #printArea .bd .md-sp{height:4px;} #printArea .bd b{font-weight:800;} #printArea .bd .md-hr{border:none;border-top:1px solid #ccc;margin:6px 0;}
-    #printArea .who{font-size:12px;color:#555;font-style:italic;}
+    #printArea .pnote{padding:11px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:15px;line-height:1.45;}
+    #printArea .pnote:last-child{border-bottom:none;}
+    #printArea .md-h{font-weight:800;color:#8a4500;margin:9px 0 3px;} #printArea .pnote>.md-h:first-child{margin-top:0;}
+    #printArea .md-h1{font-size:17px;} #printArea .md-h2{font-size:16px;} #printArea .md-h3{font-size:15px;}
+    #printArea .md-ul{margin:3px 0;padding-left:20px;} #printArea .md-ul li{margin:2px 0;}
+    #printArea .md-p{margin:3px 0;} #printArea .md-sp{height:6px;} #printArea b{font-weight:800;}
+    #printArea .md-hr{border:none;border-top:1px solid #ccc;margin:8px 0;}
+    #printArea .who{font-size:12px;color:#555;font-style:italic;margin-top:7px;}
   }
 </style>
 </head>
@@ -193,9 +195,9 @@ function apagar(id){
 function imprimir(){
   var hoje=new Date().toLocaleDateString('pt-PT',{day:'2-digit',month:'long',year:'numeric'});
   var abertos=DADOS.filter(function(n){ return !isDone(n); }).sort(function(a,b){ return new Date(a.data)-new Date(b.data); });
-  var html='<h1>Apontamentos</h1><div class="psub">Sport Zone &middot; Vasco da Gama &middot; '+esc(hoje)+'</div>';
+  var html='<h1>Apontamentos</h1><div class="pdia">'+esc(hoje)+'</div><div class="psub">Sport Zone &middot; Vasco da Gama</div>';
   if(!abertos.length){ html+='<p>N\u00E3o h\u00E1 apontamentos por resolver.</p>'; }
-  else{ html+='<ul>'; abertos.forEach(function(n){ html+='<li><span class="box"></span><span class="bd">'+mdToHtml(n.texto)+(n.autor?'<div class="who">&mdash; '+esc(n.autor)+'</div>':'')+'</span></li>'; }); html+='</ul>'; }
+  else{ abertos.forEach(function(n){ html+='<div class="pnote">'+mdToHtml(n.texto)+(n.autor?'<div class="who">&mdash; '+esc(n.autor)+'</div>':'')+'</div>'; }); }
   document.getElementById('printArea').innerHTML=html; window.print();
 }
 document.getElementById('btnPrint').addEventListener('click', imprimir);
