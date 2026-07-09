@@ -119,12 +119,20 @@
   #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
   #lightbox img{max-width:100%;max-height:100%;border-radius:8px;}
 
-  /* Impress&#xE3;o: s&#xF3; a lista de post-its (sem bot&#xF5;es nem cabe&#xE7;alho) */
+  #printArea{display:none;}
   @media print{
-    header,.newbtn,.modal-overlay,#lightbox,.aviso .acts{display:none !important;}
+    header,main,.newbtn,.modal-overlay,#lightbox{display:none !important;}
     body{background:#fff;padding-bottom:0;}
-    .card{box-shadow:none;border:none;padding:0;}
-    .aviso{page-break-inside:avoid;}
+    #printArea{display:block !important;color:#000;font-size:13px;}
+    #printArea h1{font-size:18px;margin:0 0 2px;color:#000;}
+    #printArea .pdia{font-size:25px;font-weight:800;color:#1a1303;margin:0 0 2px;text-transform:capitalize;}
+    #printArea .psub{font-size:12px;color:#555;margin-bottom:14px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea .pnote{padding:11px 0;border-bottom:1px solid #eee;page-break-inside:avoid;}
+    #printArea .pnote:last-child{border-bottom:none;}
+    #printArea .pt{font-size:16px;font-weight:800;color:#1a1303;}
+    #printArea .pd{font-size:14px;margin-top:3px;white-space:pre-wrap;}
+    #printArea .pe{font-size:12px;color:#8a4500;font-weight:700;margin-top:4px;}
+    #printArea .who{font-size:12px;color:#555;font-style:italic;margin-top:6px;}
   }
   .cal-field .cal-chk{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--accent-dark);cursor:pointer;}
   .cal-field .cal-chk input{width:18px;height:18px;flex:none;accent-color:var(--accent);}
@@ -144,9 +152,10 @@
         <p>Sport Zone &#xB7; Vasco da Gama</p>
       </div>
     </div>
-    <a class="icon-btn" id="homeBtn" href="index.html" title="Menu principal" aria-label="Menu principal"><i data-lu="home"></i></a>
+    <div style="display:flex;gap:8px;flex:none;"><button class="icon-btn" id="btnPrint" type="button" title="Imprimir lembretes" aria-label="Imprimir"><i data-lu="printer"></i></button><a class="icon-btn" id="homeBtn" href="index.html" title="Menu principal" aria-label="Menu principal"><i data-lu="home"></i></a></div>
   </div>
 </header>
+<div id="printArea"></div>
 
 <main>
   <button class="newbtn" id="btnNew"><i data-lu="plus"></i> Novo lembrete</button>
@@ -219,6 +228,16 @@ function render(){
     });
   if(window.lucideRepl) window.lucideRepl();
 }
+function imprimir(){
+  var hoje=new Date().toLocaleDateString('pt-PT',{day:'2-digit',month:'long',year:'numeric'});
+  var html='<h1>Lembretes</h1><div class="pdia">'+esc(hoje)+'</div><div class="psub">Sport Zone &middot; Vasco da Gama</div>';
+  var lista=DADOS.map(function(n){ var d={}; try{d=JSON.parse(n.texto||'{}');}catch(e){} return {autor:n.autor, d:d, ts:d.data||n.data}; }).sort(function(a,b){ return new Date(b.ts)-new Date(a.ts); });
+  if(!lista.length){ html+='<p>Ainda n\u00E3o h\u00E1 lembretes.</p>'; }
+  else{ lista.forEach(function(o){ var d=o.d||{}; html+='<div class="pnote"><div class="pt">'+esc(d.titulo||'(sem t\u00EDtulo)')+'</div>'+(d.descricao?'<div class="pd">'+esc(d.descricao)+'</div>':'')+(d.evento?'<div class="pe">Evento: '+esc(fmtData(d.evento))+'</div>':'')+'<div class="who">'+esc(fmtDataHora(o.ts))+(o.autor?' &middot; '+esc(o.autor):'')+'</div></div>'; }); }
+  document.getElementById('printArea').innerHTML=html;
+  window.print();
+}
+var _bp=document.getElementById('btnPrint'); if(_bp) _bp.addEventListener('click',imprimir);
 function abrirFoto(src){ document.getElementById('lbImg').src=src; document.getElementById('lightbox').style.display='flex'; }
 function carregar(){
   if(!BACKEND){ document.getElementById('lista').innerHTML='<div class="status">Sem liga\u00E7\u00E3o \u00E0 nuvem.</div>'; return; }
