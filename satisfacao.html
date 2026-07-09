@@ -108,6 +108,14 @@
   .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
   .tag{background:var(--accent-soft);color:var(--accent-ink);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;}
   .hidden{display:none !important;}
+  .plbl{font-size:12px;font-weight:800;color:var(--accent-ink);text-transform:uppercase;letter-spacing:.03em;display:block;margin-bottom:6px;}
+  .pinp{width:100%;box-sizing:border-box;border:1.5px solid var(--line);border-radius:10px;padding:10px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);}
+  .pinp:focus{outline:none;border-color:var(--accent);}
+  .pcat-nome{font-weight:800;}
+  .prow{display:flex;gap:8px;align-items:center;margin-top:8px;}
+  .prow .pq{flex:1;min-width:0;}
+  .pdel{flex:none;width:38px;height:38px;border:none;border-radius:9px;background:#fdeaea;color:var(--neg);font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;}
+  .padd{margin-top:10px;background:var(--accent-soft);color:var(--accent-ink);border:none;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;}
 </style>
 </head>
 <body>
@@ -131,6 +139,7 @@
 <div class="tabs">
   <button class="tab on" id="tabResp" type="button"><i data-lu="pen-line"></i> Responder</button>
   <button class="tab" id="tabRes" type="button"><i data-lu="bar-chart-3"></i> Resultados</button>
+  <button class="tab" id="tabPerg" type="button"><i data-lu="pen-line"></i> Perguntas</button>
 </div>
 
 <main>
@@ -146,6 +155,10 @@
   <div id="viewRes" class="hidden">
     <div id="resContent"><div class="status">A carregar resultados&#x2026;</div></div>
   </div>
+
+  <div id="viewPerg" class="hidden">
+    <div id="pergEditor"><div class="status">A carregar&#x2026;</div></div>
+  </div>
 </main>
 
 <script>
@@ -153,7 +166,7 @@
 const BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
 const SEC='_satisf';
 const ESCALA=[{v:1,t:'Discordo'},{v:2,t:'Neutro'},{v:3,t:'Concordo'}];
-const CATS=[
+let CATS=[
   {id:'1', nome:'Satisfa\u00E7\u00E3o Geral', qs:[
     'Estou satisfeito/a por trabalhar nesta loja.',
     'De forma geral, gosto do meu dia a dia de trabalho.',
@@ -179,15 +192,15 @@ const CATS=[
     'Tenho as ferramentas necess\u00E1rias para trabalhar bem.',
     'O volume de trabalho \u00E9 equilibrado.']}
 ];
-const FORM_Q='Recebi forma\u00E7\u00E3o suficiente para desempenhar as minhas fun\u00E7\u00F5es.';
-const ABERTAS=[
+let FORM_Q='Recebi forma\u00E7\u00E3o suficiente para desempenhar as minhas fun\u00E7\u00F5es.';
+let ABERTAS=[
   {id:'gosto', t:'O que mais gostas no teu trabalho?'},
   {id:'mudaria', t:'O que mudarias na loja?'},
   {id:'desmotiva', t:'O que te desmotiva?'},
   {id:'sugestoes', t:'Sugest\u00F5es de melhoria?'},
   {id:'social', t:'Algo a destacar na \u00E1rea social / conv\u00EDvio da equipa?'}
 ];
-const FINAL_Q='Recomendarias esta loja a um amigo para trabalhar?';
+let FINAL_Q='Recomendarias esta loja a um amigo para trabalhar?';
 const FINAL_OPTS=[{v:1,t:'N\u00E3o'},{v:2,t:'Talvez'},{v:3,t:'Sim'}];
 
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -402,21 +415,92 @@ function renderResultados(subs){
   box.innerHTML=h; icons();
 }
 
+/* ---------- perguntas editaveis (direcao) ---------- */
+var PQSEC='_satisfq';
+function aplicarDef(def){
+  try{
+    if(def && Array.isArray(def.cats) && def.cats.length){ CATS=def.cats.map(function(c){ return {id:String(c.id), nome:String(c.nome||''), qs:(c.qs||[]).map(String)}; }); }
+    if(def && typeof def.form_q==='string' && def.form_q) FORM_Q=def.form_q;
+    if(def && Array.isArray(def.abertas)) ABERTAS=def.abertas.map(function(a){ return {id:String(a.id), t:String(a.t||'')}; });
+    if(def && typeof def.final_q==='string' && def.final_q) FINAL_Q=def.final_q;
+  }catch(e){}
+}
+function carregarPerguntas(cb){
+  if(!BACKEND){ if(cb) cb(); return; }
+  fetch(BACKEND+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){
+    if(j&&j.ok&&Array.isArray(j.notas)){
+      var defs=j.notas.filter(function(n){return String(n.seccao)===PQSEC;}).sort(function(a,b){return new Date(b.data)-new Date(a.data);});
+      if(defs.length){ try{ aplicarDef(JSON.parse(defs[0].texto||'{}')); }catch(e){} }
+    }
+    if(cb) cb();
+  }).catch(function(){ if(cb) cb(); });
+}
+function prow(val, aid){ return '<div class="prow"'+(aid?(' data-aid="'+esc(aid)+'"'):'')+'><input class="pinp pq" value="'+esc(val)+'"><button type="button" class="pdel" title="Apagar">&#10005;</button></div>'; }
+function wireDel(row){ var d=row.querySelector('.pdel'); if(d) d.onclick=function(){ row.parentNode.removeChild(row); }; }
+function mostrarPergEditor(){
+  var box=document.getElementById('pergEditor');
+  if(sessionStorage.getItem('portalOK')!=='1'){ box.innerHTML='<div class="locked"><div class="big">&#128274;</div><p>Edicao de perguntas reservada a direcao.<br>Entra pelo portal.</p></div>'; return; }
+  var h='<p class="intro">Edita, apaga ou acrescenta perguntas. As alteracoes aplicam-se ao inquerito de todos.</p>';
+  CATS.forEach(function(cat){
+    h+='<div class="card pcat" data-cid="'+esc(cat.id)+'"><label class="plbl">Seccao '+esc(cat.id)+' &mdash; nome</label><input class="pinp pcat-nome" value="'+esc(cat.nome)+'"><div class="plbl" style="margin-top:10px;">Perguntas</div><div class="pqs">';
+    cat.qs.forEach(function(q){ h+=prow(q); });
+    h+='</div><button type="button" class="padd pqadd">+ Adicionar pergunta</button></div>';
+  });
+  h+='<div class="card pblock"><label class="plbl">Pergunta de formacao (seccao 6)</label><input class="pinp pform" value="'+esc(FORM_Q)+'"></div>';
+  h+='<div class="card pblock"><div class="plbl">Perguntas abertas (seccao 7)</div><div class="pabs">';
+  ABERTAS.forEach(function(a){ h+=prow(a.t, a.id); });
+  h+='</div><button type="button" class="padd pabadd">+ Adicionar pergunta aberta</button></div>';
+  h+='<div class="card pblock"><label class="plbl">Pergunta final (seccao 8)</label><input class="pinp pfinal" value="'+esc(FINAL_Q)+'"></div>';
+  h+='<button type="button" class="btn save" id="btnSavePerg"><i data-lu="check"></i> Guardar perguntas</button><div class="status" id="pergStatus"></div>';
+  box.innerHTML=h; icons();
+  box.querySelectorAll('.pqadd').forEach(function(b){ b.onclick=function(){ var qs=b.parentNode.querySelector('.pqs'); qs.insertAdjacentHTML('beforeend', prow('')); wireDel(qs.lastElementChild); qs.lastElementChild.querySelector('.pq').focus(); }; });
+  var pabadd=box.querySelector('.pabadd'); if(pabadd) pabadd.onclick=function(){ var abs=box.querySelector('.pabs'); abs.insertAdjacentHTML('beforeend', prow('','ab'+Date.now())); wireDel(abs.lastElementChild); abs.lastElementChild.querySelector('.pq').focus(); };
+  box.querySelectorAll('.prow').forEach(wireDel);
+  document.getElementById('btnSavePerg').onclick=guardarPerguntas;
+}
+function hashStr(s){ var h=0; for(var i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))|0; } return Math.abs(h); }
+function guardarPerguntas(){
+  var box=document.getElementById('pergEditor'), st=document.getElementById('pergStatus');
+  var cats=[];
+  box.querySelectorAll('.pcat').forEach(function(pc){
+    var id=pc.getAttribute('data-cid'), nome=pc.querySelector('.pcat-nome').value.trim();
+    var qs=[]; pc.querySelectorAll('.pqs .pq').forEach(function(inp){ var v=inp.value.trim(); if(v) qs.push(v); });
+    if(nome && qs.length) cats.push({id:id, nome:nome, qs:qs});
+  });
+  var abertas=[]; box.querySelectorAll('.pabs .prow').forEach(function(row){ var v=row.querySelector('.pq').value.trim(); if(v){ var aid=row.getAttribute('data-aid')||('ab'+hashStr(v)); abertas.push({id:aid, t:v}); } });
+  var def={cats:cats, form_q:box.querySelector('.pform').value.trim(), abertas:abertas, final_q:box.querySelector('.pfinal').value.trim()};
+  if(!cats.length){ st.textContent='Tem de haver pelo menos uma seccao com perguntas.'; return; }
+  if(!BACKEND){ st.textContent='Sem ligacao a nuvem.'; return; }
+  st.textContent='A guardar...'; var btn=document.getElementById('btnSavePerg'); btn.disabled=true;
+  var oldIds=[];
+  fetch(BACKEND+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){
+    if(j&&j.ok&&Array.isArray(j.notas)) j.notas.forEach(function(n){ if(String(n.seccao)===PQSEC) oldIds.push(n.id); });
+    return fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_add',seccao:PQSEC,autor:'direcao',texto:JSON.stringify(def)})}).then(function(r){return r.json();});
+  }).then(function(){
+    var chain=Promise.resolve();
+    oldIds.forEach(function(id){ chain=chain.then(function(){ return fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_del',id:id})}).catch(function(){}); }); });
+    return chain;
+  }).then(function(){ aplicarDef(def); buildSurvey(); st.textContent='Perguntas guardadas!'; btn.disabled=false; }).catch(function(){ st.textContent='Nao foi possivel guardar. Tenta de novo.'; btn.disabled=false; });
+}
+
 /* ---------- tabs ---------- */
 function showTab(which){
-  var resp=which==='resp';
+  var resp=which==='resp', res=which==='res', perg=which==='perg';
   document.getElementById('tabResp').classList.toggle('on',resp);
-  document.getElementById('tabRes').classList.toggle('on',!resp);
+  document.getElementById('tabRes').classList.toggle('on',res);
+  document.getElementById('tabPerg').classList.toggle('on',perg);
   document.getElementById('viewResp').classList.toggle('hidden',!resp);
-  document.getElementById('viewRes').classList.toggle('hidden',resp);
-  if(!resp) mostrarResultados();
+  document.getElementById('viewRes').classList.toggle('hidden',!res);
+  document.getElementById('viewPerg').classList.toggle('hidden',!perg);
+  if(res) mostrarResultados();
+  if(perg) mostrarPergEditor();
 }
 document.getElementById('tabResp').addEventListener('click',function(){ showTab('resp'); });
 document.getElementById('tabRes').addEventListener('click',function(){ showTab('res'); });
+document.getElementById('tabPerg').addEventListener('click',function(){ showTab('perg'); });
 document.getElementById('btnSubmit').addEventListener('click',submit);
 
-buildSurvey();
-icons();
+carregarPerguntas(function(){ buildSurvey(); icons(); });
 </script>
 </body>
 </html>
