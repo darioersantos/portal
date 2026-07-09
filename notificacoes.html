@@ -99,13 +99,15 @@
   .days button.on{background:var(--accent);border-color:var(--accent);color:#fff;}
   .quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
   .quick button{background:none;border:none;color:var(--accent-dark);font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;padding:2px 2px;text-decoration:underline;}
-  .field input[type="time"]{width:100%;max-width:100%;min-width:0;box-sizing:border-box;-webkit-appearance:none;appearance:none;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);}
+  .field input[type="time"]{display:block;width:100%;max-width:100%;min-width:0;min-height:50px;box-sizing:border-box;-webkit-appearance:none;appearance:none;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);}
   .field input[type="time"]:focus{outline:none;border-color:var(--accent);}
   .hint{font-size:12px;color:var(--muted);margin-top:6px;}
   .nt{border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:12px;background:#fff;}
   .nt.off{opacity:.6;}
   .nt .bar{display:flex;align-items:center;gap:10px;background:#1a1303;color:#fff;border-radius:12px;padding:12px 14px;}
-  .nt .bar .ic svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block;flex:none;}
+  .nt .bar .ic{flex:none;}
+  .nt .bar .ic svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block;flex:none;transform-origin:top center;animation:bellRing 3s ease-in-out infinite;}
+  @keyframes bellRing{0%,45%,100%{transform:rotate(0);}5%,15%,25%,35%{transform:rotate(13deg);}10%,20%,30%,40%{transform:rotate(-13deg);}}
   .nt .bar .txt{font-size:14px;font-weight:700;line-height:1.35;word-break:break-word;}
   .nt .cfg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:11px;}
   .nt .tag{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;border-radius:999px;padding:4px 10px;}
@@ -115,6 +117,7 @@
   .nt .tag.st.no{background:#f0eeeb;color:#8a8378;}
   .nt .acts{display:flex;gap:8px;margin-top:12px;}
   .nt .acts button{flex:1;border:none;border-radius:10px;padding:11px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;}
+  .nt .btn-edit{background:#eef1f4;color:#3a3a3a;}
   .nt .btn-toggle{background:var(--accent-soft);color:var(--accent-ink);}
   .nt .btn-del{background:#fdeaea;color:var(--neg);}
   #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#1a1303;color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:200;box-shadow:0 8px 28px rgba(0,0,0,.25);}
@@ -137,6 +140,7 @@
       <div class="hint">Se preencheres, a notifica&#xE7;&#xE3;o desaparece a partir dessa hora. Deixa vazio para aparecer o dia todo.</div>
     </div>
     <button class="save" id="btnSave"><i data-lu="plus"></i> Criar notifica&#xE7;&#xE3;o</button>
+    <button type="button" id="btnCancelEdit" style="display:none;width:100%;margin-top:8px;background:#f0eeeb;color:var(--muted);border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Cancelar edi&#xE7;&#xE3;o</button>
   </div>
 
   <div class="card">
@@ -156,6 +160,7 @@ var DIAS_LONG={0:'Domingo',1:'Segunda',2:'Ter\u00E7a',3:'Quarta',4:'Quinta',5:'S
 var BELL='<svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>';
 var NOTIFS=[];
 var sel=new Set();
+var editId=null;
 function byId(id){return document.getElementById(id);}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function toast(m){var t=byId('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2200);}
@@ -178,7 +183,8 @@ function render(){
     tags+='<span class="tag st'+(off?' no':'')+'">'+(off?'Inativa':'Ativa')+'</span>';
     card.innerHTML='<div class="bar"><span class="ic">'+BELL+'</span><span class="txt">'+esc(String(cfg.msg||''))+'</span></div>'
       +'<div class="cfg">'+tags+'</div>'
-      +'<div class="acts"><button class="btn-toggle">'+(off?'Ativar':'Desativar')+'</button><button class="btn-del">Apagar</button></div>';
+      +'<div class="acts"><button class="btn-edit">Editar</button><button class="btn-toggle">'+(off?'Ativar':'Desativar')+'</button><button class="btn-del">Apagar</button></div>';
+    card.querySelector('.btn-edit').onclick=function(){ editar(n,cfg); };
     card.querySelector('.btn-toggle').onclick=function(){ toggle(n,!off); };
     card.querySelector('.btn-del').onclick=function(){ if(confirm('Apagar esta notifica\u00E7\u00E3o?')) del(n); };
     l.appendChild(card);
@@ -191,18 +197,41 @@ function carregar(){
     else byId('lista').innerHTML='<div class="status">N\u00E3o foi poss\u00EDvel carregar.</div>';
   }).catch(function(){ byId('lista').innerHTML='<div class="status">Sem liga\u00E7\u00E3o. Tenta de novo.</div>'; });
 }
+var SVG_PLUS='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-4px;margin-right:6px"><path d="M12 5v14M5 12h14"/></svg>';
+var SVG_SAVE='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-4px;margin-right:6px"><path d="M20 6 9 17l-5-5"/></svg>';
+function setSaveMode(){
+  var b=byId('btnSave'), c=byId('btnCancelEdit');
+  if(editId){ b.innerHTML=SVG_SAVE+'Guardar altera\u00E7\u00F5es'; if(c) c.style.display=''; }
+  else{ b.innerHTML=SVG_PLUS+'Criar notifica\u00E7\u00E3o'; if(c) c.style.display='none'; }
+}
+function editar(n,cfg){
+  editId=n.id;
+  byId('msg').value=String(cfg.msg||'');
+  byId('ate').value=cfg.ate||'';
+  sel.clear(); (Array.isArray(cfg.dias)?cfg.dias:[]).forEach(function(d){ sel.add(+d); });
+  paintDays(); setSaveMode();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function cancelarEdicao(){ editId=null; byId('msg').value=''; byId('ate').value=''; sel.clear(); paintDays(); setSaveMode(); }
+var _bc=byId('btnCancelEdit'); if(_bc) _bc.onclick=cancelarEdicao;
 byId('btnSave').onclick=function(){
   if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
   var msg=byId('msg').value.trim();
   if(!msg){ alert('Escreve a mensagem da notifica\u00E7\u00E3o.'); return; }
   if(!sel.size){ alert('Escolhe pelo menos um dia.'); return; }
   var cfg={msg:msg, dias:Array.from(sel), ate:(byId('ate').value||'')};
+  var oldId=editId;
   var btn=this; btn.disabled=true;
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_add',seccao:SEC,autor:'',texto:JSON.stringify(cfg)})})
     .then(function(r){return r.json();}).then(function(j){
-      if(j&&j.ok){ byId('msg').value=''; byId('ate').value=''; sel.clear(); paintDays(); toast('Notifica\u00E7\u00E3o criada \u2713'); setTimeout(carregar,500); }
-      else throw new Error();
-    }).catch(function(){ alert('N\u00E3o foi poss\u00EDvel criar. Tenta de novo.'); })
+      if(!j||!j.ok) throw new Error();
+      if(oldId){ return fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_del',id:oldId})}).then(function(r){return r.json();}); }
+      return null;
+    }).then(function(){
+      byId('msg').value=''; byId('ate').value=''; sel.clear(); paintDays();
+      editId=null; setSaveMode();
+      toast(oldId?'Notifica\u00E7\u00E3o atualizada \u2713':'Notifica\u00E7\u00E3o criada \u2713'); setTimeout(carregar,500);
+    }).catch(function(){ alert('N\u00E3o foi poss\u00EDvel guardar. Tenta de novo.'); })
     .then(function(){ btn.disabled=false; });
 };
 function toggle(n,off){
