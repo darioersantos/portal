@@ -4,7 +4,7 @@
 window.BACKEND_URL = "https://script.google.com/macros/s/AKfycbxGaFY8bv7lJcI2WbgoTqs_1mp9R85jw-CRkY-tTzsEPR_igqY-LMVtKSJ1hnsuiPlm/exec";
 
 /* Emails da equipa convidados no Google Calendario (separados por virgula). Ex: "a@x.pt,b@x.pt". Vazio = sem convidados. */
-window.CAL_EMAILS = "";
+window.CAL_EMAILS = "manager9yc@iberiansports.com,store9yc@iberiansports.com";
 
 /* -----------------------------------------------------------------------------
    Alivio de carga do servidor (evita o erro "Demasiadas invocacoes em simultaneo").
