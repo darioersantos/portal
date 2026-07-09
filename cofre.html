@@ -207,6 +207,16 @@
     input{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
     .grandtotal,.diff,.subtotal{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   }
+  .cfm-ov{position:fixed;inset:0;z-index:9999;background:rgba(26,19,3,.55);display:none;align-items:center;justify-content:center;padding:20px;}
+  .cfm-ov.open{display:flex;}
+  .cfm-box{background:var(--card);border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.35);padding:22px 20px;width:100%;max-width:380px;text-align:center;}
+  .cfm-ic{font-size:40px;line-height:1;margin-bottom:6px;}
+  .cfm-title{font-size:19px;font-weight:800;color:var(--ink);margin:0 0 6px;}
+  .cfm-msg{font-size:14px;color:var(--muted);line-height:1.45;margin:0 0 18px;}
+  .cfm-acts{display:flex;gap:10px;}
+  .cfm-acts button{flex:1;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;}
+  .cfm-cancel{background:#f4efe9;color:var(--ink);}
+  .cfm-ok{background:var(--neg);color:#fff;}
 </style>
 </head>
 <body>
@@ -600,9 +610,19 @@ document.getElementById('btnPrint').addEventListener('click',()=>{
   setTimeout(()=>{ window.print(); setTimeout(()=>{ hidden.forEach(e=>e.classList.remove('phide')); if(!wasOpen) cofre.open=false; },500); },120);
 });
 
+function pedirConfirm(titulo, msg, onYes){
+  var ov=document.getElementById('cfmOv');
+  document.getElementById('cfmTitle').textContent=titulo;
+  document.getElementById('cfmMsg').textContent=msg;
+  function fecha(){ ov.classList.remove('open'); }
+  document.getElementById('cfmNo').onclick=fecha;
+  document.getElementById('cfmYes').onclick=function(){ fecha(); if(onYes) onYes(); };
+  ov.onclick=function(e){ if(e.target===ov) fecha(); };
+  ov.classList.add('open');
+}
 /* Limpar S\u00D3 o cofre (manh\u00E3+noite) e o banco. As caixas n\u00E3o s\u00E3o afetadas. */
 document.getElementById('btnClearCofre').addEventListener('click',()=>{
-  if(confirm('Limpar a contagem do COFRE e do banco?\n(As caixas n\u00E3o s\u00E3o afetadas.)')){
+  pedirConfirm('Limpar contagem do cofre?','Isto apaga a contagem do cofre e do banco. As caixas n\u00E3o s\u00E3o afetadas.',function(){
     state.cofreManha=freshCofre();
     state.cofreNoite=freshCofre();
     state.banco={notas:{}, moedas:{}};
@@ -610,14 +630,14 @@ document.getElementById('btnClearCofre').addEventListener('click',()=>{
     linkCofre();
     document.querySelectorAll('#periodoSeg button').forEach(b=>b.classList.toggle('active', b.dataset.p==='manha'));
     renderCofre(); renderBanco(); save();
-  }
+  });
 });
 /* Limpar S\u00D3 as caixas. O cofre n\u00E3o \u00E9 afetado. */
 document.getElementById('btnClearCaixas').addEventListener('click',()=>{
-  if(confirm('Limpar a contagem das CAIXAS?\n(O cofre n\u00E3o \u00E9 afetado.)')){
+  pedirConfirm('Limpar contagem das caixas?','Isto apaga todas as contagens das caixas. O cofre n\u00E3o \u00E9 afetado.',function(){
     state.caixas=freshCaixas();
     renderCaixas(); calcCaixas(); save();
-  }
+  });
 });
 
 /* ---------- Init ---------- */
@@ -661,5 +681,16 @@ document.addEventListener('input',function(){ if(loading) userEditedDuringLoad=t
 initAll();
 pullCloud();
 </script>
+<div class="cfm-ov" id="cfmOv">
+  <div class="cfm-box">
+    <div class="cfm-ic">&#x1F5D1;&#xFE0F;</div>
+    <div class="cfm-title" id="cfmTitle">Apagar?</div>
+    <div class="cfm-msg" id="cfmMsg"></div>
+    <div class="cfm-acts">
+      <button type="button" class="cfm-cancel" id="cfmNo">Cancelar</button>
+      <button type="button" class="cfm-ok" id="cfmYes">Apagar contagens</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
