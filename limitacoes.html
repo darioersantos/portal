@@ -63,6 +63,23 @@
   .aniv .del{background:none;border:none;color:var(--neg);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
   .mes{font-size:12px;font-weight:800;color:var(--accent-ink);text-transform:uppercase;letter-spacing:.04em;margin:14px 2px 2px;}
   .status{text-align:center;color:var(--muted);font-size:13px;padding:16px;}
+  .fieldhelp{font-size:12px;color:var(--muted);margin:0 0 8px;line-height:1.4;}
+  .tfield{margin-bottom:0;}
+  .tfield label{display:flex;align-items:center;gap:5px;}
+  .field input[type=time]{width:100%;max-width:100%;min-width:0;min-height:50px;box-sizing:border-box;-webkit-appearance:none;-moz-appearance:none;appearance:none;display:block;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);}
+  .field input[type=time]:focus{outline:none;border-color:var(--accent);}
+  #printArea{display:none;}
+  @media print{
+    header,main,#toast{display:none !important;}
+    #printArea{display:block !important;color:#000;font-size:12.5px;padding:0;}
+    #printArea h1{font-size:19px;margin:0 0 2px;color:#000;}
+    #printArea .psub{font-size:12px;color:#333;margin:0 0 14px;}
+    #printArea table{width:100%;border-collapse:collapse;}
+    #printArea th,#printArea td{border:1px solid #bbb;padding:6px 8px;text-align:left;vertical-align:top;font-size:12px;}
+    #printArea th{background:#f0eeeb;font-weight:800;}
+    #printArea .pnome{font-weight:800;white-space:nowrap;}
+    @page{margin:14mm;}
+  }
 </style>
 </head>
 <body>
@@ -86,6 +103,14 @@
     <div class="field"><label for="nome">Colaborador</label><select id="nome" data-staff data-ph="Seleciona o teu nome"></select></div>
     <div class="field"><label>Dias em que N&#xC3;O posso trabalhar</label><div class="chips" id="diasChips"></div></div>
     <div class="field"><label>Turnos em que N&#xC3;O posso trabalhar</label><div class="chips" id="turnosChips"></div></div>
+    <div class="field">
+      <label><i data-lu="clock"></i> Restri&#xE7;&#xE3;o de horas (opcional)</label>
+      <p class="fieldhelp">Ex.: "s&#xF3; posso trabalhar at&#xE9; &#xE0;s 17:00" ou "s&#xF3; a partir das 10:00". Toca para escolher a hora no rel&#xF3;gio.</p>
+      <div class="row2">
+        <div class="field tfield"><label for="hDesde"><i data-lu="sunrise" data-sz="14"></i> S&#xF3; posso a partir das</label><input type="time" id="hDesde"></div>
+        <div class="field tfield"><label for="hAte"><i data-lu="sunset" data-sz="14"></i> S&#xF3; posso trabalhar at&#xE9; &#xE0;s</label><input type="time" id="hAte"></div>
+      </div>
+    </div>
     <div class="field"><label for="obs">Observa&#xE7;&#xF5;es (opcional)</label><textarea id="obs" placeholder="Ex: motivo, hor&#xE1;rio espec&#xED;fico, etc."></textarea></div>
     <button class="save" id="btnSave">Guardar limita&#xE7;&#xE3;o</button>
   </div>
@@ -98,9 +123,12 @@
   <div class="card" id="cardLista">
     <h2 style="margin:0 0 10px;">Limita&#xE7;&#xF5;es de hor&#xE1;rio</h2>
     <button class="chips" id="btnExport" type="button" style="display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent-ink);border:none;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:8px;"><i data-lu="download" data-sz="14"></i> Exportar (Excel/Sheets)</button>
+    <button class="chips" id="btnPrint" type="button" style="display:inline-flex;align-items:center;gap:6px;background:#1a1303;color:#fff;border:none;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:8px;margin-left:8px;"><i data-lu="printer" data-sz="14"></i> Imprimir hist&#xF3;rico</button>
     <div id="lista"><div class="status">A carregar&#x2026;</div></div>
   </div>
 </main>
+
+<div id="printArea"></div>
 
 <script>
 "use strict";
@@ -119,8 +147,8 @@ function buildChips(boxId,arr,store){
     box.appendChild(b); });
 }
 buildChips('diasChips',DIAS,selDias); buildChips('turnosChips',TURNOS,selTurnos);
-function resetForm(){ selDias={}; selTurnos={}; document.getElementById('diasChips').innerHTML=''; document.getElementById('turnosChips').innerHTML=''; buildChips('diasChips',DIAS,selDias); buildChips('turnosChips',TURNOS,selTurnos); document.getElementById('obs').value=''; var n=document.getElementById('nome'); if(n) n.value=''; }
-function descr(d){ var p=[]; if(d.dias&&d.dias.length) p.push('Dias: '+d.dias.join(', ')); if(d.turnos&&d.turnos.length) p.push('Turnos: '+d.turnos.join(', ')); if(d.obs) p.push(esc(d.obs)); return p.length?p.join(' \u00b7 '):'\u2014'; }
+function resetForm(){ selDias={}; selTurnos={}; document.getElementById('diasChips').innerHTML=''; document.getElementById('turnosChips').innerHTML=''; buildChips('diasChips',DIAS,selDias); buildChips('turnosChips',TURNOS,selTurnos); document.getElementById('obs').value=''; var n=document.getElementById('nome'); if(n) n.value=''; var hd=document.getElementById('hDesde'); if(hd) hd.value=''; var ha=document.getElementById('hAte'); if(ha) ha.value=''; }
+function descr(d){ var p=[]; if(d.dias&&d.dias.length) p.push('Dias: '+d.dias.join(', ')); if(d.turnos&&d.turnos.length) p.push('Turnos: '+d.turnos.join(', ')); if(d.desde) p.push('S\u00f3 a partir das '+esc(d.desde)); if(d.ate) p.push('S\u00f3 at\u00e9 \u00e0s '+esc(d.ate)); if(d.obs) p.push(esc(d.obs)); return p.length?p.join(' \u00b7 '):'\u2014'; }
 function render(){
   const l=document.getElementById('lista'); l.innerHTML='';
   if(!DADOS.length){ l.innerHTML='<div class="status">Ainda n\u00e3o h\u00e1 limita\u00e7\u00f5es registadas.</div>'; return; }
@@ -142,13 +170,15 @@ function carregar(){
 document.getElementById('btnSave').addEventListener('click',function(){
   const nome=document.getElementById('nome').value.trim();
   const obs=document.getElementById('obs').value.trim();
+  const desde=(document.getElementById('hDesde')||{}).value||'';
+  const ate=(document.getElementById('hAte')||{}).value||'';
   const dias=Object.keys(selDias), turnos=Object.keys(selTurnos);
   if(!nome){ alert('Seleciona o teu nome.'); return; }
-  if(!dias.length && !turnos.length && !obs){ alert('Indica pelo menos uma limita\u00e7\u00e3o (dia, turno ou observa\u00e7\u00e3o).'); return; }
+  if(!dias.length && !turnos.length && !desde && !ate && !obs){ alert('Indica pelo menos uma limita\u00e7\u00e3o (dia, turno, hora ou observa\u00e7\u00e3o).'); return; }
   if(!BACKEND){ alert('Sem liga\u00e7\u00e3o \u00e0 nuvem.'); return; }
   const btn=this; btn.disabled=true; btn.textContent='A guardar\u2026';
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body:JSON.stringify({action:'nota_add', seccao:SEC, autor:nome, texto:JSON.stringify({dias:dias,turnos:turnos,obs:obs})})})
+    body:JSON.stringify({action:'nota_add', seccao:SEC, autor:nome, texto:JSON.stringify({dias:dias,turnos:turnos,desde:desde,ate:ate,obs:obs})})})
     .then(r=>r.json()).then(function(j){
       if(j&&j.ok){ resetForm(); if(MANAGER){ carregar(); } else { document.getElementById('cardForm').style.display='none'; document.getElementById('cardThanks').style.display='block'; window.scrollTo(0,0); } }
       else throw new Error('erro');
@@ -165,15 +195,35 @@ function apagar(id){
 function csvCel(v){ v=(v==null?'':String(v)); if(/[";\n]/.test(v)){ v='"'+v.replace(/"/g,'""')+'"'; } return v; }
 function exportarCsv(){
   if(!DADOS.length){ alert('Ainda n\u00e3o h\u00e1 limita\u00e7\u00f5es para exportar.'); return; }
-  var linhas=[['Colaborador','Dias','Turnos','Observa\u00e7\u00f5es'].map(csvCel).join(';')];
+  var linhas=[['Colaborador','Dias','Turnos','S\u00f3 a partir das','S\u00f3 at\u00e9 \u00e0s','Observa\u00e7\u00f5es'].map(csvCel).join(';')];
   DADOS.slice().sort(function(a,b){ return String(a.autor||'').localeCompare(String(b.autor||'')); }).forEach(function(n){
     var d={}; try{ d=JSON.parse(n.texto||'{}'); }catch(e){}
-    linhas.push([n.autor||'', (d.dias||[]).join(', '), (d.turnos||[]).join(', '), d.obs||''].map(csvCel).join(';'));
+    linhas.push([n.autor||'', (d.dias||[]).join(', '), (d.turnos||[]).join(', '), d.desde||'', d.ate||'', d.obs||''].map(csvCel).join(';'));
   });
   var blob=new Blob([String.fromCharCode(0xFEFF)+linhas.join('\r\n')],{type:'text/csv;charset=utf-8;'});
   var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='limitacoes_horario.csv'; document.body.appendChild(a); a.click(); a.remove();
 }
 var _be=document.getElementById('btnExport'); if(_be) _be.addEventListener('click',exportarCsv);
+function imprimir(){
+  if(!DADOS.length){ alert('Ainda n\u00E3o h\u00E1 limita\u00E7\u00F5es para imprimir.'); return; }
+  var hoje=new Date();
+  var dd=('0'+hoje.getDate()).slice(-2), mm=('0'+(hoje.getMonth()+1)).slice(-2), yy=hoje.getFullYear();
+  var rows=DADOS.slice().sort(function(a,b){ return String(a.autor||'').localeCompare(String(b.autor||'')); }).map(function(n){
+    var d={}; try{ d=JSON.parse(n.texto||'{}'); }catch(e){}
+    var horas=[]; if(d.desde) horas.push('A partir das '+esc(d.desde)); if(d.ate) horas.push('At\u00E9 \u00E0s '+esc(d.ate));
+    return '<tr><td class="pnome">'+esc(n.autor||'\u2014')+'</td>'
+      +'<td>'+esc((d.dias||[]).join(', ')||'\u2014')+'</td>'
+      +'<td>'+esc((d.turnos||[]).join(', ')||'\u2014')+'</td>'
+      +'<td>'+(horas.length?horas.join('<br>'):'\u2014')+'</td>'
+      +'<td>'+esc(d.obs||'')+'</td></tr>';
+  }).join('');
+  document.getElementById('printArea').innerHTML=
+    '<h1>Limita\u00E7\u00F5es de Hor\u00E1rio \u2014 Sport Zone Vasco da Gama</h1>'
+    +'<p class="psub">'+DADOS.length+' registo(s) \u00B7 Impresso em '+dd+'/'+mm+'/'+yy+'</p>'
+    +'<table><thead><tr><th>Colaborador</th><th>Dias</th><th>Turnos</th><th>Restri\u00E7\u00E3o de horas</th><th>Observa\u00E7\u00F5es</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  window.print();
+}
+var _bp=document.getElementById('btnPrint'); if(_bp) _bp.addEventListener('click',imprimir);
 
 if(MANAGER){ carregar(); }
 else{ document.getElementById('cardLista').style.display='none'; var _hb=document.getElementById('homeBtn'); if(_hb) _hb.style.display='none'; document.getElementById('formTitle').textContent='Regista a tua limita\u00e7\u00e3o de hor\u00e1rio'; }
