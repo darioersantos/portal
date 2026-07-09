@@ -28,6 +28,9 @@ window.PORTAL_LINKS = {
   garrafas:          "garrafas.html",
   superliga_registo: "superliga_registo.html",
   avaliacoes_google: "avaliacoes_google.html",
+  wp_loja:           "wp_loja.html",
+  wp_direcao:        "wp_direcao.html",
+  wp_pc:             "wp_pc.html",
   notificacoes:      "notificacoes.html",
 
   /* ---- Formularios ---- */
