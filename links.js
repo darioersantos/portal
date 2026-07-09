@@ -27,6 +27,7 @@ window.PORTAL_LINKS = {
   folha_elogio:      "folha_elogio.html",
   garrafas:          "garrafas.html",
   superliga_registo: "superliga_registo.html",
+  avaliacoes_google: "avaliacoes_google.html",
   notificacoes:      "notificacoes.html",
 
   /* ---- Formularios ---- */
