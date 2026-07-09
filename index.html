@@ -88,6 +88,7 @@
   #thuBanner .thurem .txt b{font-weight:800;color:#ffb45e;}
   .tile .soon-tag{position:absolute;top:7px;right:7px;background:#efe9e0;color:#9a8f7d;font-size:8.5px;font-weight:800;padding:2px 6px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em;}
   .tile.app{background:linear-gradient(135deg,#FF8100,#E66200);color:#fff;border:none;box-shadow:0 4px 16px rgba(230,98,0,.3);}
+  .tile.app.dark{background:linear-gradient(135deg,#2b2b2b,#111);box-shadow:0 4px 16px rgba(0,0,0,.4);}
   .tile.app .nm{color:#fff;}
   .tile-badge{position:absolute;top:-7px;right:-7px;min-width:24px;height:24px;padding:0 6px;background:#e11d2b;color:#fff;border-radius:999px;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.3);border:2px solid #fff;transform-origin:center;}
 
@@ -185,8 +186,8 @@ const SECTIONS = [
     {k:'notas',      ic:'square-pen',      nm:'Notas'},
     {k:'mural',      ic:'message-circle',  nm:'Lembretes'},
     {k:'contagem',   ic:'calculator',      nm:'Contagem de Dinheiro'},
-    {k:'superliga',  ic:'trophy',          nm:'Super Liga'},
-    {k:'notificacoes', ic:'bell',        nm:'Notifica\u00E7\u00F5es'}
+    {k:'notificacoes', ic:'bell',        nm:'Notifica\u00E7\u00F5es'},
+    {k:'superliga',  ic:'trophy',          nm:'Super Liga', dark:true}
   ]},
   { t:'Outros', items:[
     {k:'consumiveis',  ic:'shopping-bag',    nm:'Encomendas'},
@@ -219,7 +220,7 @@ const SECTIONS = [
     {k:'ferias',             ic:'umbrella',      nm:'Pedido de F\u00E9rias'},
     {k:'folgas',             ic:'calendar-clock',nm:'Pedido de Trocas e Folgas'}
   ]},
-  { t:'Imprim\u00EDveis', acc:true, items:[
+  { t:'Imprim\u00EDveis', items:[
     {k:'sinaletica',      ic:'signpost',       nm:'Sinal\u00E9tica'},
     {k:'alarmes',         ic:'siren',          nm:'Alarmes'},
     {k:'entradas_saidas', ic:'user',           nm:'Registo de Funcion\u00E1rio'},
@@ -267,6 +268,7 @@ function render(){
       }
       tile.dataset.key=it.k;
       tile.dataset.name=it.nm;
+      if(it.dark) tile.classList.add('dark');
       tile.style.animationDelay=(_tileIdx*40)+'ms'; _tileIdx++;
       const ic=document.createElement('div'); ic.className='ic'; ic.innerHTML=svgIcon(it.ic); tile.appendChild(ic);
       const nm=document.createElement('div'); nm.className='nm'; nm.textContent=it.nm; tile.appendChild(nm);
