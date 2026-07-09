@@ -88,6 +88,11 @@
   details[open] summary .chev{transform:rotate(180deg);}
   summary .badge{margin-left:auto;background:var(--accent-soft);color:var(--accent-ink);padding:3px 10px;border-radius:999px;font-size:13px;font-weight:800;}
   .card-body{padding:0 16px 16px;}
+  /* Cofre e Banco sempre abertos, em cartao (nao acordeao) */
+  details.open-card{margin:14px 0;}
+  details.open-card > summary{pointer-events:none;cursor:default;font-size:16.5px;padding:16px 16px 13px;border-bottom:1px solid var(--line);margin-bottom:6px;}
+  details.open-card > summary .chev{display:none;}
+  details.open-card > summary .badge{font-size:14px;padding:4px 12px;}
   .sub{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin:16px 0 8px;}
   .sub:first-child{margin-top:4px;}
 
@@ -253,7 +258,7 @@
   <!-- ===================== CONTAGEM ===================== -->
   <div class="tabview active" id="view-contagem">
 
-    <details class="card" id="card-cofre">
+    <details class="card open-card" id="card-cofre" open>
       <summary><i data-lu="lock"></i> Contagem de Cofre <span class="badge" id="badge-cofre">0 &#x20AC;</span><span class="chev">&#x25BC;</span></summary>
       <div class="card-body">
         <button type="button" class="clearbtn" id="btnClearCofre"><i data-lu="trash-2"></i> Limpar contagem do cofre</button>
@@ -306,7 +311,7 @@
       </div>
     </details>
 
-    <details class="card">
+    <details class="card open-card" open>
       <summary><i data-lu="landmark"></i> Ingresso ao Banco <span class="badge" id="badge-banco">0 &#x20AC;</span><span class="chev">&#x25BC;</span></summary>
       <div class="card-body">
         <div class="sub">Notas</div>
