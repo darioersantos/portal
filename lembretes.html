@@ -162,6 +162,15 @@
   .modal-x{background:#f4efe9;border:none;color:var(--muted);border-radius:10px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;}
   .modal-x i{width:18px;height:18px;}
   .modal-card .add{border:none;box-shadow:none;padding:0;margin:0;background:transparent;}
+  .cal-row{margin-top:10px;}
+  .cal-chk{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--accent-dark);cursor:pointer;}
+  .cal-chk input{width:18px;height:18px;flex:none;accent-color:var(--accent);}
+  .cal-fields{display:flex;gap:8px;margin-top:8px;}
+  .cal-fields input{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:10px;padding:9px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);}
+  .edit-box .ed-cal{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--accent-dark);margin-top:8px;cursor:pointer;}
+  .edit-box .ed-cal input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);}
+  .edit-box .ed-cal-fields{display:flex;gap:8px;margin-top:7px;}
+  .edit-box .ed-cal-fields input{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:10px;padding:8px;font-size:14px;font-family:inherit;background:#fff;}
 </style>
 </head>
 <body>
@@ -207,6 +216,7 @@
         <button id="btnAdd">&#xFF0B; Adicionar</button>
       </div>
       <div class="sch-row"><span class="sch-lbl"><i data-lu="calendar-clock" data-sz="15"></i> Agendar (opcional):</span><div class="sch-days" id="schDays"></div></div>
+      <div class="cal-row"><label class="cal-chk"><input type="checkbox" id="calChk"> <span>&#x1F5D3;&#xFE0F; Adicionar ao Google Calend&#xE1;rio</span></label><div class="cal-fields" id="calFields" style="display:none"><input type="date" id="calData"><input type="time" id="calHora" value="09:00"></div></div>
       <input type="file" id="fileCamara" accept="image/*" capture="environment" style="display:none">
       <input type="file" id="fileGaleria" accept="image/*" style="display:none">
       <div id="fotoPrev"></div>
@@ -325,6 +335,8 @@ function makeCard(n){
           '<select class="ed-autor" data-staff data-ph="Para quem (opcional)"></select>'+
           '<label class="ed-prio"><input type="checkbox" class="ed-prio-cb"> Tarefa priorit\u00E1ria</label>'+
           '<label class="ed-imp"><input type="checkbox" class="ed-imp-cb"> Tarefa importante</label>'+
+          '<label class="ed-cal"><input type="checkbox" class="ed-cal-cb"> \uD83D\uDDD3\uFE0F Adicionar ao Google Calend\u00E1rio</label>'+
+          '<div class="ed-cal-fields" style="display:none"><input type="date" class="ed-cal-data"><input type="time" class="ed-cal-hora" value="09:00"></div>'+
           '<div class="edit-row"><button class="ed-save" type="button">Guardar</button><button class="ed-cancel" type="button">Cancelar</button></div>'+
         '</div>';
       if(img){ const th=c.querySelector('.thumb'); th.src=img; th.onclick=function(){ abrirFoto(img); }; }
@@ -336,10 +348,12 @@ function makeCard(n){
       c.querySelector('.editar').onclick=function(){
         const open=ebox.style.display==='none';
         ebox.style.display=open?'block':'none';
-        if(open){ const et=ebox.querySelector('.ed-txt'); et.value=txt; const ea=ebox.querySelector('.ed-autor'); if(ea) ea.value=n.autor||''; ebox.querySelector('.ed-prio-cb').checked=prio; ebox.querySelector('.ed-imp-cb').checked=imp; et.focus(); }
+        if(open){ const et=ebox.querySelector('.ed-txt'); et.value=txt; const ea=ebox.querySelector('.ed-autor'); if(ea) ea.value=n.autor||''; ebox.querySelector('.ed-prio-cb').checked=prio; ebox.querySelector('.ed-imp-cb').checked=imp; ebox.querySelector('.ed-cal-cb').checked=false; ebox.querySelector('.ed-cal-fields').style.display='none'; et.focus(); }
       };
       ebox.querySelector('.ed-cancel').onclick=function(){ ebox.style.display='none'; };
-      ebox.querySelector('.ed-save').onclick=function(){ const ea=ebox.querySelector('.ed-autor'); salvarEdicao(n, ebox.querySelector('.ed-txt').value, ea?ea.value:'', this, ebox.querySelector('.ed-prio-cb').checked, ebox.querySelector('.ed-imp-cb').checked); };
+      var ecc=ebox.querySelector('.ed-cal-cb'), ecf=ebox.querySelector('.ed-cal-fields'), ecd=ebox.querySelector('.ed-cal-data');
+      ecc.addEventListener('change',function(){ if(ecc.checked){ if(ecd&&!ecd.value) ecd.value=hojeISO(); ecf.style.display='flex'; } else { ecf.style.display='none'; } });
+      ebox.querySelector('.ed-save').onclick=function(){ const ea=ebox.querySelector('.ed-autor'); if(ecc.checked){ if(!ecd.value){ alert('Escolhe a data para o Google Calend\u00E1rio.'); return; } abrirCalendario(ebox.querySelector('.ed-txt').value||'Tarefa','', ecd.value, ebox.querySelector('.ed-cal-hora').value); } salvarEdicao(n, ebox.querySelector('.ed-txt').value, ea?ea.value:'', this, ebox.querySelector('.ed-prio-cb').checked, ebox.querySelector('.ed-imp-cb').checked); };
       c.querySelector('.cb-send').onclick=function(){ enviarComentario(n.id, c.querySelector('.cb-txt').value, c.querySelector('.cb-nome').value, this); };
       c.querySelectorAll('.com-del').forEach(function(b){ b.onclick=function(){ apagarComentario(b.dataset.id); }; });
       return c;
@@ -435,6 +449,19 @@ function imprimir(){
   window.print();
 }
 
+function calEmails(){ return (typeof window!=='undefined'&&window.CAL_EMAILS?String(window.CAL_EMAILS).trim():''); }
+function hojeISO(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+function abrirCalendario(titulo, descricao, dataISO, horaHHMM){
+  if(!dataISO) return;
+  var ymd=String(dataISO).replace(/-/g,'');
+  var start, end, hm=String(horaHHMM||'').match(/^(\d{1,2}):(\d{2})/);
+  if(hm){ var h=('0'+hm[1]).slice(-2); start=ymd+'T'+h+hm[2]+'00'; var eh=('0'+Math.min(23,(+hm[1])+1)).slice(-2); end=ymd+'T'+eh+hm[2]+'00'; }
+  else { var pr=String(dataISO).split('-'); var nd=new Date(+pr[0],+pr[1]-1,+pr[2]+1); start=ymd; end=nd.getFullYear()+('0'+(nd.getMonth()+1)).slice(-2)+('0'+nd.getDate()).slice(-2); }
+  var em=calEmails();
+  var url='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(titulo||'Tarefa')+'&dates='+start+'/'+end+(descricao?('&details='+encodeURIComponent(descricao)):'')+(em?('&add='+encodeURIComponent(em)):'');
+  window.open(url,'_blank');
+}
+(function(){ var cc=document.getElementById('calChk'); if(cc){ cc.addEventListener('change',function(){ var f=document.getElementById('calFields'), dd=document.getElementById('calData'); if(cc.checked){ if(dd&&!dd.value) dd.value=hojeISO(); f.style.display='flex'; } else { f.style.display='none'; } }); } })();
 document.getElementById('btnAdd').addEventListener('click',function(){
   const texto=document.getElementById('texto').value.trim();
   const autor=document.getElementById('autor').value.trim();
@@ -442,12 +469,14 @@ document.getElementById('btnAdd').addEventListener('click',function(){
   const seccao=document.getElementById('seccao').value;
   if(!texto && !pendingFoto){ alert('Escreve a tarefa ou anexa uma foto.'); return; }
   if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
+  var _calOn=document.getElementById('calChk').checked, _calData=document.getElementById('calData').value;
+  if(_calOn){ if(!_calData){ alert('Escolhe a data para o Google Calend\u00E1rio.'); return; } abrirCalendario(texto||'Tarefa', criadoPor?('Criada por '+criadoPor):'', _calData, document.getElementById('calHora').value); }
   const textoFinal = (criadoPor ? '[[BY:'+criadoPor+']]' : '') + schMark() + (prioSel ? PRIOMARK : '') + (impSel ? IMPMARK : '') + texto + (pendingFoto ? IMGSEP+pendingFoto : '');
   const btn=this; btn.disabled=true; btn.textContent='A guardar\u2026';
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify({action:'nota_add', seccao:seccao, autor:autor, texto:textoFinal})})
     .then(r=>r.json()).then(function(j){
-      if(j&&j.ok){ document.getElementById('texto').value=''; pendingFoto=''; setPrio(false); setImp(false); schSel=[]; buildSchDays(); mostrarPrev(); carregar(); closeModal(); }
+      if(j&&j.ok){ document.getElementById('texto').value=''; pendingFoto=''; setPrio(false); setImp(false); schSel=[]; buildSchDays(); mostrarPrev(); document.getElementById('calChk').checked=false; document.getElementById('calFields').style.display='none'; carregar(); closeModal(); }
       else throw new Error('erro');
     })
     .catch(function(){ alert('N\u00E3o foi poss\u00EDvel guardar. Tenta de novo.'); })
