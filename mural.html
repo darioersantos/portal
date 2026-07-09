@@ -126,6 +126,11 @@
     .card{box-shadow:none;border:none;padding:0;}
     .aviso{page-break-inside:avoid;}
   }
+  .cal-field .cal-chk{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--accent-dark);cursor:pointer;}
+  .cal-field .cal-chk input{width:18px;height:18px;flex:none;accent-color:var(--accent);}
+  .cal-fields{display:flex;align-items:center;gap:10px;margin-top:8px;}
+  .cal-fields input[type=time]{border:1.5px solid var(--line);border-radius:10px;padding:9px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);}
+  .cal-note{font-size:12px;color:var(--muted);}
 </style>
 </head>
 <body>
@@ -171,6 +176,7 @@
       <div id="mediaPrev" class="mediaprev"></div>
     </div>
     <div class="field"><label for="evento">Data do evento (opcional)</label><input type="date" id="evento"></div>
+    <div class="field cal-field"><label class="cal-chk"><input type="checkbox" id="calChk"> &#x1F5D3;&#xFE0F; Adicionar ao Google Calend&#xE1;rio da equipa</label><div class="cal-fields" id="calFields" style="display:none"><input type="time" id="calHora" value="09:00"><span class="cal-note">Usa a &ldquo;Data do evento&rdquo; acima</span></div></div>
     <div class="field"><label for="autor">Autor</label><select id="autor" data-staff data-area="sup" data-ph="Quem regista"></select></div>
     <button class="save" id="btnSave">Publicar lembrete</button>
   </div>
@@ -269,6 +275,18 @@ document.getElementById('fileGaleria').addEventListener('change',onFoto);
 })();
 
 /* ---- guardar / editar / apagar ---- */
+function calEmails(){ return (typeof window!=='undefined'&&window.CAL_EMAILS?String(window.CAL_EMAILS).trim():''); }
+function abrirCalendario(titulo, descricao, dataISO, horaHHMM){
+  if(!dataISO) return;
+  var ymd=String(dataISO).replace(/-/g,'');
+  var start, end, hm=String(horaHHMM||'').match(/^(\d{1,2}):(\d{2})/);
+  if(hm){ var h=('0'+hm[1]).slice(-2); start=ymd+'T'+h+hm[2]+'00'; var eh=('0'+Math.min(23,(+hm[1])+1)).slice(-2); end=ymd+'T'+eh+hm[2]+'00'; }
+  else { var pr=String(dataISO).split('-'); var nd=new Date(+pr[0],+pr[1]-1,+pr[2]+1); start=ymd; end=nd.getFullYear()+('0'+(nd.getMonth()+1)).slice(-2)+('0'+nd.getDate()).slice(-2); }
+  var em=calEmails();
+  var url='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(titulo||'Lembrete')+'&dates='+start+'/'+end+(descricao?('&details='+encodeURIComponent(descricao)):'')+(em?('&add='+encodeURIComponent(em)):'');
+  window.open(url,'_blank');
+}
+(function(){ var cc=document.getElementById('calChk'); if(cc){ cc.addEventListener('change',function(){ document.getElementById('calFields').style.display=cc.checked?'flex':'none'; }); } })();
 document.getElementById('btnSave').addEventListener('click',function(){
   const titulo=document.getElementById('titulo').value.trim();
   const descricao=document.getElementById('descricao').value.trim();
@@ -276,6 +294,7 @@ document.getElementById('btnSave').addEventListener('click',function(){
   const autor=document.getElementById('autor').value.trim();
   if(!titulo && !descricao && !pendingFoto){ alert('Escreve algo, ou anexa uma foto.'); return; }
   if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
+  if(document.getElementById('calChk').checked){ if(!evento){ alert('Escolhe a \u201cData do evento\u201d para adicionar ao Google Calend\u00E1rio.'); return; } abrirCalendario(titulo||descricao||'Lembrete', descricao, evento, document.getElementById('calHora').value); }
   var payload={ titulo:titulo, descricao:descricao, data:new Date().toISOString(), evento:evento, foto:pendingFoto||'' };
   var texto=JSON.stringify(payload);
   if(texto.length>MAXLEN){ alert('O lembrete ficou grande demais. Reduz o texto ou remove a foto.'); return; }
@@ -303,7 +322,7 @@ var modal=document.getElementById('modal');
 function resetForm(){
   document.getElementById('titulo').value=''; document.getElementById('descricao').value='';
   document.getElementById('evento').value=''; var a=document.getElementById('autor'); if(a) a.value='';
-  pendingFoto=''; editId=''; mostrarPrev();
+  pendingFoto=''; editId=''; var _cc=document.getElementById('calChk'); if(_cc){ _cc.checked=false; document.getElementById('calFields').style.display='none'; } mostrarPrev();
 }
 function openModal(){
   resetForm();
