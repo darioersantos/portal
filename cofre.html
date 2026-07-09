@@ -9,6 +9,7 @@
 <title>Contagem &#xB7; Sport Zone Vasco da Gama</title>
 <script src="config.js"></script>
 <script src="lucide.js"></script>
+<script src="roster.js"></script>
 <script>if(sessionStorage.getItem('portalOK')!=='1')location.replace('index.html');</script>
 <style>
   :root{
@@ -173,7 +174,7 @@
   @media print{
     @page{margin:10mm 12mm;}
     html,body{background:#fff;padding:0;overflow:visible;}
-    header,nav.tabs,.h-actions,.icon-btn,.saved,.sig-actions,.printbtn,.sig-hint,.periodo-seg,.clearbtn,.phide{display:none !important;}
+    header,nav.tabs,.h-actions,.icon-btn,.saved,.sig-actions,.printbtn,.sig-hint,.periodo-seg,.clearbtn,.phide,.sig-name{display:none !important;}
     #sigCanvas{display:none !important;}
     .sig-placeholder{display:none !important;}
     .sig-print{display:block !important;width:auto;max-width:100%;max-height:145px;border:1px solid #cbb9a5;border-radius:6px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
@@ -217,6 +218,10 @@
   .cfm-acts button{flex:1;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;}
   .cfm-cancel{background:#f4efe9;color:var(--ink);}
   .cfm-ok{background:var(--neg);color:#fff;}
+  .sig-name{margin-bottom:12px;}
+  .sig-name label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px;}
+  .sig-name select{width:100%;box-sizing:border-box;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  .sig-name select:focus{outline:none;border-color:var(--accent);}
 </style>
 </head>
 <body>
@@ -281,6 +286,10 @@
         <div class="diff ok" id="diff-cofre"><span><i data-lu="scale"></i> Diferen&#xE7;a face ao alvo</span><b>0 &#x20AC;</b></div>
 
         <div class="sig-block">
+          <div class="sig-name">
+            <label><i data-lu="user"></i> Nome (equipa diretiva) <span style="color:var(--neg)">*</span></label>
+            <select id="cofreNome" data-staff data-area="sup" data-ph="Seleciona o teu nome"></select>
+          </div>
           <div class="sig-label"><i data-lu="pen-line"></i> Assinatura <span class="sig-hint">(toca em "Assinar" e assina com o dedo)</span></div>
           <div class="sig-wrap">
             <canvas id="sigCanvas"></canvas>
@@ -346,7 +355,7 @@ const STORE_KEY = 'contagem_vg_v1';
 const BACKEND = (typeof window!=='undefined' && window.BACKEND_URL ? String(window.BACKEND_URL).trim() : '');
 let state = loadLocal();
 
-function freshCofre(){ return {notas:{}, mangas:{}, saquetas:{}, moedas:{}, meta:2500, assinatura:'', sigStamp:''}; }
+function freshCofre(){ return {notas:{}, mangas:{}, saquetas:{}, moedas:{}, meta:2500, assinatura:'', sigStamp:'', nome:''}; }
 function freshCaixas(){ return Array.from({length:N_CAIXAS},(_,i)=>({nome:'Caixa '+(i+1), retiradas:[''], audit:''})); }
 function defaultState(){
   return {
@@ -393,7 +402,7 @@ function pushCloud(tries){
 }
 function pullCloud(tries){
   tries=tries||0;
-  if(!BACKEND){ loading=false; setStatus('ok','Guardado neste dispositivo'); return; }
+  if(!BACKEND){ loading=false; setStatus('ok','Guardado neste dispositivo'); checkCofreReset(); return; }
   setStatus('sync','A ligar\u2026');
   fetch(BACKEND+'?action=get&t='+Date.now())
     .then(r=>r.json()).then(j=>{
@@ -404,9 +413,10 @@ function pullCloud(tries){
       }
       loading=false;
       if(userEditedDuringLoad){ save(); }   // envia para a nuvem o que ele escreveu durante o arranque
+      checkCofreReset();
       setStatus('ok','Guardado na nuvem');
     })
-    .catch(e=>{ if(tries<3){ setTimeout(()=>pullCloud(tries+1),2000); } else { loading=false; if(userEditedDuringLoad){ save(); } setStatus('off','Sem liga\u00E7\u00E3o \u2014 a usar dados do dispositivo'); } });
+    .catch(e=>{ if(tries<3){ setTimeout(()=>pullCloud(tries+1),2000); } else { loading=false; if(userEditedDuringLoad){ save(); } checkCofreReset(); setStatus('off','Sem liga\u00E7\u00E3o \u2014 a usar dados do dispositivo'); } });
 }
 function setStatus(kind,txt){
   const el=document.getElementById('saveStatus'); if(!el) return;
@@ -419,6 +429,32 @@ function euro(n){ return (Number(n)||0).toLocaleString('pt-PT',{style:'currency'
 /* O "dia" s\u00F3 muda a partir da 01:00 \u2014 a contagem \u00E9 feita at\u00E9 \u00E0 meia-noite e meia,
    por isso entre 00:00 e 00:59 continua a contar para o dia anterior. */
 function today(){ var d=new Date(); if(d.getHours()<1){ d=new Date(d.getTime()-3600*1000); } return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+/* dia do cofre: muda a partir da 01:00 HORA DE PORTUGAL (Europe/Lisbon). A contagem do cofre zera de um dia p/ o outro a essa hora. */
+function cofreDayKey(){
+  try{
+    var f=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Lisbon',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hour12:false});
+    var o={}; f.formatToParts(new Date()).forEach(function(pt){o[pt.type]=pt.value;});
+    var y=+o.year,m=+o.month,d=+o.day,h=+o.hour;
+    var dt=new Date(Date.UTC(y,m-1,d)); if(h<1){ dt.setUTCDate(dt.getUTCDate()-1); }
+    return dt.getUTCFullYear()+'-'+('0'+(dt.getUTCMonth()+1)).slice(-2)+'-'+('0'+dt.getUTCDate()).slice(-2);
+  }catch(e){ return today(); }
+}
+var _cofreChecked=false;
+function checkCofreReset(){
+  if(_cofreChecked) return; _cofreChecked=true;
+  var key=cofreDayKey();
+  if(state.cofreDay && state.cofreDay!==key){
+    state.cofreManha=freshCofre(); state.cofreNoite=freshCofre();
+    state.banco={notas:{}, moedas:{}}; state.periodo='manha'; linkCofre(); initAll(true);
+  }
+  if(state.cofreDay!==key){ state.cofreDay=key; save(); }
+}
+function syncCofreNome(){
+  var sel=document.getElementById('cofreNome'); if(!sel||!state.cofre) return;
+  var v=state.cofre.nome||'';
+  if(v && !Array.prototype.some.call(sel.options,function(o){return o.value===v;})){ var op=document.createElement('option'); op.value=v; op.textContent=v; sel.appendChild(op); }
+  sel.value=v;
+}
 function num(v){ const n=parseFloat(String(v).replace(',','.')); return isNaN(n)?0:n; }
 function el(html){ const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstChild; }
 function set(id,txt){ const e=document.getElementById(id); if(e) e.textContent=txt; }
@@ -585,15 +621,16 @@ function setPeriodo(p){
   state.periodo=(p==='noite')?'noite':'manha';
   linkCofre();
   document.querySelectorAll('#periodoSeg button').forEach(b=>b.classList.toggle('active', b.dataset.p===state.periodo));
-  renderCofre();
+  renderCofre(); syncCofreNome();
   save();
 }
 document.querySelectorAll('#periodoSeg button').forEach(b=>b.addEventListener('click',()=>setPeriodo(b.dataset.p)));
 
 document.getElementById('btnPrint').addEventListener('click',()=>{
+  if(!((state.cofre&&state.cofre.nome||'').trim())){ alert('Escolhe o nome (equipa diretiva) antes de imprimir.'); var _n=document.getElementById('cofreNome'); if(_n) _n.focus(); return; }
   const periodoTxt=(state.periodo==='noite')?'Contagem da Noite \uD83C\uDF19':'Contagem da Manh\u00E3 \uD83C\uDF05';
   document.getElementById('printHead').innerHTML=
-    `<h1>Contagem de Cofre \u2014 Sport Zone Vasco da Gama</h1><p class="pperiodo">${periodoTxt}</p>`;
+    `<h1>Contagem de Cofre \u2014 Sport Zone Vasco da Gama</h1><p class="pperiodo">${periodoTxt}</p><p>Respons\u00E1vel: ${escapeHtml(state.cofre.nome||'')}</p>`;
   const cofre=document.getElementById('card-cofre');
   const wasOpen=cofre.open; cofre.open=true;
   // Para caber numa folha: esconder contagens a zero na impressao
@@ -672,12 +709,13 @@ function migrate(){
 function initAll(keepTab){
   migrate();
   document.querySelectorAll('#periodoSeg button').forEach(b=>b.classList.toggle('active', b.dataset.p===(state.periodo||'manha')));
-  renderCofre(); renderBanco(); renderCaixas();
+  renderCofre(); renderBanco(); renderCaixas(); syncCofreNome();
 }
 
 // Se o utilizador comecar a contar enquanto a nuvem ainda esta a carregar,
 // marca para o pullCloud NAO apagar o que ele escreveu (evita "nao gravou").
 document.addEventListener('input',function(){ if(loading) userEditedDuringLoad=true; }, true);
+(function(){ var sel=document.getElementById('cofreNome'); if(sel){ sel.addEventListener('change',function(){ if(state.cofre) state.cofre.nome=sel.value; save(); }); } })();
 initAll();
 pullCloud();
 </script>
