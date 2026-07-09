@@ -3,6 +3,9 @@
    Para desligar a sincronizacao, deixar as aspas vazias. */
 window.BACKEND_URL = "https://script.google.com/macros/s/AKfycbxGaFY8bv7lJcI2WbgoTqs_1mp9R85jw-CRkY-tTzsEPR_igqY-LMVtKSJ1hnsuiPlm/exec";
 
+/* Emails da equipa convidados no Google Calendario (separados por virgula). Ex: "a@x.pt,b@x.pt". Vazio = sem convidados. */
+window.CAL_EMAILS = "";
+
 /* -----------------------------------------------------------------------------
    Alivio de carga do servidor (evita o erro "Demasiadas invocacoes em simultaneo").
    Envolve o fetch: as LEITURAS de ?action=notas passam a ter cache curta (8s) por
