@@ -1,5 +1,5 @@
 /* Service Worker - Portal Sport Zone Vasco da Gama */
-var CACHE='spz-portal-v62';
+var CACHE='spz-portal-v63';
 var ASSETS=['./','./index.html','./cofre.html','./lembretes.html','./aniversario.html','./limpeza.html','./config.js','./links.js','./manifest.json'];
 self.addEventListener('install',function(e){
   e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(ASSETS);}).then(function(){return self.skipWaiting();}));
