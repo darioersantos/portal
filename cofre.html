@@ -88,13 +88,13 @@
   details[open] summary .chev{transform:rotate(180deg);}
   summary .badge{margin-left:auto;background:var(--accent-soft);color:var(--accent-ink);padding:3px 10px;border-radius:999px;font-size:13px;font-weight:800;}
   .card-body{padding:0 16px 16px;}
-  /* Cofre e Banco: dois quadrados clicaveis; clicar num abre o seu conteudo (so um de cada vez) */
-  .money-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;}
-  .money-tile{display:flex;flex-direction:column;align-items:flex-start;gap:9px;padding:16px 14px;border-radius:16px;border:2px solid var(--line);background:var(--card);cursor:pointer;font-family:inherit;text-align:left;box-shadow:var(--shadow);transition:.15s;}
-  .money-tile:active{transform:scale(.98);}
-  .money-tile i,.money-tile svg{width:26px;height:26px;color:var(--accent-dark);stroke:currentColor;fill:none;}
-  .money-tile .mt-name{font-size:15px;font-weight:800;color:var(--ink);line-height:1.2;}
-  .money-tile .mt-tot{font-size:14px;font-weight:800;color:var(--accent-ink);background:var(--accent-soft);padding:3px 11px;border-radius:999px;}
+  /* Caixas / Cofre / Banco: tres quadrados clicaveis; clicar num abre o seu conteudo (so um de cada vez) */
+  .money-tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:14px 0;}
+  .money-tile{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;gap:7px;padding:13px 7px;border-radius:15px;border:2px solid var(--line);background:var(--card);cursor:pointer;font-family:inherit;box-shadow:var(--shadow);transition:.15s;}
+  .money-tile:active{transform:scale(.97);}
+  .money-tile i,.money-tile svg{width:24px;height:24px;color:var(--accent-dark);stroke:currentColor;fill:none;flex:none;}
+  .money-tile .mt-name{font-size:12.5px;font-weight:800;color:var(--ink);line-height:1.15;}
+  .money-tile .mt-tot{font-size:11.5px;font-weight:800;color:var(--accent-ink);background:var(--accent-soft);padding:2px 9px;border-radius:999px;}
   .money-tile.active{border-color:var(--accent);background:linear-gradient(135deg,#FF8100,#E66200);box-shadow:0 6px 18px rgba(230,98,0,.3);}
   .money-tile.active i,.money-tile.active svg,.money-tile.active .mt-name{color:#fff;}
   .money-tile.active .mt-tot{background:rgba(255,255,255,.22);color:#fff;}
@@ -198,7 +198,7 @@
     main{max-width:100%;padding:0;}
     .tabview{display:none !important;}
     #view-contagem{display:block !important;}
-    .money-tiles,#sec-banco{display:none !important;}
+    .money-tiles,#sec-banco,#sec-caixas{display:none !important;}
     #card-cofre{display:block !important;box-shadow:none;border:none;padding:0;margin:0;}
     /* formulario do cofre numa UNICA folha A4: 2 colunas, bem distribuido */
     #card-cofre .card-body{display:block !important;padding:0;column-count:2;column-gap:20px;}
@@ -254,11 +254,6 @@
   </div>
 </header>
 
-<nav class="tabs">
-  <button id="tabBtn-contagem" class="active" onclick="showTab('contagem')"><i data-lu="coins"></i> Contagem</button>
-  <button id="tabBtn-caixas" onclick="showTab('caixas')"><i data-lu="receipt"></i> Caixas</button>
-</nav>
-
 <main>
   <div class="print-head" id="printHead"></div>
 
@@ -266,11 +261,21 @@
   <div class="tabview active" id="view-contagem">
 
     <div class="money-tiles">
-      <button type="button" class="money-tile active" id="tile-cofre" data-money="cofre"><i data-lu="lock"></i><span class="mt-name">Contagem de Cofre</span><span class="mt-tot" id="badge-cofre">0 &#x20AC;</span></button>
+      <button type="button" class="money-tile active" id="tile-caixas" data-money="caixas"><i data-lu="receipt"></i><span class="mt-name">Contagem das Caixas</span><span class="mt-tot" id="badge-caixas">0 &#x20AC;</span></button>
+      <button type="button" class="money-tile" id="tile-cofre" data-money="cofre"><i data-lu="lock"></i><span class="mt-name">Contagem de Cofre</span><span class="mt-tot" id="badge-cofre">0 &#x20AC;</span></button>
       <button type="button" class="money-tile" id="tile-banco" data-money="banco"><i data-lu="landmark"></i><span class="mt-name">Ingresso ao Banco</span><span class="mt-tot" id="badge-banco">0 &#x20AC;</span></button>
     </div>
 
-    <div class="money-section active" id="card-cofre">
+    <div class="money-section active" id="sec-caixas">
+      <div class="card-body">
+        <button type="button" class="clearbtn" id="btnClearCaixas"><i data-lu="trash-2"></i> Limpar contagem das caixas</button>
+        <p class="hint">Preenche as retiradas e o Till Audit (com moedas) de cada caixa.</p>
+        <div class="caixa-grid" id="caixas-container"></div>
+        <div class="grandtotal"><span><i data-lu="landmark"></i> TOTAL GERAL</span><b id="total-caixas">0 &#x20AC;</b></div>
+      </div>
+    </div>
+
+    <div class="money-section" id="card-cofre">
       <div class="card-body">
         <button type="button" class="clearbtn" id="btnClearCofre"><i data-lu="trash-2"></i> Limpar contagem do cofre</button>
         <div class="periodo-seg" id="periodoSeg">
@@ -337,17 +342,6 @@
     </div>
 
 
-  </div>
-
-  <!-- ===================== CAIXAS ===================== -->
-  <div class="tabview" id="view-caixas">
-    <div class="card" style="padding:16px;">
-      <button type="button" class="clearbtn" id="btnClearCaixas"><i data-lu="trash-2"></i> Limpar contagem das caixas</button>
-      <div style="display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;"><i data-lu="banknote"></i> Retiradas das Caixas <span class="badge" id="badge-caixas" style="margin-left:auto;">0 &#x20AC;</span></div>
-      <p class="hint">Preenche as retiradas e o Till Audit (com moedas) de cada caixa.</p>
-      <div class="caixa-grid" id="caixas-container"></div>
-      <div class="grandtotal"><span><i data-lu="landmark"></i> TOTAL GERAL</span><b id="total-caixas">0 &#x20AC;</b></div>
-    </div>
   </div>
 
 </main>
@@ -635,9 +629,9 @@ function showTab(name){
 /* Cofre / Ingresso ao Banco: dois quadrados; clicar num mostra o seu conteudo */
 function showMoney(which){
   document.querySelectorAll('.money-tile').forEach(function(t){ t.classList.toggle('active', t.dataset.money===which); });
-  var cofre=document.getElementById('card-cofre'), banco=document.getElementById('sec-banco');
-  if(cofre) cofre.classList.toggle('active', which==='cofre');
-  if(banco) banco.classList.toggle('active', which==='banco');
+  var map={caixas:'sec-caixas', cofre:'card-cofre', banco:'sec-banco'};
+  document.querySelectorAll('.money-section').forEach(function(s){ s.classList.remove('active'); });
+  var sec=document.getElementById(map[which]); if(sec) sec.classList.add('active');
   if(which==='cofre'){ try{ window.dispatchEvent(new Event('resize')); }catch(e){} }
 }
 (function(){ document.querySelectorAll('.money-tile').forEach(function(t){ t.addEventListener('click', function(){ showMoney(t.dataset.money); }); }); })();
