@@ -87,7 +87,8 @@
   @media (prefers-reduced-motion:reduce){#taskBanner .taskrem{animation:none;}}
   #thuBanner .thurem{display:flex;align-items:center;gap:12px;background:#1a1303;color:#fff;border-radius:16px;padding:14px 16px;margin:14px 0 2px;box-shadow:var(--shadow);}
   #thuBanner .thurem .ic{line-height:0;color:#ffb45e;flex:none;}
-  #thuBanner .thurem .ic svg{width:26px;height:26px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+  #thuBanner .thurem .ic svg{width:26px;height:26px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round;transform-origin:top center;animation:bellRing 3s ease-in-out infinite;}
+  @keyframes bellRing{0%,45%,100%{transform:rotate(0);}5%,15%,25%,35%{transform:rotate(13deg);}10%,20%,30%,40%{transform:rotate(-13deg);}}
   #thuBanner .thurem .txt{flex:1;min-width:0;font-size:14px;line-height:1.35;font-weight:700;}
   #thuBanner .thurem .txt b{font-weight:800;color:#ffb45e;}
   .tile .soon-tag{position:absolute;top:7px;right:7px;background:#efe9e0;color:#9a8f7d;font-size:8.5px;font-weight:800;padding:2px 6px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em;}
