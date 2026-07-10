@@ -93,7 +93,10 @@
         <p>Sport Zone &#xB7; Vasco da Gama</p>
       </div>
     </div>
-    <a class="icon-btn" id="homeBtn" href="index.html" title="Menu principal" aria-label="Menu principal"><i data-lu="home"></i></a>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="icon-btn" id="btnPrintTop" type="button" title="Imprimir hist&#xF3;rico" aria-label="Imprimir hist&#xF3;rico"><i data-lu="printer"></i></button>
+      <a class="icon-btn" id="homeBtn" href="index.html" title="Menu principal" aria-label="Menu principal"><i data-lu="home"></i></a>
+    </div>
   </div>
 </header>
 
@@ -123,7 +126,6 @@
   <div class="card" id="cardLista">
     <h2 style="margin:0 0 10px;">Limita&#xE7;&#xF5;es de hor&#xE1;rio</h2>
     <button class="chips" id="btnExport" type="button" style="display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent-ink);border:none;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:8px;"><i data-lu="download" data-sz="14"></i> Exportar (Excel/Sheets)</button>
-    <button class="chips" id="btnPrint" type="button" style="display:inline-flex;align-items:center;gap:6px;background:#1a1303;color:#fff;border:none;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:8px;margin-left:8px;"><i data-lu="printer" data-sz="14"></i> Imprimir hist&#xF3;rico</button>
     <div id="lista"><div class="status">A carregar&#x2026;</div></div>
   </div>
 </main>
@@ -223,10 +225,10 @@ function imprimir(){
     +'<table><thead><tr><th>Colaborador</th><th>Dias</th><th>Turnos</th><th>Restri\u00E7\u00E3o de horas</th><th>Observa\u00E7\u00F5es</th></tr></thead><tbody>'+rows+'</tbody></table>';
   window.print();
 }
-var _bp=document.getElementById('btnPrint'); if(_bp) _bp.addEventListener('click',imprimir);
+var _bp=document.getElementById('btnPrintTop'); if(_bp) _bp.addEventListener('click',imprimir);
 
 if(MANAGER){ carregar(); }
-else{ document.getElementById('cardLista').style.display='none'; var _hb=document.getElementById('homeBtn'); if(_hb) _hb.style.display='none'; document.getElementById('formTitle').textContent='Regista a tua limita\u00e7\u00e3o de hor\u00e1rio'; }
+else{ document.getElementById('cardLista').style.display='none'; var _hb=document.getElementById('homeBtn'); if(_hb) _hb.style.display='none'; var _pt=document.getElementById('btnPrintTop'); if(_pt) _pt.style.display='none'; document.getElementById('formTitle').textContent='Regista a tua limita\u00e7\u00e3o de hor\u00e1rio'; }
 </script>
 </body>
 </html>
