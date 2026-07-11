@@ -254,6 +254,10 @@
 "use strict";
 var BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
 var LINKS=(window.PORTAL_LINKS||{});
+/* Fotos de perfil sincronizadas da Superliga (mesmo ficheiro, sem duplicar) */
+var SL_BASE='https://manager9yc.github.io/superliga/';
+var SL_FOTOS={'Ant\u00F3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00FAjo':'images/img_04.jpg','Ricardo Eus\u00E9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00E3o Paiva':'images/img_10.jpg','Jo\u00E3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00E2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00E9rgio Correia':'images/img_21.jpg','Andr\u00E9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00FAjo':'images/img_25.jpg','Lu\u00EDs Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00E2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00E3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00E7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00EDrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00FAria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00E1rio Santos':'images/img_51.jpg','Beatriz Jer\u00F3nimo':'images/img_52.jpg'};
+function slFoto(nome){ nome=(nome||'').trim(); return (typeof SL_FOTOS!=='undefined' && SL_FOTOS[nome])?(SL_BASE+SL_FOTOS[nome]):''; }
 
 /* ---------- Icons ---------- */
 var IC={
@@ -451,7 +455,8 @@ function render(notas){
   /* Aniversarios panel */
   var lb=document.getElementById('listBd');
   var asorted=aniv.slice().sort(function(a,b){ return bdDiasAte(a.texto)-bdDiasAte(b.texto); });
-  lb.innerHTML=aniv.length?asorted.slice(0,6).map(function(n){ var dias=bdDiasAte(n.texto); var id=bdIdade(n.texto); return '<div class="lrow"><div class="l-ic cake">'+svg('cake')+'</div><div class="l-info"><div class="l-txt">'+esc(n.autor||'\u2014')+'</div><div class="l-meta">'+(id!==''?('faz '+(id+ (dias===0?0:1))+' anos'):'')+'</div></div><div class="l-when'+(dias===0?' hoje':'')+'">'+bdWhen(dias)+'</div></div>'; }).join(''):'<div class="empty">Sem anivers\u00E1rios registados.</div>';
+  var a7=asorted.filter(function(n){ return bdDiasAte(n.texto)<=7; });
+  lb.innerHTML=a7.length?a7.map(function(n){ var dias=bdDiasAte(n.texto); var id=bdIdade(n.texto); return '<div class="lrow"><div class="l-ic cake">'+svg('cake')+'</div><div class="l-info"><div class="l-txt">'+esc(n.autor||'\u2014')+'</div><div class="l-meta">'+(id!==''?('faz '+(id+ (dias===0?0:1))+' anos'):'')+'</div></div><div class="l-when'+(dias===0?' hoje':'')+'">'+bdWhen(dias)+'</div></div>'; }).join(''):'<div class="empty">Sem anivers\u00E1rios nos pr\u00F3ximos 7 dias.</div>';
 
   mountIcons();
   maybeBirthdayPopup(asorted);
@@ -496,13 +501,22 @@ function greeting(){
   document.getElementById('today').textContent=dias[now.getDay()]+', '+now.getDate()+' '+meses[now.getMonth()]+' '+now.getFullYear();
 }
 
+/* ---------- Avatar (foto da Superliga ou iniciais) ---------- */
+function setAvatar(user){
+  var ava=document.getElementById('sbAva');
+  var ini=(user||'?').split(' ').map(function(w){return w.charAt(0);}).slice(0,2).join('').toUpperCase();
+  ava.textContent=ini;
+  var f=slFoto(user);
+  if(f){ var img=new Image(); img.onload=function(){ ava.textContent=''; img.style.cssText='width:100%;height:100%;border-radius:11px;object-fit:cover;display:block;'; ava.appendChild(img); }; img.onerror=function(){ ava.textContent=ini; }; img.src=f; }
+}
+
 /* ---------- Start app ---------- */
 function startApp(){
   var user=(sessionStorage.getItem('sz_user')||'').trim();
   document.getElementById('login').style.display='none';
   document.querySelectorAll('.app-el').forEach(function(el){ el.classList.remove('app-hidden'); });
   document.getElementById('sbName').textContent=user||'Utilizador';
-  document.getElementById('sbAva').textContent=(user||'?').split(' ').map(function(w){return w.charAt(0);}).slice(0,2).join('').toUpperCase();
+  setAvatar(user);
   renderSidebar();
   greeting();
   mountIcons();
