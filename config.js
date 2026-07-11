@@ -51,7 +51,7 @@ window.CAL_EMAILS = "manager9yc@iberiansports.com,store9yc@iberiansports.com";
 ----------------------------------------------------------------------------- */
 (function(){
   if(typeof document==='undefined') return;
-  var isIndex = /(^|\/)(index\.html?)?$/.test(location.pathname); // '/', '/index.html', '/portal/', etc.
+  var isIndex = /(^|\/)(index\.html?|dashboard\.html?)?$/.test(location.pathname); // '/', '/index.html', '/dashboard.html', '/portal/', etc.
   try{
     var st=document.createElement('style');
     st.textContent='.icon-btn[href="index.html"],#homeBtn{display:none!important;}'
@@ -61,7 +61,7 @@ window.CAL_EMAILS = "manager9yc@iberiansports.com,store9yc@iberiansports.com";
     (document.head||document.documentElement).appendChild(st);
   }catch(e){}
   if(isIndex) return; // no menu principal nao ha "voltar"
-  function irInicio(){ location.href='index.html'; }
+  function irInicio(){ location.href='dashboard.html'; }
   document.addEventListener('DOMContentLoaded', function(){
     var logo=document.querySelector('.logo');
     if(logo){ logo.addEventListener('click', function(){ logo.classList.add('sz-press'); setTimeout(irInicio, 230); }); }
