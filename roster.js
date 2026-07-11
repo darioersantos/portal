@@ -27,10 +27,11 @@
         sel.appendChild(og);
       });
       if(cur){ try{ sel.value=cur; }catch(e){} }
+      else if(opts.autofill){ try{ var _u=(sessionStorage.getItem('sz_user')||'').trim(); if(_u && Array.prototype.some.call(sel.options,function(o){return o.value===_u;})){ sel.value=_u; sel.dispatchEvent(new Event('change')); } }catch(e){} }
     });
   };
   /* preenche automaticamente qualquer <select data-staff> (placeholder via data-ph; area opcional via data-area) */
-  function init(root){ (root||document).querySelectorAll('select[data-staff]').forEach(function(sel){ if(!sel.dataset._szdone){ sel.dataset._szdone='1'; window.SZfillStaff(sel,{placeholder:sel.getAttribute('data-ph')||'', area:sel.getAttribute('data-area')||''}); } }); }
+  function init(root){ var sels=(root||document).querySelectorAll('select[data-staff]'); var single=(sels.length===1); sels.forEach(function(sel){ if(!sel.dataset._szdone){ sel.dataset._szdone='1'; var area=sel.getAttribute('data-area')||''; window.SZfillStaff(sel,{placeholder:sel.getAttribute('data-ph')||'', area:area, autofill:(/sup/.test(area)||single)}); } }); }
   window.SZinitStaff=init;
   if(document.readyState!=='loading') init(); else document.addEventListener('DOMContentLoaded',function(){init();});
 })();
