@@ -61,7 +61,7 @@ window.CAL_EMAILS = "manager9yc@iberiansports.com,store9yc@iberiansports.com";
     (document.head||document.documentElement).appendChild(st);
   }catch(e){}
   if(isIndex) return; // no menu principal nao ha "voltar"
-  function irInicio(){ location.href='dashboard.html'; }
+  function irInicio(){ location.href=(window.innerWidth>820?'dashboard.html':'index.html'); }
   document.addEventListener('DOMContentLoaded', function(){
     var logo=document.querySelector('.logo');
     if(logo){ logo.addEventListener('click', function(){ logo.classList.add('sz-press'); setTimeout(irInicio, 230); }); }
