@@ -192,6 +192,8 @@
   .tk-empty{font-size:12.5px;color:var(--muted2);padding:8px 2px;}
 
 
+
+
   /* ===== Tarefas ===== */
   .tk-newbtn{background:linear-gradient(135deg,#FF8100,#E06E00);color:#fff;border:none;border-radius:12px;padding:11px 18px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px;box-shadow:0 6px 16px rgba(230,98,0,.28);}
   .tk-newbtn .ico{width:18px;height:18px;stroke-width:2.4;}
@@ -238,6 +240,22 @@
 
 
 
+
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
 </style>
 </head>
 <body>
@@ -257,7 +275,7 @@
   <header class="topbar">
     <button class="menu-btn" id="menuBtn"><span data-ic="menu"></span></button>
     <div class="tb-hi"><h1>Tarefas</h1><p>Gere as tarefas da loja, por area.</p></div>
-    <div class="tb-right"><button class="tk-newbtn" id="btnNew"><span data-ic="plus"></span> Nova tarefa</button></div>
+    <div class="tb-right"><div class="tb-icon" id="btnPrint" title="Imprimir"><span data-ic="printer"></span></div> <button class="tk-newbtn" id="btnNew"><span data-ic="plus"></span> Nova tarefa</button></div>
   </header>
   <div class="content"><div id="tkSections"><div class="tk-empty">A carregar...</div></div></div>
 </div>
@@ -269,6 +287,7 @@
   <div class="flags"><button type="button" class="flag prio" id="flagPrio">Prioritaria</button><button type="button" class="flag imp" id="flagImp">Importante</button></div>
   <div class="acts"><button type="button" class="cancel" id="tkCancel">Cancelar</button><button type="button" class="save" id="tkSave">Criar tarefa</button></div>
 </div></div>
+<div id="printArea"></div>
 
 <script>
 "use strict";
@@ -324,6 +343,20 @@ IC.image='<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9"
 IC.plus='<path d="M5 12h14"/><path d="M12 5v14"/>';
 IC['trash-2']='<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>';
 IC.check='<path d="M20 6 9 17l-5-5"/>';
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+
 IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
@@ -441,7 +474,11 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 
 
 
+
+
 /* ===== Modulo ===== */
+
+
 
 
 var SECS=[{k:'geral',nm:'Geral',ic:'clipboard-list'},{k:'calcado',nm:'Cal\u00e7ado',ic:'footprints'},{k:'textil',nm:'T\u00eaxtil',ic:'shirt'},{k:'visual',nm:'Visual',ic:'image'},{k:'caixa',nm:'Caixa',ic:'receipt'},{k:'logistica',nm:'Log\u00edstica',ic:'package'}];
@@ -504,6 +541,27 @@ document.getElementById('tkSave').onclick=function(){
 loadTasks();
 
 
+
+
+
+/* ---- Imprimir tarefas por fazer (por area) ---- */
+function parteFoto(raw){ raw=semSch(raw); if(raw.indexOf(PRIOMARK)===0) raw=raw.slice(PRIOMARK.length); if(raw.indexOf(IMPMARK)===0) raw=raw.slice(IMPMARK.length); var i=raw.indexOf(IMGSEP); return i>=0?raw.slice(i+IMGSEP.length):''; }
+function imprimir(){
+  var hoje=new Date().toLocaleDateString('pt-PT',{day:'2-digit',month:'long',year:'numeric'});
+  var html='<h1>Tarefas do dia</h1><div class="psub">Sport Zone Vasco da Gama &middot; '+esc(hoje)+'</div>';
+  var total=0;
+  SECS.forEach(function(s){
+    var itens=TASKS.filter(function(n){return n.seccao===s.k;});
+    if(!itens.length) return;
+    itens.sort(function(a,b){ var pa=temPrio(a.texto),pb=temPrio(b.texto); if(pa!==pb) return pa?-1:1; var ia=temImp(a.texto),ib=temImp(b.texto); if(ia!==ib) return ia?-1:1; return 0; });
+    html+='<h2>'+esc(s.nm)+'</h2><ul>';
+    itens.forEach(function(n){ total++; var t=parteTexto(n.texto).trim()||'(foto)'; var foto=parteFoto(n.texto); var by=parteBy(n.texto)||n.autor||''; html+='<li><span class="box"></span><span>'+(temPrio(n.texto)?'<b style="color:#dc2626">[PRIORITARIA]</b> ':'')+(temImp(n.texto)?'<b style="color:#a16207">[IMPORTANTE]</b> ':'')+esc(t)+(by?' <i>&mdash; '+esc(by)+'</i>':'')+'</span>'+(foto?'<img class="pthumb" src="'+foto+'">':'')+'</li>'; });
+    html+='</ul>';
+  });
+  if(!total){ html+='<p>Nao ha tarefas por fazer.</p>'; }
+  document.getElementById('printArea').innerHTML=html; window.print();
+}
+document.getElementById('btnPrint').addEventListener('click',imprimir);
 
 </script>
 </body>
