@@ -180,17 +180,28 @@
     .sidebar{transform:translateX(-100%);transition:transform .2s;box-shadow:0 10px 40px rgba(0,0,0,.2);width:270px;}
     .sidebar.open{transform:none;}
     .main{margin-left:0;min-width:0;}
-    .menu-btn{display:flex !important;}
     .content{padding:6px calc(14px + env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));}
-    /* barra de topo compacta (respeita a barra de estado do iPhone) */
-    .topbar{padding:calc(12px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) 10px calc(14px + env(safe-area-inset-left));gap:11px;}
-    .tb-hi{min-width:0;}
-    .tb-hi h1{font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    /* botao de abertura do menu: maior e com design diferenciado (nao hamburger) */
+    .menu-btn{display:flex !important;width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,#FF8100,#E0620A);border:none;color:#fff;box-shadow:0 8px 22px rgba(230,98,0,.42);flex:none;transition:transform .12s;}
+    .menu-btn .ico{width:23px;height:23px;fill:#fff;stroke:none;}
+    .menu-btn:active{transform:scale(.93);}
+    /* barra de topo: espacamento no topo + saudacao sempre visivel */
+    .topbar{padding:calc(26px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) 12px calc(14px + env(safe-area-inset-left));gap:10px;}
+    .tb-hi{min-width:0;flex:1;}
+    .tb-hi h1{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .tb-hi p{display:none;}
-    .tb-right{gap:8px;}
-    .tb-date{font-size:11px;padding:7px 9px;line-height:1.2;}
-    .tb-date .ico{width:14px;height:14px;}
-    .tb-icon{width:40px;height:40px;}
+    .tb-right{gap:8px;flex:none;}
+    .tb-date{display:none;}                       /* esconde o quadrado da data no telemovel */
+    /* pesquisa: so a lupa; expande ao tocar */
+    .tb-search{width:44px;height:44px;padding:0;justify-content:center;overflow:hidden;flex:none;}
+    .tb-search .ico{margin:0;}
+    .tb-search input{width:0;padding:0;}
+    .topbar.searching .menu-btn{display:none !important;}
+    .topbar.searching .tb-hi{display:none;}
+    .topbar.searching .tb-right{flex:1;}
+    .topbar.searching .tb-search{width:100%;padding:0 12px;justify-content:flex-start;}
+    .topbar.searching .tb-search input{width:100%;padding-left:8px;}
+    .tb-icon{width:44px;height:44px;}
     /* cartoes KPI como mosaicos compactos (2 por linha) */
     .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-bottom:16px;}
     .kpi{flex-direction:column;align-items:flex-start;gap:9px;padding:13px 14px;border-radius:15px;}
@@ -224,14 +235,16 @@
   /* App instalada no ecra inicial (PWA/standalone): garantir que o topo (menu + saudacao)
      fica SEMPRE abaixo da barra de estado do iPhone e clicavel. Nao afeta o browser. */
   @media all and (display-mode:standalone){
-    .topbar{padding-top:max(env(safe-area-inset-top),46px);background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;}
-    .sb-brand{padding-top:max(env(safe-area-inset-top),46px);}
+    .topbar{padding-top:calc(max(env(safe-area-inset-top),44px) + 16px);background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;}
+    .sb-brand{padding-top:calc(max(env(safe-area-inset-top),44px) + 8px);}
   }
   @media all and (display-mode:fullscreen){
-    .topbar{padding-top:max(env(safe-area-inset-top),46px);background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;}
-    .sb-brand{padding-top:max(env(safe-area-inset-top),46px);}
+    .topbar{padding-top:calc(max(env(safe-area-inset-top),44px) + 16px);background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;}
+    .sb-brand{padding-top:calc(max(env(safe-area-inset-top),44px) + 8px);}
   }
-  .menu-btn{display:none;width:42px;height:42px;border-radius:11px;background:var(--card);border:1px solid var(--line2);align-items:center;justify-content:center;color:#4a515b;cursor:pointer;}
+  .menu-btn{display:none;width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,#FF8100,#E0620A);border:none;box-shadow:0 8px 22px rgba(230,98,0,.42);align-items:center;justify-content:center;color:#fff;cursor:pointer;transition:transform .12s;}
+  .menu-btn .ico{width:23px;height:23px;fill:#fff;stroke:none;}
+  .menu-btn:active{transform:scale(.93);}
   .sb-backdrop{position:fixed;inset:0;background:rgba(20,24,30,.4);z-index:39;display:none;}
   .sb-backdrop.show{display:block;}
 </style>
@@ -265,7 +278,7 @@
 
 <div class="main app-el app-hidden" id="mainApp">
   <header class="topbar">
-    <button class="menu-btn" id="menuBtn"><span data-ic="menu"></span></button>
+    <button class="menu-btn" id="menuBtn" aria-label="Abrir menu"><span data-ic="apps"></span></button>
     <div class="tb-hi">
       <h1 id="greet">Bom dia</h1>
       <p>Aqui tens o que se passa na tua loja hoje.</p>
@@ -628,9 +641,16 @@ document.getElementById('btnLogin').onclick=doLogin;
 document.querySelectorAll('[data-go]').forEach(function(el){ el.addEventListener('click',function(){ go(el.getAttribute('data-go')); }); });
 /* Pesquisa no topo: filtra o menu lateral ao escrever */
 IC.search=IC.search||'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>';
+IC.apps=IC.apps||'<rect x="3" y="3" width="7.5" height="7.5" rx="2.2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2.2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2.2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2.2"/>';
 (function(){
   var inp=document.getElementById('navSearch'); if(!inp) return;
   var srch=inp.closest('.tb-search'); if(srch) mountIcons(srch);
+  var tb=document.querySelector('.topbar');
+  if(srch&&tb){
+    srch.addEventListener('click',function(){ if(window.innerWidth<=820 && !tb.classList.contains('searching')){ tb.classList.add('searching'); setTimeout(function(){ inp.focus(); },60); } });
+    inp.addEventListener('blur',function(){ if(!inp.value.trim()) tb.classList.remove('searching'); });
+    inp.addEventListener('keydown',function(e){ if(e.key==='Escape'){ inp.value=''; inp.dispatchEvent(new Event('input',{bubbles:true})); inp.blur(); tb.classList.remove('searching'); } });
+  }
   inp.addEventListener('input',function(){
     var q=inp.value.trim().toLowerCase();
     var nav=document.getElementById('sbNav'); if(!nav) return;
