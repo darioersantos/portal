@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#FF8100">
-<script>if(window.innerWidth<=820&&!sessionStorage.getItem('_mbounce')){sessionStorage.setItem('_mbounce','1');location.replace('index.html');}</script>
 <title>Painel &#xb7; Sport Zone Vasco da Gama</title>
 <script src="config.js"></script>
 <script src="links.js"></script>
@@ -149,19 +148,49 @@
   #bdpop .bfoot button{width:100%;padding:12px;border:none;border-radius:13px;background:var(--accent-soft);color:var(--accent-dark);font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
 
   @media(max-width:1120px){
-    .kpis{grid-template-columns:repeat(2,1fr);}
-    .layout{grid-template-columns:1fr;}
-    .col-l{grid-template-columns:1fr;}
+    .kpis{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .layout{grid-template-columns:minmax(0,1fr);}
+    .col-l{grid-template-columns:minmax(0,1fr);}
   }
   @media(max-width:820px){
     :root{--sb:0px;}
     .sidebar{transform:translateX(-100%);transition:transform .2s;box-shadow:0 10px 40px rgba(0,0,0,.2);width:270px;}
     .sidebar.open{transform:none;}
-    .main{margin-left:0;}
+    .main{margin-left:0;min-width:0;}
     .menu-btn{display:flex !important;}
-    .content{padding:8px 16px 30px;}
-    .topbar{padding:16px 16px 12px;}
+    .content{padding:6px 14px 28px;}
+    /* barra de topo compacta */
+    .topbar{padding:12px 14px 10px;gap:11px;}
+    .tb-hi{min-width:0;}
+    .tb-hi h1{font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .tb-hi p{display:none;}
+    .tb-right{gap:8px;}
+    .tb-date{font-size:11px;padding:7px 9px;line-height:1.2;}
+    .tb-date .ico{width:14px;height:14px;}
+    .tb-icon{width:40px;height:40px;}
+    /* cartoes KPI como mosaicos compactos (2 por linha) */
+    .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-bottom:16px;}
+    .kpi{flex-direction:column;align-items:flex-start;gap:9px;padding:13px 14px;border-radius:15px;}
+    .kpi .k-ic{width:40px;height:40px;border-radius:12px;}
+    .kpi .k-ic .ico{width:21px;height:21px;}
+    .kpi>div{min-width:0;width:100%;}
+    .kpi .k-lbl{font-size:11.5px;line-height:1.25;}
+    .kpi .k-val{font-size:23px;margin:1px 0;}
+    .kpi .k-sub{font-size:11.5px;}
+    /* paineis / widgets */
+    .layout{gap:14px;}
+    .col-l,.col-r{gap:14px;}
+    .panel{padding:15px 16px;border-radius:15px;}
+    .p-head{flex-wrap:wrap;}
+    .p-head h2{font-size:14.5px;}
+    .trow,.lrow{padding:10px 2px;gap:10px;}
+    .trow .t-txt,.lrow .l-txt{font-size:13px;}
+    .lrow .l-when{font-size:11.5px;}
+  }
+  @media(max-width:380px){
     .kpis{grid-template-columns:1fr;}
+    .kpi{flex-direction:row;align-items:center;}
+    .kpi>div{width:auto;}
   }
   .menu-btn{display:none;width:42px;height:42px;border-radius:11px;background:var(--card);border:1px solid var(--line2);align-items:center;justify-content:center;color:#4a515b;cursor:pointer;}
   .sb-backdrop{position:fixed;inset:0;background:rgba(20,24,30,.4);z-index:39;display:none;}
@@ -468,14 +497,13 @@ function render(notas){
 /* ---------- Birthday popup ---------- */
 function maybeBirthdayPopup(asorted){
   try{ if(sessionStorage.getItem('sz_bd_seen')==='1') return; }catch(e){}
-  var soon=asorted.filter(function(n){ return bdDiasAte(n.texto)<=7; });
   var hoje=asorted.filter(function(n){ return bdDiasAte(n.texto)===0; });
-  if(!soon.length) return;
-  var title=hoje.length?'Feliz Anivers\u00e1rio!':'Anivers\u00e1rios a chegar';
-  var subt=hoje.length?(hoje.length+' colaborador'+(hoje.length>1?'es fazem':' faz')+' anos hoje'):'Nos pr\u00f3ximos 7 dias';
+  if(!hoje.length) return;   /* so aparece no proprio dia do aniversario */
+  var title='Feliz Anivers\u00e1rio!';
+  var subt=(hoje.length+' colaborador'+(hoje.length>1?'es fazem':' faz')+' anos hoje');
   document.getElementById('bdTitle').textContent=title;
   document.getElementById('bdSubt').textContent=subt;
-  document.getElementById('bdList').innerHTML=soon.map(function(n){ var dias=bdDiasAte(n.texto); var id=bdIdade(n.texto); return '<div class="lrow"><div class="l-ic cake">'+svg('cake')+'</div><div class="l-info"><div class="l-txt">'+esc(n.autor||'\u2014')+'</div><div class="l-meta">'+(id!==''?('faz '+(id+(dias===0?0:1))+' anos'):'')+'</div></div><div class="l-when'+(dias===0?' hoje':'')+'">'+bdWhen(dias)+'</div></div>'; }).join('');
+  document.getElementById('bdList').innerHTML=hoje.map(function(n){ var dias=bdDiasAte(n.texto); var id=bdIdade(n.texto); return '<div class="lrow"><div class="l-ic cake">'+svg('cake')+'</div><div class="l-info"><div class="l-txt">'+esc(n.autor||'\u2014')+'</div><div class="l-meta">'+(id!==''?('faz '+(id+(dias===0?0:1))+' anos'):'')+'</div></div><div class="l-when'+(dias===0?' hoje':'')+'">'+bdWhen(dias)+'</div></div>'; }).join('');
   mountIcons();
   document.getElementById('bdpop').classList.add('show');
   try{ sessionStorage.setItem('sz_bd_seen','1'); }catch(e){}
