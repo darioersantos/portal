@@ -100,6 +100,18 @@
   .kpi .k-sub.a{color:var(--accent-dark);} .kpi .k-sub.g{color:var(--green);} .kpi .k-sub.m{color:var(--muted);}
   .kpi .k-sub.link{cursor:pointer;} .kpi .k-sub.link:hover{text-decoration:underline;}
 
+  /* Atalhos rapidos */
+  .quick-wrap{margin-bottom:20px;}
+  .quick-h{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:0 2px 10px;}
+  .quick{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;}
+  .qtile{background:var(--card);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow-sm);padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;text-align:center;transition:transform .1s,border-color .12s,box-shadow .12s;}
+  .qtile:hover{border-color:#f0d6bd;box-shadow:var(--shadow);transform:translateY(-1px);}
+  .qtile:active{transform:scale(.97);}
+  .qtile .qic{width:44px;height:44px;border-radius:13px;background:var(--accent-soft);color:var(--accent-dark);display:flex;align-items:center;justify-content:center;flex:none;}
+  .qtile .qic .ico{width:22px;height:22px;}
+  .qtile.dark .qic{background:var(--dark);color:#ffb45e;}
+  .qtile .qlbl{font-size:12px;font-weight:700;color:#3a4048;line-height:1.2;}
+
   /* layout grid */
   .layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(320px,1fr);gap:18px;align-items:start;}
   .col-l{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);gap:18px;align-items:start;}
@@ -181,6 +193,12 @@
     .kpi .k-lbl{font-size:11.5px;line-height:1.25;}
     .kpi .k-val{font-size:23px;margin:1px 0;}
     .kpi .k-sub{font-size:11.5px;}
+    /* atalhos rapidos: 3 por linha no telemovel */
+    .quick{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+    .quick-wrap{margin-bottom:16px;}
+    .qtile{padding:12px 6px;border-radius:14px;gap:7px;}
+    .qtile .qic{width:40px;height:40px;border-radius:12px;}
+    .qtile .qlbl{font-size:11px;}
     /* paineis / widgets */
     .layout{gap:14px;}
     .col-l,.col-r{gap:14px;}
@@ -195,6 +213,16 @@
     .kpis{grid-template-columns:1fr;}
     .kpi{flex-direction:row;align-items:center;}
     .kpi>div{width:auto;}
+  }
+  /* App instalada no ecra inicial (PWA/standalone): garantir que o topo (menu + saudacao)
+     fica SEMPRE abaixo da barra de estado do iPhone e clicavel. Nao afeta o browser. */
+  @media all and (display-mode:standalone){
+    .topbar{padding-top:max(env(safe-area-inset-top),46px);background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;}
+    .sb-brand{padding-top:max(env(safe-area-inset-top),46px);}
+  }
+  @media all and (display-mode:fullscreen){
+    .topbar{padding-top:max(env(safe-area-inset-top),46px);background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;}
+    .sb-brand{padding-top:max(env(safe-area-inset-top),46px);}
   }
   .menu-btn{display:none;width:42px;height:42px;border-radius:11px;background:var(--card);border:1px solid var(--line2);align-items:center;justify-content:center;color:#4a515b;cursor:pointer;}
   .sb-backdrop{position:fixed;inset:0;background:rgba(20,24,30,.4);z-index:39;display:none;}
@@ -246,6 +274,11 @@
       <div class="kpi"><div class="k-ic"><span data-ic="message-circle"></span></div><div><div class="k-lbl">Lembretes</div><div class="k-val" id="kLem">&#x2013;</div><div class="k-sub a" id="kLemSub">&#x2014;</div></div></div>
       <div class="kpi"><div class="k-ic"><span data-ic="bell"></span></div><div><div class="k-lbl">Notifica&#xe7;&#xf5;es n&#xe3;o lidas</div><div class="k-val" id="kNot">&#x2013;</div><div class="k-sub a link" id="kNotSub" data-go="notificacoes">Ver todas</div></div></div>
       <div class="kpi"><div class="k-ic"><span data-ic="cake"></span></div><div><div class="k-lbl">Anivers&#xe1;rios (7 dias)</div><div class="k-val" id="kBd">&#x2013;</div><div class="k-sub g" id="kBdSub">&#x2014;</div></div></div>
+    </div>
+
+    <div class="quick-wrap">
+      <div class="quick-h">Atalhos r&#xe1;pidos</div>
+      <div class="quick" id="quickGrid"></div>
     </div>
 
     <div class="layout">
@@ -547,6 +580,25 @@ function setAvatar(user){
 }
 
 /* ---------- Start app ---------- */
+/* Atalhos rapidos (ecra principal) */
+function navItem(key){ for(var g=0;g<NAV.length;g++){ var items=NAV[g].items||[]; for(var i=0;i<items.length;i++){ if(items[i].k===key) return items[i]; } } return null; }
+var QUICK=[
+  {k:'contagem', nm:'Dinheiro'},
+  {k:'lembretes', nm:'Tarefas'},
+  {k:'mural', nm:'Lembretes'},
+  {k:'notas', nm:'Notas'},
+  {k:'notificacoes', nm:'Notifica\u00e7\u00f5es'},
+  {k:'consumiveis', nm:'Encomendas'}
+];
+function renderQuick(){
+  var host=document.getElementById('quickGrid'); if(!host) return;
+  host.innerHTML=QUICK.map(function(q){
+    var it=navItem(q.k)||{}; var ic=it.ic||'clipboard';
+    return '<div class="qtile'+(it.dark?' dark':'')+'" data-k="'+q.k+'"><div class="qic">'+svg(ic)+'</div><div class="qlbl">'+esc(q.nm)+'</div></div>';
+  }).join('');
+  host.querySelectorAll('.qtile').forEach(function(el){ el.onclick=function(){ go(el.getAttribute('data-k')); }; });
+  mountIcons(host);
+}
 function startApp(){
   var user=(sessionStorage.getItem('sz_user')||'').trim();
   document.getElementById('login').style.display='none';
@@ -554,6 +606,7 @@ function startApp(){
   document.getElementById('sbName').textContent=user||'Utilizador';
   setAvatar(user);
   renderSidebar();
+  renderQuick();
   greeting();
   mountIcons();
   loadData();
