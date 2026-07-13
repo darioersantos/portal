@@ -1,6 +1,6 @@
 /* Menu lateral partilhado por todas as paginas. Editar AQUI muda a barra em toda a app. */
 window.PORTAL_NAV = [
-  {group:null, items:[ {k:'__home', ic:'home', nm:'Início', active:true}, {k:'equipa', ic:'users', nm:'Equipa de Hoje'} ]},
+  {group:null, items:[ {k:'__home', ic:'home', nm:'Início', active:true}, {k:'equipa', ic:'users', nm:'Horário do Staff'} ]},
   {group:'Operações', items:[
     {k:'lembretes', ic:'list-checks', nm:'Tarefas', badgeId:'nbTar'},
     {k:'mural', ic:'calendar-days', nm:'Calendário', badgeId:'nbLem'},
