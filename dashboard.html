@@ -69,6 +69,10 @@
   .sb-item.dark{background:var(--dark);color:#fff;margin:5px 0;box-shadow:0 4px 12px rgba(26,29,33,.25);}
   .sb-item.dark:hover{background:#000;color:#fff;}
   .sb-item.dark .ico{color:#ffb45e;}
+  .sb-item.accent{background:linear-gradient(135deg,#FF8100,#E06E00);color:#fff;margin:5px 0;box-shadow:0 4px 12px rgba(230,98,0,.28);}
+  .sb-item.accent:hover{background:linear-gradient(135deg,#ff8f1f,#f07600);color:#fff;}
+  .sb-item.accent .ico{color:#fff;}
+  .sb-item.accent.active::before{display:none;}
   .sb-user{border-top:1px solid var(--line2);padding:12px 14px calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:11px;cursor:pointer;}
   .sb-user:hover{background:#f8f9fa;}
   .sb-ava{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#FF8100,#E06E00);color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex:none;}
@@ -435,19 +439,19 @@ function mountIcons(root){ (root||document).querySelectorAll('[data-ic]').forEac
 /* ---------- Sidebar structure (igual ao Portal de Gestao) ---------- */
 var NAV=[
   {group:null, items:[ {k:'__home', ic:'home', nm:'In\u00edcio', active:true} ]},
-  {group:'Aplica\u00e7\u00f5es', items:[
+  {group:'Opera\u00e7\u00f5es', items:[
     {k:'lembretes', ic:'list-checks', nm:'Tarefas', badgeId:'nbTar'},
     {k:'mural', ic:'message-circle', nm:'Lembretes', badgeId:'nbLem'},
     {k:'notas', ic:'square-pen', nm:'Notas'},
-    {k:'vendas', ic:'bar-chart-3', nm:'An\u00e1lise de Vendas'},
     {k:'contagem', ic:'calculator', nm:'Contagem de Dinheiro'},
     {k:'notificacoes', ic:'bell', nm:'Notifica\u00e7\u00f5es'},
+    {k:'vendas', ic:'bar-chart-3', nm:'An\u00e1lise de Vendas', accent:true},
     {k:'superliga', ic:'trophy', nm:'Super Liga', dark:true}
   ]},
   {group:'Outros', items:[
-    {k:'consumiveis', ic:'shopping-bag', nm:'Encomendas'},
     {k:'checklists', ic:'clipboard-check', nm:'Checklist Abertura/Fecho'},
     {k:'limpeza', ic:'clipboard-list', nm:'Checklist de Loja'},
+    {k:'consumiveis', ic:'shopping-bag', nm:'Encomendas'},
     {k:'atas', ic:'file-text', nm:'Reuni\u00f5es'},
     {k:'pontualidade', ic:'calendar-days', nm:'Atrasos e Faltas'},
     {k:'caderno', ic:'book-open', nm:'Caderno de Acompanhamento'},
@@ -512,8 +516,8 @@ function renderSidebar(){
     if(g.group) html+='<div class="sb-grouplbl">'+g.group+'</div>';
     g.items.forEach(function(it){
       var url=LINKS[it.k];
-      var soon=(it.k!=='__home' && (url===''||url==null));
-      html+='<div class="sb-item'+(it.active?' active':'')+(it.dark?' dark':'')+(soon?' soon':'')+'" data-k="'+it.k+'">'
+      var soon=(it.k!=='__home' && !WEB_PAGES[it.k] && (url===''||url==null));
+      html+='<div class="sb-item'+(it.active?' active':'')+(it.dark?' dark':'')+(it.accent?' accent':'')+(soon?' soon':'')+'" data-k="'+it.k+'">'
         +svg(it.ic)+'<span class="lbl">'+it.nm+'</span>'
         +(it.badgeId?'<span class="badge" id="'+it.badgeId+'" style="display:none">0</span>':'')
         +'</div>';
