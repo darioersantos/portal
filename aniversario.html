@@ -14,7 +14,7 @@
 <script src="roster.js"></script>
 <script src="nav.js"></script>
 <script src="lucide.js"></script>
-<script>if((sessionStorage.getItem('sz_user')||'').trim()===''){ location.replace('dashboard.html'); }</script>
+<script>if((sessionStorage.getItem('sz_user')||'').trim()==='' && location.search.indexOf('publico=1')<0){ location.replace('dashboard.html'); }</script>
 <style>
   :root{
     --bg:#f4f6f8; --card:#ffffff; --ink:#1b1f24; --muted:#8b929c; --muted2:#aeb4bd;
@@ -307,7 +307,7 @@
 <main>
   <div class="card" id="cardForm">
     <h2 id="formTitle">Adicionar anivers&#xe1;rio</h2>
-    <p style="color:var(--muted);font-size:13px;margin:2px 0 12px;">Quando um colaborador fizer anos, aparece automaticamente uma <b>notifica&#xe7;&#xe3;o no menu principal</b> (e um aviso) a lembrar do anivers&#xe1;rio. &#x1f382;</p>
+    <p style="color:var(--muted);font-size:13px;margin:2px 0 12px;">Quando um colaborador fizer anos, aparece automaticamente uma <b>notifica&#xe7;&#xe3;o no menu principal</b> (e um aviso) a lembrar do anivers&#xe1;rio. <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#d6337f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg></p>
     <div class="field"><label for="nome">Colaborador</label><select id="nome" data-staff data-ph="Seleciona o teu nome"></select></div>
     <div class="field"><label for="nasc">Data de nascimento</label><input type="date" id="nasc"></div>
     <button class="save" id="btnSave">&#xff0b; Guardar anivers&#xe1;rio</button>
@@ -318,6 +318,12 @@
     <h2 style="margin:12px 0 4px;">Obrigado!</h2>
     <p style="color:var(--muted);margin:0;">O teu anivers&#xe1;rio foi guardado.</p>
     <button class="save" id="btnOutro" style="margin-top:16px;">Registar outro</button>
+  </div>
+
+  <div class="card" id="shareBox" style="display:none;background:linear-gradient(135deg,#ffffff,#fff7ed);border:1.5px solid #ffe2c0;">
+    <div style="font-weight:800;font-size:14px;color:var(--ink);margin-bottom:3px;">Partilhar com o staff</div>
+    <div style="font-size:12.5px;color:var(--muted2);margin-bottom:10px;">Envia este link para cada colaborador registar o seu anivers&#xe1;rio, sem entrar no painel.</div>
+    <button type="button" class="save" id="btnShare" style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;"><i data-lu="link"></i> Copiar link de partilha</button>
   </div>
 
   <div class="card" id="cardLista">
@@ -737,7 +743,7 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 "use strict";
 const BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
 const ANIV='_aniversario';
-const MANAGER=(sessionStorage.getItem('portalOK')==='1'); /* quem entrou pelo portal (com codigo) ve a lista; staff (link publico) so regista */
+const MANAGER=(sessionStorage.getItem('portalOK')==='1' && location.search.indexOf('publico=1')<0); /* quem entrou pelo portal (com codigo) ve a lista; staff (link publico) so regista */
 let DADOS=[];
 
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
@@ -766,7 +772,7 @@ function render(){
     else if(dias===1) quando='<span class="hojetag" style="background:#15803d;">Amanh\u00e3</span>';
     else quando='<span class="hojetag" style="background:#fff;color:var(--accent-ink);border:1px solid var(--line);">Faltam '+dias+' dias</span>';
     const row=document.createElement('div'); row.className='aniv'+(hoje?' hoje':'');
-    row.innerHTML='<span class="cake">\ud83c\udf82</span><div class="info"><div class="nome">'+esc(n.autor||'\u2014')+' '+quando+'</div>'+
+    row.innerHTML='<span class="cake"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#d6337f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg></span><div class="info"><div class="nome">'+esc(n.autor||'\u2014')+' '+quando+'</div>'+
       '<div class="data">'+fmt(n.texto)+' \u00b7 '+idade(n.texto)+' anos</div></div>'+
       '<button class="del" data-id="'+esc(n.id)+'">\u2715</button>';
     row.querySelector('.del').onclick=function(){ apagar(n.id); };
@@ -824,6 +830,7 @@ function apagar(id){
 if(MANAGER){
   document.getElementById('btnExport').addEventListener('click',exportar);
   carregar();
+  (function(){ var sbx=document.getElementById('shareBox'), sb=document.getElementById('btnShare'); if(sbx) sbx.style.display='block'; if(sb) sb.onclick=function(){ var link=location.href.split('?')[0].split('#')[0]+'?publico=1'; var o=sb.innerHTML; function done(){ sb.textContent='\u2713 Link copiado!'; setTimeout(function(){ sb.innerHTML=o; },1700); } if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(link).then(done,done); } else { try{ prompt('Copia o link:', link); }catch(e){} } }; })();
 }else{
   document.getElementById('cardLista').style.display='none';
   var _hb=document.getElementById('homeBtn'); if(_hb) _hb.style.display='none';
