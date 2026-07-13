@@ -10,9 +10,9 @@ window.PORTAL_NAV = [
     {k:'roturas', ic:'package', nm:'Roturas'},
     {k:'notificacoes', ic:'bell', nm:'Notificações'},
     {k:'contagem', ic:'calculator', nm:'Contagem de Dinheiro', accent2:true},
+    {k:'superliga', ic:'trophy', nm:'Super Liga', dark:true},
     {k:'vendas', ic:'bar-chart-3', nm:'Análise de Vendas', accent:true},
-    {k:'planeamento', ic:'calendar-days', nm:'Planeamento'},
-    {k:'superliga', ic:'trophy', nm:'Super Liga', dark:true}
+    {k:'planeamento', ic:'calendar-days', nm:'Planeamento'}
   ]},
   {group:'Outros', items:[
     {k:'checklists', ic:'clipboard-check', nm:'Checklist Abertura/Fecho'},
@@ -65,3 +65,16 @@ window.PORTAL_NAV = [
     {k:'wp_pc', ic:'monitor', nm:'Wallpaper PC'}
   ]}
 ];
+
+/* ==== ajustes globais partilhados (todas as paginas que carregam o nav.js) ==== */
+(function(){
+  /* 1) selects (catalogos) uniformes: caixa personalizada igual aos inputs/data */
+  var css='.field select, select[data-staff]{-webkit-appearance:none !important;appearance:none !important;width:100%;box-sizing:border-box;background-image:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%236b7280%27 stroke-width=%272.5%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:38px;}';
+  try{ var s=document.createElement('style'); s.textContent=css; (document.head||document.documentElement).appendChild(s); }catch(e){}
+  /* 2) manter a posicao de scroll do menu lateral entre paginas */
+  document.addEventListener('DOMContentLoaded', function(){
+    var nav=document.getElementById('sbNav'); if(!nav) return;
+    try{ var y=sessionStorage.getItem('sz_navscroll'); if(y!=null) nav.scrollTop=parseInt(y,10)||0; }catch(e){}
+    nav.addEventListener('scroll', function(){ try{ sessionStorage.setItem('sz_navscroll', nav.scrollTop); }catch(e){} }, {passive:true});
+  });
+})();
