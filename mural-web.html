@@ -164,7 +164,7 @@
     .main{margin-left:0;min-width:0;}
     .menu-btn{display:flex !important;}
     .content{padding:6px calc(14px + env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));}
-    .topbar{padding:calc(12px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) 10px calc(14px + env(safe-area-inset-left));gap:11px;flex-wrap:wrap;}
+    .topbar{padding:calc(26px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) 12px calc(14px + env(safe-area-inset-left));gap:11px;flex-wrap:wrap;}
     .tb-hi{min-width:0;}
     .tb-hi h1{font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .tb-hi p{display:none;}
@@ -173,12 +173,12 @@
   }
   /* App instalada (PWA/standalone): topo sempre abaixo da barra de estado e tocavel */
   @media all and (display-mode:standalone){
-    .topbar{padding-top:max(env(safe-area-inset-top),46px);background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;}
-    .sb-brand{padding-top:max(env(safe-area-inset-top),46px);}
+    .topbar{padding-top:calc(max(env(safe-area-inset-top),44px) + 16px);background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;}
+    .sb-brand{padding-top:calc(max(env(safe-area-inset-top),44px) + 8px);}
   }
   @media all and (display-mode:fullscreen){
-    .topbar{padding-top:max(env(safe-area-inset-top),46px);background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;}
-    .sb-brand{padding-top:max(env(safe-area-inset-top),46px);}
+    .topbar{padding-top:calc(max(env(safe-area-inset-top),44px) + 16px);background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;}
+    .sb-brand{padding-top:calc(max(env(safe-area-inset-top),44px) + 8px);}
   }
   .menu-btn{display:none;width:42px;height:42px;border-radius:11px;background:var(--card);border:1px solid var(--line2);align-items:center;justify-content:center;color:#4a515b;cursor:pointer;}
   .sb-backdrop{position:fixed;inset:0;background:rgba(20,24,30,.4);z-index:39;display:none;}
@@ -190,6 +190,8 @@
   .tk-newbtn{background:linear-gradient(135deg,#FF8100,#E06E00);color:#fff;border:none;border-radius:12px;padding:11px 18px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px;box-shadow:0 6px 16px rgba(230,98,0,.28);white-space:nowrap;}
   .tk-newbtn .ico{width:18px;height:18px;stroke-width:2.4;}
   .tk-empty{font-size:12.5px;color:var(--muted2);padding:8px 2px;}
+
+
 
 
 
@@ -218,6 +220,8 @@
   #lbModal h3{margin:0 0 4px;font-size:18px;font-weight:800;}
   #lbModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
   #lbModal input[type=text],#lbModal input[type=date],#lbModal input[type=time],#lbModal textarea,#lbModal select{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #lbModal input[type=date],#lbModal input[type=time]{display:block;width:100%;min-height:52px;line-height:1.2;}
+  #lbEvento{font-size:16px;}
   #lbModal textarea{min-height:100px;resize:vertical;}
   #lbModal input:focus,#lbModal textarea:focus,#lbModal select:focus{outline:none;border-color:var(--accent);}
   .lb-mediabar{display:flex;gap:8px;margin-top:9px;}
@@ -372,6 +376,20 @@ IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
 IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
 
 IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
@@ -483,6 +501,8 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
   function close(){ sb.classList.remove('open'); bd.classList.remove('show'); }
   if(mb) mb.onclick=function(){ sb.classList.add('open'); bd.classList.add('show'); };
   if(bd) bd.onclick=close; })();
+
+
 
 
 
