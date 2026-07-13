@@ -5,12 +5,12 @@ window.PORTAL_NAV = [
     {k:'lembretes', ic:'list-checks', nm:'Tarefas', badgeId:'nbTar'},
     {k:'mural', ic:'calendar-days', nm:'Calendário', badgeId:'nbLem'},
     {k:'permanencia', ic:'book-open', nm:'Relatório de Permanência'},
-    {k:'roturas', ic:'package', nm:'Roturas'},
+    {k:'roturas', ic:'package', nm:'Ruturas'},
     {k:'notificacoes', ic:'bell', nm:'Notificações'},
     {k:'contagem', ic:'calculator', nm:'Contagem de Dinheiro', accent2:true},
     {k:'superliga', ic:'trophy', nm:'Super Liga', dark:true},
     {k:'vendas', ic:'bar-chart-3', nm:'Análise de Vendas', accent:true},
-    {k:'planeamento', ic:'calendar-days', nm:'Planeamento'}
+    {k:'planeamento', ic:'trending-up', nm:'Produtividade'}
   ]},
   {group:'Outros', items:[
     {k:'checklists', ic:'clipboard-check', nm:'Checklist Abertura/Fecho'},
