@@ -14,7 +14,7 @@
 <script src="roster.js"></script>
 <script src="nav.js"></script>
 <script src="lucide.js"></script>
-<script>if((sessionStorage.getItem('sz_user')||'').trim()===''){ location.replace('dashboard.html'); }</script>
+<script>if((sessionStorage.getItem('sz_user')||'').trim()==='' && location.search.indexOf('publico=1')<0){ location.replace('dashboard.html'); }</script>
 <style>
   :root{
     --bg:#f4f6f8; --card:#ffffff; --ink:#1b1f24; --muted:#8b929c; --muted2:#aeb4bd;
@@ -376,6 +376,11 @@
 <main>
   <!-- ============ RESPONDER ============ -->
   <div id="viewResp">
+    <div class="card" id="shareBox" style="background:linear-gradient(135deg,#ffffff,#fff7ed);border:1.5px solid #ffe2c0;border-radius:14px;padding:14px;margin-bottom:16px;">
+      <div style="font-weight:800;font-size:14px;color:#1a1d21;margin-bottom:3px;">Partilhar o inqu&#xe9;rito com o staff</div>
+      <div style="font-size:12.5px;color:#8b929c;margin-bottom:10px;">Envia este link &#x2014; cada pessoa responde de forma an&#xf3;nima, sem entrar no painel.</div>
+      <button type="button" id="btnShare" style="width:100%;background:linear-gradient(135deg,#FF8100,#E06E00);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:8px;"><i data-lu="link"></i> Copiar link de partilha</button>
+    </div>
     <p class="intro">O teu feedback &#xe9; <b>an&#xf3;nimo</b>. Responde com sinceridade &#x2014; ajuda a melhorar a loja para todos. <span class="priv"><i data-lu="lock"></i> An&#xf3;nimo</span></p>
     <div id="survey"></div>
     <button class="btn save" id="btnSubmit" type="button"><i data-lu="check"></i> Enviar respostas</button>
@@ -1143,6 +1148,7 @@ document.getElementById('tabRes').addEventListener('click',function(){
 });
 document.getElementById('tabPerg').addEventListener('click',function(){ showTab('perg'); });
 document.getElementById('btnSubmit').addEventListener('click',submit);
+(function(){ var sb=document.getElementById('btnShare'); if(!sb) return; sb.onclick=function(){ var link=location.href.split('?')[0].split('#')[0]+'?publico=1'; function done(){ var o=sb.innerHTML; sb.innerHTML='<i data-lu="check"></i> Link copiado!'; if(window.lucideRepl)window.lucideRepl(); setTimeout(function(){ sb.innerHTML=o; if(window.lucideRepl)window.lucideRepl(); },1700); } if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(link).then(done,done); } else { try{ prompt('Copia o link:', link); }catch(e){} } }; })();
 
 carregarPerguntas(function(){ buildSurvey(); icons(); });
 </script>
