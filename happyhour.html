@@ -379,7 +379,6 @@
   </div>
 
   <div class="actions">
-    <button class="btn print" id="btnPrint2" type="button"><i data-lu="printer"></i> Imprimir / Guardar PDF</button>
     <button class="btn arq" id="btnArquivar" type="button"><i data-lu="download"></i> Guardar no hist&#xf3;rico</button>
     <button class="btn reset" id="btnReset" type="button"><i data-lu="trash-2"></i> Nova Happy Hour</button>
   </div>
@@ -890,7 +889,7 @@ function imprimirObj(o){
 }
 function imprimir(){ imprimirObj(st); }
 document.getElementById('btnPrint').addEventListener('click',imprimir);
-document.getElementById('btnPrint2').addEventListener('click',imprimir);
+var _bp2=document.getElementById('btnPrint2'); if(_bp2) _bp2.addEventListener('click',imprimir);
 
 /* ---- Historico de Happy Hour (guardado como nota seccao=_hhhist; sem mudar Apps Script) ---- */
 let HH=[];
