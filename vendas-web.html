@@ -200,6 +200,8 @@
 
 
 
+
+
   /* ===== Analise de Vendas ===== */
   .vd-wrap{max-width:1100px;}
   .vd-toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;}
@@ -257,6 +259,58 @@
   .vd-note{font-size:12px;color:var(--muted2);margin-top:8px;padding:2px;}
   #toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:#1a1d21;color:#fff;padding:11px 18px;border-radius:12px;font-size:13.5px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:.2s;z-index:120;max-width:86vw;text-align:center;}
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  /* ===== detalhe das sub-abas ===== */
+  .vd-tabs{margin-top:0;margin-bottom:18px;}
+  #vdDetail .panel{margin-bottom:18px;}
+  .vd-dhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px;}
+  .vd-dhead h2{font-size:16px;font-weight:800;margin:0;flex:1;min-width:120px;}
+  .vd-seg{display:inline-flex;gap:6px;flex-wrap:wrap;}
+  .vd-seg.wrap{margin:2px 0 4px;}
+  .vd-seg button{border:1px solid var(--line2);background:#fff;border-radius:999px;padding:6px 13px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .vd-seg button:hover{border-color:#f0d6bd;}
+  .vd-seg button.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  .vd-dsum{font-size:12.5px;color:var(--muted2);font-weight:700;margin:8px 0 12px;}
+  .vd-drow{padding:10px 0;border-bottom:1px solid var(--line);}
+  .vd-drow:last-child{border-bottom:none;}
+  .vd-drow .dr-top{display:flex;align-items:center;gap:8px;}
+  .vd-drow .dr-nm{flex:1;min-width:0;font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .vd-drow .dl{font-size:12px;font-weight:800;}
+  .vd-drow .dl.up{color:var(--green);} .vd-drow .dl.down{color:var(--red);}
+  .vd-drow .dr-bar{height:7px;border-radius:99px;background:#f1f3f5;margin:7px 0 5px;overflow:hidden;}
+  .vd-drow .dr-bar>span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#FF8100,#E06E00);}
+  .vd-drow .dr-bot{display:flex;justify-content:space-between;font-size:12px;}
+  .vd-drow .dr-val{font-weight:800;} .vd-drow .dr-split{color:var(--muted2);font-weight:600;}
+  .vd-donwrap{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-top:6px;}
+  .vd-donut-box{flex:none;width:180px;} .vd-donut{width:180px;height:180px;}
+  .vd-dn-big{fill:#1b1f24;font-size:20px;font-weight:800;font-family:inherit;} .vd-dn-sm{fill:#aeb4bd;font-size:12px;font-weight:700;font-family:inherit;text-transform:uppercase;letter-spacing:.5px;}
+  .vd-legend{flex:1;min-width:190px;}
+  .vd-lg{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
+  .vd-lg:last-child{border-bottom:none;}
+  .vd-lg .dot{width:12px;height:12px;border-radius:4px;flex:none;} .vd-lg .lg-nm{flex:1;font-size:13.5px;font-weight:700;} .vd-lg .lg-sp{font-size:13px;font-weight:800;color:var(--accent-dark);}
+  .vd-acards{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;}
+  @media(max-width:640px){.vd-acards{grid-template-columns:minmax(0,1fr);}}
+  .vd-acard{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:14px 15px;box-shadow:var(--shadow-sm);}
+  .vd-acard .ac-top{display:flex;align-items:center;gap:8px;} .vd-acard .ac-nm{flex:1;font-size:14px;font-weight:800;} .vd-acard .dl{font-size:12px;font-weight:800;} .vd-acard .dl.up{color:var(--green);} .vd-acard .dl.down{color:var(--red);}
+  .vd-acard .ac-val{font-size:13px;font-weight:800;margin:5px 0 8px;} .vd-acard .ac-val span{color:var(--muted2);font-weight:600;font-size:12px;}
+  .vd-acard .dr-bar{height:7px;border-radius:99px;background:#f1f3f5;overflow:hidden;} .vd-acard .dr-bar>span{display:block;height:100%;border-radius:99px;}
+  .vd-acard .ac-brands{font-size:12px;color:var(--muted2);font-weight:600;margin-top:9px;}
+  .vd-hstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:6px 0 14px;}
+  @media(max-width:520px){.vd-hstats{grid-template-columns:minmax(0,1fr);}}
+  .vd-hstats .hs{background:var(--accent-soft);border-radius:13px;padding:11px 13px;}
+  .vd-hstats .hs-l{font-size:11.5px;color:var(--accent-ink);font-weight:700;opacity:.85;} .vd-hstats .hs-v{font-size:15px;font-weight:800;color:var(--accent-ink);margin-top:3px;}
+  .vd-hrow{display:flex;align-items:center;gap:11px;padding:7px 0;}
+  .vd-hrow .hr-l{width:38px;flex:none;font-size:12.5px;font-weight:700;color:#4a515b;}
+  .vd-hrow .hr-bar{flex:1;height:9px;border-radius:99px;background:#f1f3f5;overflow:hidden;} .vd-hrow .hr-bar>span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#FF8100,#E06E00);}
+  .vd-hrow .hr-v{width:82px;flex:none;text-align:right;font-size:12.5px;font-weight:800;}
+  .vd-ia-note{font-size:12px;color:var(--muted2);font-weight:600;margin:6px 0 14px;padding:9px 12px;background:#f7f8fa;border-radius:10px;}
+  .vd-ins2wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;}
+  @media(max-width:640px){.vd-ins2wrap{grid-template-columns:minmax(0,1fr);}}
+  .vd-ins2{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line2);border-radius:14px;padding:13px 14px;box-shadow:var(--shadow-sm);}
+  .vd-ins2 .i2-ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:none;} .vd-ins2 .i2-ic .ico{width:19px;height:19px;}
+  .vd-ins2.g .i2-ic{background:#eafaf1;} .vd-ins2.g .i2-ic .ico{color:var(--green);}
+  .vd-ins2.r .i2-ic{background:#fdecec;} .vd-ins2.r .i2-ic .ico{color:var(--red);}
+  .vd-ins2.i .i2-ic{background:var(--accent-soft);} .vd-ins2.i .i2-ic .ico{color:var(--accent-dark);}
+  .vd-ins2 .i2-h{font-size:12px;font-weight:800;color:var(--muted2);text-transform:uppercase;letter-spacing:.3px;} .vd-ins2 .i2-b{font-size:13.5px;font-weight:600;color:#3a4048;margin-top:3px;line-height:1.4;}
 
 </style>
 </head>
@@ -284,6 +338,8 @@
     <button class="vd-week" id="vdWeek"><span data-ic="calendar-days"></span> <span id="vdWeekLbl">Semana</span> <span data-ic="chevron-down"></span></button>
     <button class="vd-cmp" id="vdCompare"><span data-ic="refresh-cw"></span> Comparar</button>
   </div>
+  <div class="vd-tabs" id="vdTabs"></div>
+  <div id="vdResumo">
   <div class="kpis" id="vdKpis"></div>
   <div class="panel">
     <div class="p-head"><h2>Evolu&#231;&#227;o de Vendas Semanais</h2><select class="vd-sel" id="vdMetric"><option value="eur">Vendas (&#8364;)</option><option value="tx">Transa&#231;&#245;es</option></select></div>
@@ -300,7 +356,8 @@
     <div class="panel"><div class="p-head"><h2>Vendas por &#193;rea</h2></div><div class="vd-catlist" id="vdAreas"></div></div>
   </div>
   <div class="panel"><div class="p-head"><h2>Insights da Semana</h2></div><div class="vd-insights" id="vdInsights"></div></div>
-  <div class="vd-tabs" id="vdTabs"></div>
+  </div>
+  <div id="vdDetail" style="display:none"></div>
 </div></div>
 </div>
 
@@ -360,6 +417,40 @@ IC.image='<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9"
 IC.plus='<path d="M5 12h14"/><path d="M12 5v14"/>';
 IC['trash-2']='<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>';
 IC.check='<path d="M20 6 9 17l-5-5"/>';
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+
 IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
@@ -582,6 +673,8 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 
 
 
+
+
 /* ===== Modulo ===== */
 
 var VD_DEFAULT = {"semana": "Semana 23 \u00b7 2026", "kpis": [{"ic": "banknote", "lbl": "Vendas Totais", "val": 159340, "fmt": "eur", "dl": -0.1}, {"ic": "receipt", "lbl": "Transa\u00e7\u00f5es", "val": 5903, "fmt": "int", "dl": 1.2}, {"ic": "trending-up", "lbl": "Ticket M\u00e9dio", "val": 33.2, "fmt": "eur2", "dl": -1.3}, {"ic": "shopping-bag", "lbl": "UPT (pe\u00e7as/tal\u00e3o)", "val": 2.22, "fmt": "dec", "dl": 3.1}], "serie": [{"l": "S11", "eur": 99584, "tx": 3524}, {"l": "S12", "eur": 106297, "tx": 3643}, {"l": "S13", "eur": 143988, "tx": 4689}, {"l": "S14", "eur": 123264, "tx": 4220}, {"l": "S15", "eur": 111659, "tx": 3762}, {"l": "S16", "eur": 114425, "tx": 3850}, {"l": "S17", "eur": 132949, "tx": 4542}, {"l": "S18", "eur": 141456, "tx": 4664}, {"l": "S19", "eur": 120734, "tx": 4108}, {"l": "S20", "eur": 114454, "tx": 3969}, {"l": "S21", "eur": 122558, "tx": 4397}, {"l": "S22", "eur": 169807, "tx": 5857}, {"l": "S23", "eur": 159340, "tx": 5903}], "hourly": [{"l": "09h", "eur": 0, "ff": 95}, {"l": "10h", "eur": 4842, "ff": 1197}, {"l": "11h", "eur": 8568, "ff": 1453}, {"l": "12h", "eur": 8695, "ff": 1565}, {"l": "13h", "eur": 10298, "ff": 1801}, {"l": "14h", "eur": 9521, "ff": 1848}, {"l": "15h", "eur": 11483, "ff": 2038}, {"l": "16h", "eur": 9387, "ff": 1996}, {"l": "17h", "eur": 11965, "ff": 1944}, {"l": "18h", "eur": 9106, "ff": 1790}, {"l": "19h", "eur": 9424, "ff": 1447}, {"l": "20h", "eur": 6641, "ff": 1207}, {"l": "21h", "eur": 6372, "ff": 969}, {"l": "22h", "eur": 4766, "ff": 705}, {"l": "23h", "eur": 2821, "ff": 342}], "topAct": [{"nm": "Casual Fwr", "val": 43032, "dl": -10.1, "split": 27.0}, {"nm": "Athletics", "val": 29327, "dl": -6.3, "split": 18.4}, {"nm": "Casual Swr", "val": 26838, "dl": -2.4, "split": 16.8}, {"nm": "Team Sports", "val": 21266, "dl": 32.7, "split": 13.3}, {"nm": "Leisure Acc", "val": 17970, "dl": -2.3, "split": 11.3}, {"nm": "Outdoor", "val": 7661, "dl": 6.2, "split": 4.8}, {"nm": "Fitness", "val": 5549, "dl": -8.9, "split": 3.5}, {"nm": "Swimming", "val": 4104, "dl": 3.2, "split": 2.6}], "topCat": [{"nm": "Trainers", "val": 56619, "dl": -12.0, "split": 35.5}, {"nm": "T-Shirts", "val": 17878, "dl": -2.8, "split": 11.2}, {"nm": "Pants", "val": 10432, "dl": -0.3, "split": 6.5}, {"nm": "Slides", "val": 7949, "dl": 3.6, "split": 5.0}, {"nm": "Boots", "val": 7084, "dl": 10.8, "split": 4.4}, {"nm": "Official T-Shirts", "val": 6878, "dl": 55.2, "split": 4.3}, {"nm": "Swimsuits", "val": 6332, "dl": 18.6, "split": 4.0}, {"nm": "Socks", "val": 5646, "dl": -2.6, "split": 3.5}, {"nm": "Sandals", "val": 4097, "dl": 37.9, "split": 2.6}, {"nm": "Caps", "val": 3775, "dl": 13.3, "split": 2.4}, {"nm": "Backpacks", "val": 2864, "dl": -20.6, "split": 1.8}, {"nm": "Balls", "val": 2812, "dl": 75.3, "split": 1.8}], "marcasByArea": {"todas": [{"nm": "Nike", "val": 27701, "split": 17.4}, {"nm": "Adidas", "val": 25256, "split": 15.9}, {"nm": "Fila", "val": 18285, "split": 11.5}, {"nm": "Puma", "val": 17290, "split": 10.9}, {"nm": "Up", "val": 6721, "split": 4.2}, {"nm": "Silver", "val": 6564, "split": 4.1}], "calcado": [{"nm": "Nike", "val": 17212, "split": 21.5}, {"nm": "Adidas", "val": 13486, "split": 16.8}, {"nm": "Fila", "val": 9685, "split": 12.1}, {"nm": "Puma", "val": 6588, "split": 8.2}, {"nm": "Skechers", "val": 4750, "split": 5.9}, {"nm": "Nb", "val": 4731, "split": 5.9}], "textil": [{"nm": "Puma", "val": 8517, "split": 16.8}, {"nm": "Adidas", "val": 7067, "split": 14.0}, {"nm": "Nike", "val": 6506, "split": 12.9}, {"nm": "Up", "val": 5388, "split": 10.7}, {"nm": "Fila", "val": 4942, "split": 9.8}, {"nm": "Silver", "val": 2618, "split": 5.2}], "acess": [{"nm": "Adidas", "val": 4703, "split": 16.4}, {"nm": "Nike", "val": 3983, "split": 13.9}, {"nm": "Fila", "val": 3659, "split": 12.8}, {"nm": "Puma", "val": 2185, "split": 7.6}, {"nm": "New Era", "val": 1559, "split": 5.4}, {"nm": "Silver", "val": 1555, "split": 5.4}]}, "areas": [{"nm": "Footwear", "val": 80073, "split": 50.3, "dl": -5.0}, {"nm": "Apparel", "val": 50587, "split": 31.7, "dl": 5.7}, {"nm": "Accessories & Equipment", "val": 28675, "split": 18.0, "dl": 4.8}, {"nm": "Other", "val": 5, "split": 0.0, "dl": -33.3}]};
@@ -658,9 +751,40 @@ function renderInsights(){
   if(tm) ins.push({t:'i',ic:'info',tx:'O ticket m\u00e9dio variou '+(tm.dl>=0?'+':'')+fmtDelta(tm.dl)+'% (LFL).'});
   document.getElementById('vdInsights').innerHTML=ins.map(function(x){ return '<div class="ins '+x.t+'"><div class="ic-w">'+svg(x.ic)+'</div><div class="tx">'+esc(x.tx)+'</div>'+svg('chevron-right')+'</div>'; }).join('');
 }
-var TABS=[{k:'resumo',nm:'Resumo',ic:'bar-chart-3'},{k:'categorias',nm:'Categorias',ic:'list-checks'},{k:'marcas',nm:'Marcas',ic:'tag'},{k:'areas',nm:'Areas',ic:'package'},{k:'horas',nm:'Por Hora',ic:'clock'},{k:'ia',nm:'Insights IA',ic:'lightbulb'}];
-function renderTabs(){ var host=document.getElementById('vdTabs'); host.innerHTML=TABS.map(function(t,i){ return '<div class="vd-tab'+(i===0?' active':'')+'" data-k="'+t.k+'">'+svg(t.ic)+'<span>'+esc(t.nm)+'</span></div>'; }).join(''); host.querySelectorAll('.vd-tab').forEach(function(el){ el.onclick=function(){ host.querySelectorAll('.vd-tab').forEach(function(x){x.classList.remove('active');}); el.classList.add('active'); if(el.getAttribute('data-k')!=='resumo') toast('Vista detalhada desta sec\u00e7\u00e3o: pr\u00f3xima fase.'); }; }); }
-function renderAll(){ document.getElementById('vdWeekLbl').textContent=VD.semana||'Semana'; renderKpis(); vdLineChart(); vdHourly(); renderTop(); renderMarcaFilter(); vdBrandChart(); renderAreas(); renderInsights(); renderTabs(); mountIcons(document.querySelector('.vd-wrap')); }
+var TABS=[{k:'resumo',nm:'Resumo',ic:'bar-chart-3'},{k:'categorias',nm:'Categorias',ic:'list-checks'},{k:'marcas',nm:'Marcas',ic:'tag'},{k:'areas',nm:'\u00c1reas',ic:'package'},{k:'horas',nm:'Por Hora',ic:'clock'},{k:'ia',nm:'Insights IA',ic:'lightbulb'}];
+var DETAIL='resumo';
+var detState={cat:'act',marca:'todas',hora:'eur'};
+function setActiveTab(k){ var host=document.getElementById('vdTabs'); if(!host) return; host.querySelectorAll('.vd-tab').forEach(function(x){ x.classList.toggle('active', x.getAttribute('data-k')===k); }); }
+function renderTabs(){ var host=document.getElementById('vdTabs'); host.innerHTML=TABS.map(function(t){ return '<div class="vd-tab'+(t.k===DETAIL?' active':'')+'" data-k="'+t.k+'">'+svg(t.ic)+'<span>'+esc(t.nm)+'</span></div>'; }).join(''); host.querySelectorAll('.vd-tab').forEach(function(el){ el.onclick=function(){ showTab(el.getAttribute('data-k')); }; }); }
+function showTab(k){ DETAIL=k; setActiveTab(k); var res=document.getElementById('vdResumo'), det=document.getElementById('vdDetail'); if(!res||!det) return; if(k==='resumo'){ res.style.display=''; det.style.display='none'; det.innerHTML=''; return; } res.style.display='none'; det.style.display=''; det.innerHTML=detailHTML(k); wireDetail(); mountIcons(det); }
+
+/* ---- Vistas detalhadas (sub-abas) ---- */
+function detBar(rank,nm,val,split,dl,maxv){ var badge=(dl==null)?'':'<span class="dl '+(dl>=0?'up':'down')+'">'+(dl>=0?'+':'')+fmtDelta(dl)+'%</span>'; return '<div class="vd-drow"><div class="dr-top"><span class="dr-nm">'+rank+'. '+esc(nm)+'</span>'+badge+'</div><div class="dr-bar"><span style="width:'+Math.max(2,Math.round(val/maxv*100))+'%"></span></div><div class="dr-bot"><span class="dr-val">'+fmtEur(val)+'</span><span class="dr-split">'+fmtDelta(split)+'% do total</span></div></div>'; }
+function detCategorias(){ var mode=detState.cat; var list=(mode==='cat'?VD.topCat:VD.topAct)||[]; var maxv=Math.max.apply(null,list.map(function(c){return c.val;}).concat([1])); var tot=0; list.forEach(function(c){tot+=c.val;}); var rows=list.map(function(c,i){return detBar(i+1,c.nm,c.val,c.split,c.dl,maxv);}).join('')||'<div class="vd-note">Sem dados.</div>'; return '<div class="panel"><div class="vd-dhead"><h2>'+(mode==='cat'?'Categorias':'Atividades')+'</h2><div class="vd-seg"><button data-m="act" class="'+(mode==='act'?'on':'')+'">Atividades</button><button data-m="cat" class="'+(mode==='cat'?'on':'')+'">Categorias</button></div></div><div class="vd-dsum">'+list.length+' '+(mode==='cat'?'categorias':'atividades')+' \u00b7 '+fmtEur(tot)+'</div><div class="vd-dlist">'+rows+'</div></div>'; }
+function detMarcas(){ var a=detState.marca; var list=(VD.marcasByArea&&VD.marcasByArea[a])||[]; var maxv=Math.max.apply(null,list.map(function(c){return c.val;}).concat([1])); var tot=0; list.forEach(function(c){tot+=c.val;}); var seg=MAREAS.map(function(o){return '<button data-a="'+o[0]+'" class="'+(o[0]===a?'on':'')+'">'+o[1]+'</button>';}).join(''); var rows=list.map(function(c,i){return detBar(i+1,c.nm,c.val,c.split,null,maxv);}).join('')||'<div class="vd-note">Sem dados nesta \u00e1rea.</div>'; return '<div class="panel"><div class="vd-dhead"><h2>Marcas</h2></div><div class="vd-seg wrap">'+seg+'</div><div class="vd-dsum">'+list.length+' marcas \u00b7 '+fmtEur(tot)+'</div><div class="vd-dlist">'+rows+'</div></div>'; }
+function areaKey(nm){ var map={'Footwear':'calcado','Apparel':'textil','Accessories & Equipment':'acess'}; return map[nm]||''; }
+function detAreas(){ var data=(VD.areas||[]).filter(function(a){return (a.split||0)>=1;}); var tot=0; data.forEach(function(a){tot+=a.val;}); tot=tot||1; var maxv=Math.max.apply(null,data.map(function(a){return a.val;}).concat([1])); var COL=['#FF8100','#2563eb','#10b981','#a855f7','#6b7280']; var cx=90,cy=90,r=66,sw=26,C=2*Math.PI*r,off=0; var segs=data.map(function(a,i){ var len=a.val/tot*C; var s='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+COL[i%COL.length]+'" stroke-width="'+sw+'" stroke-dasharray="'+len.toFixed(1)+' '+(C-len).toFixed(1)+'" stroke-dashoffset="'+(-off).toFixed(1)+'" transform="rotate(-90 '+cx+' '+cy+')"/>'; off+=len; return s; }).join(''); var dn='<svg viewBox="0 0 180 180" class="vd-donut">'+segs+'<text x="90" y="86" text-anchor="middle" class="vd-dn-big">'+fmtEur(tot)+'</text><text x="90" y="104" text-anchor="middle" class="vd-dn-sm">total</text></svg>'; var legend=data.map(function(a,i){ return '<div class="vd-lg"><span class="dot" style="background:'+COL[i%COL.length]+'"></span><span class="lg-nm">'+esc(a.nm)+'</span><span class="lg-sp">'+fmtDelta(a.split)+'%</span></div>'; }).join(''); var cards=data.map(function(a,i){ var up=a.dl>=0; var k=areaKey(a.nm); var brs=(k&&VD.marcasByArea&&VD.marcasByArea[k])||[]; return '<div class="vd-acard"><div class="ac-top"><span class="ac-nm">'+esc(a.nm)+'</span><span class="dl '+(up?'up':'down')+'">'+(up?'+':'')+fmtDelta(a.dl)+'%</span></div><div class="ac-val">'+fmtEur(a.val)+' <span>\u00b7 '+fmtDelta(a.split)+'% do total</span></div><div class="dr-bar"><span style="width:'+Math.max(2,Math.round(a.val/maxv*100))+'%;background:'+COL[i%COL.length]+'"></span></div>'+(brs.length?'<div class="ac-brands">Top marcas: '+brs.slice(0,3).map(function(b){return esc(b.nm);}).join(' \u00b7 ')+'</div>':'')+'</div>'; }).join(''); return '<div class="panel"><div class="vd-dhead"><h2>Vendas por \u00c1rea</h2></div><div class="vd-donwrap"><div class="vd-donut-box">'+dn+'</div><div class="vd-legend">'+legend+'</div></div></div><div class="vd-acards">'+cards+'</div>'; }
+function detHoras(){ var mode=detState.hora; var data=VD.hourly||[]; var best=data.slice().sort(function(a,b){return b.eur-a.eur;})[0]; var busy=data.slice().sort(function(a,b){return b.ff-a.ff;})[0]; var totE=0,totF=0; data.forEach(function(h){totE+=h.eur;totF+=h.ff;}); var maxv=Math.max.apply(null,data.map(function(h){return h[mode]||0;}).concat([1])); var rows=data.map(function(h){ return '<div class="vd-hrow"><span class="hr-l">'+esc(h.l)+'</span><div class="hr-bar"><span style="width:'+Math.max(1,Math.round((h[mode]||0)/maxv*100))+'%"></span></div><span class="hr-v">'+(mode==='eur'?fmtEur(h.eur):grp(h.ff))+'</span></div>'; }).join(''); return '<div class="panel"><div class="vd-dhead"><h2>Vendas por Hora</h2><div class="vd-seg"><button data-h="eur" class="'+(mode==='eur'?'on':'')+'">Vendas (\u20ac)</button><button data-h="ff" class="'+(mode==='ff'?'on':'')+'">Visitas</button></div></div><div class="vd-hstats"><div class="hs"><div class="hs-l">Pico de vendas</div><div class="hs-v">'+(best?esc(best.l)+' \u00b7 '+fmtEur(best.eur):'\u2014')+'</div></div><div class="hs"><div class="hs-l">Mais visitas</div><div class="hs-v">'+(busy?esc(busy.l)+' \u00b7 '+grp(busy.ff):'\u2014')+'</div></div><div class="hs"><div class="hs-l">\u20ac por visita</div><div class="hs-v">'+(totF?fmtDec2(totE/totF)+'\u20ac':'\u2014')+'</div></div></div><div class="vd-hlist">'+rows+'</div><div class="vd-note">Para separar dias \u00fateis (Seg-Sex) e fim de semana (S\u00e1b-Dom), importa o relat\u00f3rio por hora repartido por dia.</div></div>'; }
+function detIA(){ var ins=[]; var s=VD.serie||[];
+  if(s.length>=2){ var a=s[s.length-1].eur,b=s[s.length-2].eur; var d=b?(a/b-1)*100:0; ins.push({t:d>=0?'g':'r',ic:d>=0?'trending-up':'trending-down',h:'Vendas vs semana anterior',tx:'As vendas '+(d>=0?'subiram':'desceram')+' '+fmtDelta(Math.abs(d))+'% face \u00e0 semana passada ('+fmtEur(b)+' \u2192 '+fmtEur(a)+').'}); }
+  var k0=(VD.kpis||[])[0]; if(k0) ins.push({t:k0.dl>=0?'g':'r',ic:'banknote',h:'Compara\u00e7\u00e3o hom\u00f3loga (LFL)',tx:'Vendas totais '+(k0.dl>=0?'+':'')+fmtDelta(k0.dl)+'% vs o mesmo per\u00edodo do ano passado.'});
+  var acts=VD.topAct||[]; var ga=acts.filter(function(x){return x.dl>0;}).sort(function(a,b){return b.dl-a.dl;})[0]; var da=acts.slice().sort(function(a,b){return a.dl-b.dl;})[0];
+  if(ga) ins.push({t:'g',ic:'trending-up',h:'Atividade em alta',tx:ga.nm+' cresceu '+fmtDelta(ga.dl)+'% e vale '+fmtDelta(ga.split)+'% das vendas.'});
+  if(da&&da.dl<0) ins.push({t:'r',ic:'trending-down',h:'Atividade em queda',tx:da.nm+' caiu '+fmtDelta(da.dl)+'% \u2014 a maior descida.'});
+  var cats=VD.topCat||[]; var gc=cats.filter(function(x){return x.dl>0;}).sort(function(a,b){return b.dl-a.dl;})[0]; var dc=cats.slice().sort(function(a,b){return a.dl-b.dl;})[0];
+  if(gc) ins.push({t:'g',ic:'arrow-up-right',h:'Categoria em alta',tx:gc.nm+' subiu '+fmtDelta(gc.dl)+'%.'});
+  if(dc&&dc.dl<0) ins.push({t:'r',ic:'arrow-down-right',h:'Categoria em queda',tx:dc.nm+' recuou '+fmtDelta(dc.dl)+'%.'});
+  var tb=((VD.marcasByArea&&VD.marcasByArea.todas)||[])[0]; if(tb) ins.push({t:'g',ic:'badge-check',h:'Marca l\u00edder',tx:tb.nm+' foi a mais vendida ('+fmtEur(tb.val)+', '+fmtDelta(tb.split)+'% das vendas).'});
+  var hrs=VD.hourly||[]; var bh=hrs.slice().sort(function(a,b){return b.eur-a.eur;})[0]; if(bh&&bh.eur>0) ins.push({t:'i',ic:'clock',h:'Melhor hora',tx:'O pico de vendas foi \u00e0s '+bh.l+' ('+fmtEur(bh.eur)+'). Vale a pena refor\u00e7ar equipa nesta faixa.'});
+  var ar=(VD.areas||[]).filter(function(x){return (x.split||0)>=1;}); var ba=ar.slice().sort(function(a,b){return b.dl-a.dl;})[0]; var wa=ar.slice().sort(function(a,b){return a.dl-b.dl;})[0];
+  if(ba) ins.push({t:'g',ic:'package',h:'\u00c1rea em crescimento',tx:ba.nm+' \u00e9 a \u00e1rea que mais cresce ('+(ba.dl>=0?'+':'')+fmtDelta(ba.dl)+'%).'});
+  if(wa&&ba&&wa.nm!==ba.nm&&wa.dl<0) ins.push({t:'r',ic:'package',h:'\u00c1rea a vigiar',tx:wa.nm+' est\u00e1 em queda ('+fmtDelta(wa.dl)+'%).'});
+  var upt=(VD.kpis||[]).filter(function(k){return String(k.lbl).indexOf('UPT')>=0;})[0]; if(upt) ins.push({t:upt.dl>=0?'g':'i',ic:'shopping-bag',h:'Pe\u00e7as por tal\u00e3o (UPT)',tx:'Cada cliente levou em m\u00e9dia '+fmtDec2(upt.val)+' pe\u00e7as ('+(upt.dl>=0?'+':'')+fmtDelta(upt.dl)+'%). '+(upt.dl>=0?'Boa venda cruzada.':'H\u00e1 espa\u00e7o para venda complementar.')});
+  var cards=ins.map(function(x){ return '<div class="vd-ins2 '+x.t+'"><div class="i2-ic">'+svg(x.ic)+'</div><div class="i2-tx"><div class="i2-h">'+esc(x.h)+'</div><div class="i2-b">'+esc(x.tx)+'</div></div></div>'; }).join('');
+  return '<div class="panel"><div class="vd-dhead"><h2>Insights IA</h2></div><div class="vd-ia-note">An\u00e1lise autom\u00e1tica dos n\u00fameros desta semana \u2014 sem estimativas nem valores inventados.</div><div class="vd-ins2wrap">'+cards+'</div></div>'; }
+function detailHTML(k){ if(k==='categorias')return detCategorias(); if(k==='marcas')return detMarcas(); if(k==='areas')return detAreas(); if(k==='horas')return detHoras(); if(k==='ia')return detIA(); return ''; }
+function wireDetail(){ var det=document.getElementById('vdDetail'); det.querySelectorAll('[data-m]').forEach(function(b){ b.onclick=function(){ detState.cat=b.getAttribute('data-m'); showTab('categorias'); }; }); det.querySelectorAll('[data-a]').forEach(function(b){ b.onclick=function(){ detState.marca=b.getAttribute('data-a'); showTab('marcas'); }; }); det.querySelectorAll('[data-h]').forEach(function(b){ b.onclick=function(){ detState.hora=b.getAttribute('data-h'); showTab('horas'); }; }); }
+function renderAll(){ document.getElementById('vdWeekLbl').textContent=VD.semana||'Semana'; renderKpis(); vdLineChart(); vdHourly(); renderTop(); renderMarcaFilter(); vdBrandChart(); renderAreas(); renderInsights(); renderTabs(); mountIcons(document.querySelector('.vd-wrap')); showTab(DETAIL); }
 document.getElementById('vdMetric').addEventListener('change',vdLineChart);
 document.getElementById('vdCatToggle').addEventListener('click',function(){ catMode=(catMode==='cat'?'act':'cat'); renderTop(); mountIcons(document.getElementById('vdTopCat')); mountIcons(document.getElementById('vdDownCat')); });
 
