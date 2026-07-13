@@ -346,10 +346,10 @@
 
   <div class="content">
     <div id="notifBanner" class="notif-banner" style="display:none"></div>
-    <div class="brief" id="brief" data-go="calendario" style="display:none"></div>
+    <div class="brief" id="brief" data-go="mural" style="display:none"></div>
     <div class="kpis" id="kpis">
       <div class="kpi" data-go="lembretes"><div class="k-ic"><span data-ic="clipboard"></span></div><div><div class="k-lbl">Tarefas pendentes</div><div class="k-val" id="kTar">&#x2013;</div><div class="k-sub a" id="kTarSub">&#x2014;</div></div></div>
-      <div class="kpi" data-go="mural"><div class="k-ic"><span data-ic="message-circle"></span></div><div><div class="k-lbl">Lembretes</div><div class="k-val" id="kLem">&#x2013;</div><div class="k-sub a" id="kLemSub">&#x2014;</div></div></div>
+      <div class="kpi" data-go="mural"><div class="k-ic"><span data-ic="calendar-days"></span></div><div><div class="k-lbl">Calend&#xe1;rio</div><div class="k-val" id="kLem">&#x2013;</div><div class="k-sub a" id="kLemSub">&#x2014;</div></div></div>
       <div class="kpi" data-go="notificacoes"><div class="k-ic"><span data-ic="bell"></span></div><div><div class="k-lbl">Notifica&#xe7;&#xf5;es n&#xe3;o lidas</div><div class="k-val" id="kNot">&#x2013;</div><div class="k-sub a" id="kNotSub">Ver todas</div></div></div>
       <div class="kpi" data-go="aniversario"><div class="k-ic"><span data-ic="cake"></span></div><div><div class="k-lbl">Anivers&#xe1;rios (7 dias)</div><div class="k-val" id="kBd">&#x2013;</div><div class="k-sub g" id="kBdSub">&#x2014;</div></div></div>
     </div>
@@ -366,7 +366,7 @@
           <div class="rows" id="listTar"><div class="empty">A carregar&#x2026;</div></div>
         </div>
         <div class="panel">
-          <div class="p-head"><h2>Pr&#xf3;ximos lembretes</h2><span class="cnt" id="cntLem">0</span><span class="more" data-go="mural">Ver todos <span data-ic="chevron-right"></span></span></div>
+          <div class="p-head"><h2>Pr&#xf3;ximos eventos</h2><span class="cnt" id="cntLem">0</span><span class="more" data-go="mural">Ver todos <span data-ic="chevron-right"></span></span></div>
           <div class="rows" id="listLem"><div class="empty">A carregar&#x2026;</div></div>
         </div>
       </div>
@@ -463,7 +463,7 @@ function mountIcons(root){ (root||document).querySelectorAll('[data-ic]').forEac
 var NAV=(window.PORTAL_NAV||[]);
 
 /* paginas web integradas (versao desktop). Os restantes modulos abrem as paginas existentes. */
-var WEB_PAGES={ lembretes:'tarefas.html', mural:'mural-web.html', notas:'notas-web.html', consumiveis:'encomendas-web.html', vendas:'vendas-web.html', incidencias:'incidencias.html', permanencia:'permanencia.html', roturas:'roturas.html', planeamento:'planeamento.html', calendario:'calendario.html' };
+var WEB_PAGES={ lembretes:'tarefas.html', mural:'mural-web.html', notas:'notas-web.html', consumiveis:'encomendas-web.html', vendas:'vendas-web.html', incidencias:'incidencias.html', permanencia:'permanencia.html', roturas:'roturas.html', planeamento:'planeamento.html' };
 function go(key){
   if(key==='__home') return;
   var url=WEB_PAGES[key]||LINKS[key];
@@ -527,12 +527,10 @@ function render(notas){
   (function(){
     var brief=document.getElementById('brief'); if(!brief) return;
     var tKey=todayKey();
-    var cal=notas.filter(function(n){ return String(n.seccao)==='_cal'; }).map(function(n){ var d={}; try{d=JSON.parse(n.texto);}catch(e){} return d; }).filter(function(d){ return d.data===tKey; }).sort(function(a,b){ return String(a.hora||'99').localeCompare(String(b.hora||'99')); });
     var lemHojeL=lembretes.filter(function(n){ return tKey===String(muralInfo(n).when||'').slice(0,10); });
     var bdHojeL=aniv.filter(function(n){ return bdDiasAte(n.texto)===0; });
     var items=[];
-    cal.forEach(function(d){ items.push({ic:'calendar-days',cls:'ev',txt:(d.hora?('<b>'+esc(d.hora)+'</b> &middot; '):'')+esc(d.titulo||'Evento'),tag:'Evento',k:'calendario'}); });
-    lemHojeL.forEach(function(n){ items.push({ic:'message-circle',cls:'lm',txt:esc(muralInfo(n).titulo),tag:'Lembrete',k:'mural'}); });
+    lemHojeL.forEach(function(n){ items.push({ic:'calendar-days',cls:'ev',txt:esc(muralInfo(n).titulo),tag:'Calend&aacute;rio',k:'mural'}); });
     bdHojeL.forEach(function(n){ items.push({ic:'cake',cls:'bd',txt:'Anivers&aacute;rio de <b>'+esc(n.autor||'')+'</b>',tag:'\ud83c\udf82',k:'aniversario'}); });
     notifs.forEach(function(n){ var msg=''; try{msg=JSON.parse(n.texto).msg;}catch(e){msg=cleanTxt(n.texto);} items.push({ic:'bell',cls:'nt',txt:esc(msg||'\u2014'),tag:'Aviso',k:'notificacoes'}); });
     var rot=notas.filter(function(n){ return String(n.seccao)==='_roturas' && !isDone(n); }).length;
@@ -571,7 +569,7 @@ function render(notas){
   document.getElementById('cntLem').textContent=lembretes.length;
   var ll=document.getElementById('listLem');
   var lsorted=lembretes.slice().sort(function(a,b){ return String(muralInfo(a).when).localeCompare(String(muralInfo(b).when)); });
-  ll.innerHTML=lembretes.length?lsorted.slice(0,7).map(function(n){ var m=muralInfo(n); var w=fmtWhen(m.when); return '<div class="trow"><span class="stat hoje"></span><span class="t-txt">'+esc(m.titulo)+'</span>'+(w?'<span class="t-tag hoje">'+esc(w)+'</span>':'')+'</div>'; }).join(''):'<div class="empty">Sem lembretes.</div>';
+  ll.innerHTML=lembretes.length?lsorted.slice(0,7).map(function(n){ var m=muralInfo(n); var w=fmtWhen(m.when); return '<div class="trow"><span class="stat hoje"></span><span class="t-txt">'+esc(m.titulo)+'</span>'+(w?'<span class="t-tag hoje">'+esc(w)+'</span>':'')+'</div>'; }).join(''):'<div class="empty">Sem eventos.</div>';
 
   /* Notificacoes */
   var ln=document.getElementById('listNot');
@@ -640,7 +638,7 @@ function navItem(key){ for(var g=0;g<NAV.length;g++){ var items=NAV[g].items||[]
 var QUICK=[
   {k:'contagem', nm:'Dinheiro'},
   {k:'lembretes', nm:'Tarefas'},
-  {k:'mural', nm:'Lembretes'},
+  {k:'mural', nm:'Calend\u00e1rio'},
   {k:'notas', nm:'Notas'},
   {k:'notificacoes', nm:'Notifica\u00e7\u00f5es'},
   {k:'consumiveis', nm:'Encomendas'}
