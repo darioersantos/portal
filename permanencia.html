@@ -221,6 +221,8 @@
 
 
 
+
+
   /* ===== Notas ===== */
   .nt-wrap{max-width:760px;}
   #ntModal{position:fixed;inset:0;z-index:90;background:rgba(20,24,30,.5);display:none;align-items:flex-start;justify-content:center;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));overflow-y:auto;}
@@ -257,6 +259,34 @@
   #printArea{display:none;}
   @media print{ .sidebar,.sb-backdrop,.topbar,.content{display:none !important;} #printArea{display:block !important;color:#000;padding:6mm;} #printArea h1{font-size:20px;margin:0 0 2px;} #printArea .pdia{font-size:15px;color:#444;margin:0 0 12px;text-transform:capitalize;} #printArea .pnote{border:1px solid #ccc;border-radius:8px;padding:9px 11px;margin:8px 0;} #printArea .who{font-size:12px;color:#555;margin-top:5px;} }
 
+  /* ===== diarios (incidencias/permanencia/roturas) ===== */
+  .nota .info{width:100%;}
+  .jfoot{display:flex;align-items:center;gap:10px;margin-top:9px;flex-wrap:wrap;}
+  .jfoot .meta{flex:1;min-width:0;font-size:11.5px;color:var(--muted);}
+  .jchk{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:800;color:#6b7280;cursor:pointer;font-family:inherit;}
+  .jchk .ico{width:14px;height:14px;stroke-width:3;}
+  .jchk.on{background:#eafaf1;border-color:#a7e8c6;color:var(--green);}
+  .jfoot .del{background:none;border:none;color:var(--muted2);cursor:pointer;padding:2px;flex:none;}
+  .jfoot .del:hover{color:var(--red);} .jfoot .del .ico{width:16px;height:16px;}
+  .nota.done .txt{opacity:.6;}
+  .area-grp{margin-bottom:20px;}
+  .area-h{font-size:13px;font-weight:800;color:var(--accent-ink);background:var(--accent-soft);border-radius:11px;padding:9px 14px;margin-bottom:4px;display:flex;align-items:center;gap:9px;}
+  .area-h .acnt{background:#fff;color:var(--accent-dark);border-radius:999px;padding:1px 9px;font-size:11px;}
+  .aempty{font-size:12.5px;color:var(--muted2);padding:8px 4px 12px;}
+  #ntModal .jarea{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px;}
+  #ntModal .jarea button{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:9px 16px;font-size:14px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  #ntModal .jarea button.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  @media print{
+    .sidebar,.sb-backdrop,.topbar,.menu-btn,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:4mm;font-family:inherit;}
+    #printArea h1{font-size:21px;margin:0 0 3px;}
+    #printArea h2{font-size:15px;margin:15px 0 7px;color:#8a4500;border-bottom:2px solid #FF8100;padding-bottom:4px;}
+    #printArea .pdia{font-size:12px;color:#555;margin:0 0 14px;}
+    #printArea .pnote{border:1px solid #ccc;border-radius:8px;padding:10px 12px;margin:8px 0;page-break-inside:avoid;font-size:13.5px;line-height:1.5;}
+    #printArea .pnote .who{font-size:11.5px;color:#666;margin-top:7px;}
+    #printArea .md-h{font-weight:800;margin:5px 0 2px;} #printArea .md-ul{margin:3px 0;padding-left:20px;} #printArea .md-p{margin:2px 0;}
+  }
+
 </style>
 </head>
 <body>
@@ -280,7 +310,7 @@
   </header>
   <div class="content"><div class="nt-wrap">
   <div class="panel">
-    <div class="p-head"><h2>Recados de perman&#xea;ncia</h2><span class="cnt" id="ntCnt">0</span></div>
+    <div class="p-head"><h2>Relat&#xf3;rios de perman&#xea;ncia</h2><span class="cnt" id="ntCnt">0</span></div>
     <div class="rows" id="ntLista"><div class="empty">A carregar...</div></div>
   </div>
 </div></div>
@@ -289,10 +319,10 @@
 <div id="printArea"></div>
 <div id="ntModal"><div class="bx">
   <h3>Novo recado</h3>
-  <label for="ntTexto">Nota</label>
-  <textarea id="ntTexto" placeholder="Deixa o recado para o turno seguinte (ex.: falta repor as sapatilhas do topo, o cliente X vem levantar a encomenda, entregar as chaves ao colega Y). Aceita **negrito**, t&#xed;tulos com # e listas com -"></textarea>
-  <label for="ntAutor">Escrito por (equipa de direcao)</label>
-  <select id="ntAutor" data-staff data-area="sup" data-ph="Seleciona (equipa de direcao)"></select>
+  <label for="ntTexto">Recado para o turno seguinte</label>
+  <textarea id="ntTexto" placeholder="Deixa o recado para o turno seguinte (ex.: falta repor as sapatilhas do topo, o cliente X vem levantar a encomenda, entregar as chaves ao colega Y)."></textarea>
+  <label for="ntAutor">Registado por (equipa diretiva)</label>
+  <select id="ntAutor" data-staff data-area="sup" data-ph="Seleciona (equipa diretiva)"></select>
   <div class="acts"><button type="button" class="cancel" id="ntCancel">Cancelar</button><button type="button" class="save" id="ntSave">Guardar recado</button></div>
 </div></div>
 
@@ -350,6 +380,40 @@ IC.image='<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9"
 IC.plus='<path d="M5 12h14"/><path d="M12 5v14"/>';
 IC['trash-2']='<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>';
 IC.check='<path d="M20 6 9 17l-5-5"/>';
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+
 IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
@@ -673,84 +737,69 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 
 
 
+
+
 /* ===== Modulo ===== */
 
 var SEC='_permanencia';
-var DADOS=[];
+var AREAS=false;
+var CHK=null;
+var HEADING="Relat\u00f3rios de perman\u00eancia";
+var EMPTY_TXT="Ainda n\u00e3o h\u00e1 recados de perman\u00eancia.";
+var AREA_DEFS=[['calcado','Cal\u00e7ado'],['textil','T\u00eaxtil'],['acess','Acess\u00f3rios']];
+var DADOS=[], curArea='';
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function mdInline(t){ t=t.replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>'); t=t.replace(/__([^_\n]+)__/g,'<b>$1</b>'); return t; }
-function mdToHtml(raw){
-  var lines=esc(String(raw||'')).split(/\r?\n/); var out=[], inList=false;
-  function closeList(){ if(inList){ out.push('</ul>'); inList=false; } }
-  lines.forEach(function(ln){
-    if(/^\s*([-*_])\1{2,}\s*$/.test(ln)){ closeList(); out.push('<hr class="md-hr">'); return; }
-    var h=ln.match(/^\s*(#{1,6})\s+(.*)$/); var b=ln.match(/^\s*[\*\-]\s+(.*)$/);
-    if(h){ closeList(); var lvl=Math.min(h[1].length,3); out.push('<div class="md-h md-h'+lvl+'">'+mdInline(h[2])+'</div>'); }
-    else if(b){ if(!inList){ out.push('<ul class="md-ul">'); inList=true; } out.push('<li>'+mdInline(b[1])+'</li>'); }
-    else if(ln.trim()===''){ closeList(); out.push('<div class="md-sp"></div>'); }
-    else { closeList(); out.push('<div class="md-p">'+mdInline(ln)+'</div>'); }
-  });
-  closeList(); return out.join('');
-}
+function mdToHtml(raw){ var lines=esc(String(raw||'')).split(/\r?\n/); var out=[], inList=false; function cl(){ if(inList){ out.push('</ul>'); inList=false; } } lines.forEach(function(ln){ if(/^\s*([-*_])\1{2,}\s*$/.test(ln)){ cl(); out.push('<hr class="md-hr">'); return; } var h=ln.match(/^\s*(#{1,6})\s+(.*)$/); var b=ln.match(/^\s*[\*\-]\s+(.*)$/); if(h){ cl(); var lvl=Math.min(h[1].length,3); out.push('<div class="md-h md-h'+lvl+'">'+mdInline(h[2])+'</div>'); } else if(b){ if(!inList){ out.push('<ul class="md-ul">'); inList=true; } out.push('<li>'+mdInline(b[1])+'</li>'); } else if(ln.trim()===''){ cl(); out.push('<div class="md-sp"></div>'); } else { cl(); out.push('<div class="md-p">'+mdInline(ln)+'</div>'); } }); cl(); return out.join(''); }
 function isDone(n){ return n.done===true||String(n.done).toLowerCase()==='true'; }
 function fmtDataHora(iso){ var d=new Date(iso); if(isNaN(d)) return String(iso||''); return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
 function bust(){ try{sessionStorage.removeItem('sz_notas_cache');}catch(e){} }
+function areaOf(t){ var m=String(t||'').match(/^\[\[AREA:([a-z]+)\]\]/); return m?m[1]:''; }
+function stripMk(t){ return String(t||'').replace(/^\[\[AREA:[a-z]+\]\]/,''); }
+function byId(id){ for(var i=0;i<DADOS.length;i++){ if(String(DADOS[i].id)===String(id)) return DADOS[i]; } return null; }
+function card(n){ var done=isDone(n); var chk=CHK?('<button class="jchk'+(done?' on':'')+'" data-id="'+esc(n.id)+'">'+svg('check')+'<span>'+esc(CHK)+'</span></button>'):''; return '<div class="nota'+(done?' done':'')+'"><div class="info"><div class="txt">'+mdToHtml(stripMk(n.texto))+'</div><div class="jfoot">'+chk+'<span class="meta">'+esc(n.autor||'')+(n.data?' &middot; '+esc(fmtDataHora(n.data)):'')+'</span><button class="del" data-id="'+esc(n.id)+'" title="Apagar">'+svg('trash-2')+'</button></div></div></div>'; }
 function render(){
-  var l=document.getElementById('ntLista'); l.innerHTML='';
-  var abertos=DADOS.filter(function(n){return !isDone(n);}).length;
-  document.getElementById('ntCnt').textContent=abertos;
-  if(!DADOS.length){ l.innerHTML='<div class="empty">Ainda n\u00e3o h\u00e1 recados de perman\u00eancia.</div>'; return; }
-  DADOS.slice().sort(function(a,b){ return (isDone(a)-isDone(b)) || (new Date(b.data)-new Date(a.data)); }).forEach(function(n){
-    var row=document.createElement('div'); row.className='nota'+(isDone(n)?' done':'');
-    row.innerHTML='<button class="chk" title="Marcar como resolvido">'+svg('check')+'</button>'+
-      '<div class="info"><div class="txt">'+mdToHtml(n.texto)+'</div><div class="meta">'+esc(n.autor||'')+(n.data?' &middot; '+esc(fmtDataHora(n.data)):'')+'</div></div>'+
-      '<button class="del" title="Apagar">'+svg('trash-2')+'</button>';
-    row.querySelector('.chk').onclick=function(){ marcar(n, !isDone(n)); };
-    row.querySelector('.del').onclick=function(){ apagar(n.id); };
-    l.appendChild(row);
-  });
+  var l=document.getElementById('ntLista'); document.getElementById('ntCnt').textContent=DADOS.length;
+  if(!DADOS.length){ l.innerHTML='<div class="empty">'+EMPTY_TXT+'</div>'; return; }
+  var sorted=DADOS.slice().sort(function(a,b){ return (CHK?(isDone(a)-isDone(b)):0) || (new Date(b.data)-new Date(a.data)); });
+  var html='';
+  if(AREAS){ AREA_DEFS.forEach(function(a){ var items=sorted.filter(function(n){return areaOf(n.texto)===a[0];}); html+='<div class="area-grp"><div class="area-h">'+a[1]+' <span class="acnt">'+items.length+'</span></div>'+(items.length?items.map(card).join(''):'<div class="aempty">Sem roturas nesta \u00e1rea.</div>')+'</div>'; }); var out2=sorted.filter(function(n){return !areaOf(n.texto);}); if(out2.length){ html+='<div class="area-grp"><div class="area-h">Outros</div>'+out2.map(card).join('')+'</div>'; } }
+  else { html=sorted.map(card).join(''); }
+  l.innerHTML=html;
+  l.querySelectorAll('.jchk').forEach(function(b){ b.onclick=function(){ var n=byId(b.getAttribute('data-id')); if(n) marcar(n,!isDone(n)); }; });
+  l.querySelectorAll('.del').forEach(function(b){ b.onclick=function(){ apagar(b.getAttribute('data-id')); }; });
   mountIcons(l);
 }
-function carregar(){
-  if(!BACKEND){ document.getElementById('ntLista').innerHTML='<div class="empty">Sem ligacao a nuvem.</div>'; return; }
-  bust();
-  fetch(BACKEND+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){
-    if(j&&j.ok&&Array.isArray(j.notas)){ DADOS=j.notas.filter(function(n){return String(n.seccao)===SEC;}); render(); }
-    else{ document.getElementById('ntLista').innerHTML='<div class="empty">A nuvem ainda nao esta ativa.</div>'; }
-  }).catch(function(){ document.getElementById('ntLista').innerHTML='<div class="empty">Sem ligacao. Recarrega.</div>'; });
-}
-document.getElementById('ntSave').addEventListener('click',function(){
-  var texto=document.getElementById('ntTexto').value.trim();
-  var autor=document.getElementById('ntAutor').value.trim();
-  if(!texto){ alert('Escreve o recado.'); return; }
-  if(!autor){ alert('Seleciona o teu nome.'); return; }
-  var btn=this; btn.disabled=true;
-  fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_add', seccao:SEC, autor:autor, texto:texto})})
-    .then(function(r){return r.json();}).then(function(j){
-      var id=(j&&j.id!=null)?j.id:('tmp_'+Date.now());
-      DADOS.unshift({id:id, seccao:SEC, autor:autor, texto:texto, data:new Date().toISOString(), done:false});
-      render(); closeModal();
-      document.getElementById('ntTexto').value=''; var a=document.getElementById('ntAutor'); if(a) a.value='';
-      bust(); setTimeout(function(){bust();carregar();},1800); setTimeout(function(){bust();carregar();},4200);
-    }).catch(function(){ alert('Nao foi possivel guardar. Verifica a ligacao.'); })
-    .then(function(){ btn.disabled=false; });
-});
-/* modal (dinamica igual aos Lembretes) */
+function carregar(){ if(!BACKEND){ document.getElementById('ntLista').innerHTML='<div class="empty">Sem ligacao a nuvem.</div>'; return; } bust(); fetch(BACKEND+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){ if(j&&j.ok&&Array.isArray(j.notas)){ DADOS=j.notas.filter(function(n){return String(n.seccao)===SEC;}); render(); } else { document.getElementById('ntLista').innerHTML='<div class="empty">A nuvem ainda nao esta ativa.</div>'; } }).catch(function(){ document.getElementById('ntLista').innerHTML='<div class="empty">Sem ligacao. Recarrega.</div>'; }); }
+function marcar(n,done){ n.done=done; render(); bust(); fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_done', id:n.id, done:done})}).catch(function(){}); }
+function apagar(id){ if(!confirm('Apagar este registo?')) return; DADOS=DADOS.filter(function(x){return String(x.id)!==String(id);}); render(); bust(); fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_del', id:id})}).catch(function(){}); }
 var ntModal=document.getElementById('ntModal');
-function openModal(){ document.getElementById('ntTexto').value=''; var a=document.getElementById('ntAutor'); if(a) a.value=''; ntModal.classList.add('show'); if(window.SZinitStaff){ try{ window.SZinitStaff(ntModal); }catch(e){} } setTimeout(function(){ var t=document.getElementById('ntTexto'); if(t) t.focus(); },60); }
+function renderChips(){ var w=document.getElementById('jArea'); if(!w) return; w.innerHTML=AREA_DEFS.map(function(a){return '<button type="button" data-a="'+a[0]+'" class="'+(curArea===a[0]?'on':'')+'">'+a[1]+'</button>';}).join(''); w.querySelectorAll('button').forEach(function(b){ b.onclick=function(){ curArea=b.getAttribute('data-a'); renderChips(); }; }); }
+function openModal(){ document.getElementById('ntTexto').value=''; var a=document.getElementById('ntAutor'); if(a) a.value=''; curArea=''; if(AREAS) renderChips(); ntModal.classList.add('show'); if(window.SZinitStaff){ try{ window.SZinitStaff(ntModal); }catch(e){} } setTimeout(function(){ var t=document.getElementById('ntTexto'); if(t) t.focus(); },60); }
 function closeModal(){ ntModal.classList.remove('show'); }
 document.getElementById('ntNew').addEventListener('click',openModal);
 document.getElementById('ntCancel').addEventListener('click',closeModal);
 ntModal.addEventListener('click',function(e){ if(e.target===ntModal) closeModal(); });
 document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
-function marcar(n, done){ n.done=done; render(); bust(); fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_done', id:n.id, done:done})}).catch(function(){}); }
-function apagar(id){ if(!confirm('Apagar este apontamento?')) return; DADOS=DADOS.filter(function(x){return String(x.id)!==String(id);}); render(); bust(); fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_del', id:id})}).catch(function(){}); }
+document.getElementById('ntSave').addEventListener('click',function(){
+  var texto=document.getElementById('ntTexto').value.trim();
+  var autor=document.getElementById('ntAutor').value.trim();
+  if(!texto){ alert('Escreve o recado.'); return; }
+  if(AREAS && !curArea){ alert('Escolhe a \u00e1rea: Cal\u00e7ado, T\u00eaxtil ou Acess\u00f3rios.'); return; }
+  if(!autor){ alert('Seleciona o teu nome (equipa diretiva).'); return; }
+  var full=(AREAS?('[[AREA:'+curArea+']]'):'')+texto;
+  var btn=this; btn.disabled=true;
+  fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_add', seccao:SEC, autor:autor, texto:full})})
+    .then(function(r){return r.json();}).then(function(j){ var id=(j&&j.id!=null)?j.id:('tmp_'+Date.now()); DADOS.unshift({id:id, seccao:SEC, autor:autor, texto:full, data:new Date().toISOString(), done:false}); render(); closeModal(); bust(); setTimeout(function(){bust();carregar();},1800); setTimeout(function(){bust();carregar();},4200); }).catch(function(){ alert('Nao foi possivel guardar. Verifica a ligacao.'); }).then(function(){ btn.disabled=false; });
+});
 function imprimir(){
   var hoje=new Date().toLocaleDateString('pt-PT',{day:'2-digit',month:'long',year:'numeric'});
-  var abertos=DADOS.filter(function(n){ return !isDone(n); }).sort(function(a,b){ return new Date(a.data)-new Date(b.data); });
-  var html='<h1>Apontamentos</h1><div class="pdia">'+esc(hoje)+' &middot; Sport Zone Vasco da Gama</div>';
-  if(!abertos.length){ html+='<p>Nao ha apontamentos por resolver.</p>'; }
-  else{ abertos.forEach(function(n){ html+='<div class="pnote">'+mdToHtml(n.texto)+(n.autor?'<div class="who">&mdash; '+esc(n.autor)+'</div>':'')+'</div>'; }); }
+  var html='<h1>'+HEADING+'</h1><div class="pdia">'+esc(hoje)+' &middot; Sport Zone Vasco da Gama</div>';
+  var list=DADOS.slice().sort(function(a,b){return new Date(a.data)-new Date(b.data);});
+  function pnote(n){ return '<div class="pnote">'+mdToHtml(stripMk(n.texto))+'<div class="who">&mdash; '+esc(n.autor||'')+(n.data?' &middot; '+esc(fmtDataHora(n.data)):'')+'</div></div>'; }
+  if(!list.length){ html+='<p>Sem registos.</p>'; }
+  else if(AREAS){ AREA_DEFS.forEach(function(a){ var items=list.filter(function(n){return areaOf(n.texto)===a[0];}); if(!items.length) return; html+='<h2>'+a[1]+'</h2>'+items.map(pnote).join(''); }); }
+  else { html+=list.map(pnote).join(''); }
   document.getElementById('printArea').innerHTML=html; window.print();
 }
 document.getElementById('btnPrint').addEventListener('click', imprimir);
