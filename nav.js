@@ -3,10 +3,9 @@ window.PORTAL_NAV = [
   {group:null, items:[ {k:'__home', ic:'home', nm:'Início', active:true}, {k:'equipa', ic:'users', nm:'Horário do Staff'} ]},
   {group:'Operações', items:[
     {k:'lembretes', ic:'list-checks', nm:'Tarefas', badgeId:'nbTar'},
-    {k:'mural', ic:'calendar-days', nm:'Calendário', badgeId:'nbLem'},
+    {k:'mural', ic:'calendar-days', nm:'Lembretes', badgeId:'nbLem'},
     {k:'permanencia', ic:'book-open', nm:'Relatório de Permanência'},
     {k:'roturas', ic:'package', nm:'Ruturas'},
-    {k:'notificacoes', ic:'bell', nm:'Notificações'},
     {k:'contagem', ic:'calculator', nm:'Contagem de Dinheiro', accent2:true},
     {k:'superliga', ic:'trophy', nm:'Super Liga', dark:true},
     {k:'vendas', ic:'bar-chart-3', nm:'Análise de Vendas', accent:true},
@@ -212,6 +211,29 @@ window.PORTAL_NAV = [
     t.appendChild(sp);
     setTimeout(function(){ try{ sp.remove(); }catch(_){} }, 620);
   }, {passive:true});
+})();
+
+/* ==== correcoes globais do menu (propaga a todas as paginas) ==== */
+(function(){
+  document.addEventListener('DOMContentLoaded', function(){
+    try{
+      /* 1) garantir icones do menu que possam faltar em paginas mais antigas
+            (ex.: "Produtividade"/trending-up so aparecia na propria pagina) */
+      if(typeof window.IC==='object' && window.IC){
+        var need={
+          'trending-up':'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+          'calendar-days':'<rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/>'
+        };
+        var falta=false;
+        for(var k in need){ if(!window.IC[k]){ window.IC[k]=need[k]; falta=true; } }
+        if(falta && typeof window.renderSidebar==='function'){ try{ window.renderSidebar(); }catch(e){} }
+      }
+      /* 2) clicar no logotipo/marca da barra lateral -> pagina principal */
+      var br=document.querySelector('.sb-brand');
+      if(br && !br._szHome){ br._szHome=1; br.style.cursor='pointer'; br.setAttribute('title','Ir para o inicio');
+        br.addEventListener('click', function(){ location.href='dashboard.html'; }); }
+    }catch(e){}
+  });
 })();
 
 /* ==== Puxar para atualizar (pull-to-refresh) - PWA + browser mobile ==== */
