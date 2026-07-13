@@ -14,7 +14,7 @@
 <script src="roster.js"></script>
 <script src="nav.js"></script>
 <script src="lucide.js"></script>
-<script>if((sessionStorage.getItem('sz_user')||'').trim()===''){ location.replace('dashboard.html'); }</script>
+<script>if((sessionStorage.getItem('sz_user')||'').trim()==='' && location.search.indexOf('publico=1')<0){ location.replace('dashboard.html'); }</script>
 <style>
   :root{
     --bg:#f4f6f8; --card:#ffffff; --ink:#1b1f24; --muted:#8b929c; --muted2:#aeb4bd;
@@ -821,7 +821,7 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 "use strict";
 const BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
 const SEC='_folgas';
-const MANAGER=(sessionStorage.getItem('portalOK')==='1');
+const MANAGER=(sessionStorage.getItem('portalOK')==='1' && location.search.indexOf('publico=1')<0);
 const STATUS={analise:'Em an\u00e1lise', validado:'Validado', recusado:'Recusado'};
 let DADOS=[];
 function byId(id){return document.getElementById(id);}
@@ -1012,7 +1012,7 @@ renderCal();
 
 if(MANAGER){
   carregar();
-  var _link=location.href.split('?')[0].split('#')[0];
+  var _link=location.href.split('?')[0].split('#')[0]+'?publico=1';
   var su=byId('shareUrl'); if(su){ su.value=_link; byId('shareBox').style.display='block'; }
   var bx=byId('btnExport'); if(bx) bx.style.display='inline-flex';
   var bp=byId('btnPrint'); if(bp){ bp.style.display='inline-flex'; bp.onclick=imprimir; }
