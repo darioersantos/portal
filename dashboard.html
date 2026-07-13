@@ -183,6 +183,21 @@
   #bdpop .bfoot button{width:100%;padding:12px;border:none;border-radius:13px;background:var(--accent-soft);color:var(--accent-dark);font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
 
   /* Banner de notificacao (preto, no topo) */
+  .brief{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px 20px;margin-bottom:18px;cursor:pointer;}
+  .brief:hover{border-color:#f0d6bd;}
+  .brief-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .brief-h{font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;} .brief-h .ico{width:19px;height:19px;color:var(--accent-dark);}
+  .brief-date{font-size:12.5px;color:var(--muted2);margin-top:3px;text-transform:capitalize;}
+  .brief-sub{font-size:12.5px;font-weight:700;color:var(--accent-ink);background:var(--accent-soft);border-radius:999px;padding:6px 13px;white-space:nowrap;}
+  .brief-list{margin-top:14px;display:flex;flex-direction:column;gap:0;}
+  .brief-it{display:flex;align-items:center;gap:11px;padding:9px 2px;border-bottom:1px solid var(--line);}
+  .brief-it:last-child{border-bottom:none;}
+  .brief-it .bi-ic{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--accent-soft);} .brief-it .bi-ic .ico{width:16px;height:16px;color:var(--accent-dark);}
+  .brief-it.bd .bi-ic{background:#fdecf4;} .brief-it.bd .bi-ic .ico{color:#d6337f;}
+  .brief-it.nt .bi-ic{background:#fdecec;} .brief-it.nt .bi-ic .ico{color:var(--red);}
+  .brief-it .bi-tx{flex:1;min-width:0;font-size:13.5px;font-weight:600;color:#3a4048;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .brief-it .bi-tag{flex:none;font-size:11px;font-weight:800;color:var(--muted2);}
+  .brief-empty{margin-top:12px;font-size:13.5px;color:var(--muted);font-weight:600;}
   .notif-banner{background:linear-gradient(135deg,#23262b,#111417);color:#fff;border-radius:15px;padding:13px 16px;margin-bottom:18px;display:flex;align-items:center;gap:13px;cursor:pointer;box-shadow:0 8px 24px rgba(16,24,40,.18);}
   .notif-banner:hover{background:#000;}
   .notif-banner .nb-ic{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex:none;}
@@ -329,6 +344,7 @@
 
   <div class="content">
     <div id="notifBanner" class="notif-banner" style="display:none"></div>
+    <div class="brief" id="brief" data-go="calendario" style="display:none"></div>
     <div class="kpis" id="kpis">
       <div class="kpi" data-go="lembretes"><div class="k-ic"><span data-ic="clipboard"></span></div><div><div class="k-lbl">Tarefas pendentes</div><div class="k-val" id="kTar">&#x2013;</div><div class="k-sub a" id="kTarSub">&#x2014;</div></div></div>
       <div class="kpi" data-go="mural"><div class="k-ic"><span data-ic="message-circle"></span></div><div><div class="k-lbl">Lembretes</div><div class="k-val" id="kLem">&#x2013;</div><div class="k-sub a" id="kLemSub">&#x2014;</div></div></div>
@@ -445,7 +461,7 @@ function mountIcons(root){ (root||document).querySelectorAll('[data-ic]').forEac
 var NAV=(window.PORTAL_NAV||[]);
 
 /* paginas web integradas (versao desktop). Os restantes modulos abrem as paginas existentes. */
-var WEB_PAGES={ lembretes:'tarefas.html', mural:'mural-web.html', notas:'notas-web.html', consumiveis:'encomendas-web.html', vendas:'vendas-web.html', incidencias:'incidencias.html', permanencia:'permanencia.html', roturas:'roturas.html', planeamento:'planeamento.html' };
+var WEB_PAGES={ lembretes:'tarefas.html', mural:'mural-web.html', notas:'notas-web.html', consumiveis:'encomendas-web.html', vendas:'vendas-web.html', incidencias:'incidencias.html', permanencia:'permanencia.html', roturas:'roturas.html', planeamento:'planeamento.html', calendario:'calendario.html' };
 function go(key){
   if(key==='__home') return;
   var url=WEB_PAGES[key]||LINKS[key];
@@ -504,6 +520,27 @@ function render(notas){
   var bdHoje=aniv.filter(function(n){ return bdDiasAte(n.texto)===0; }).length;
   document.getElementById('kBd').textContent=bd7.length;
   document.getElementById('kBdSub').textContent=bdHoje?(bdHoje+' hoje!'):(bd7.length?'esta semana':'nenhum');
+
+  /* ===== Resumo de hoje (briefing) ===== */
+  (function(){
+    var brief=document.getElementById('brief'); if(!brief) return;
+    var tKey=todayKey();
+    var cal=notas.filter(function(n){ return String(n.seccao)==='_cal'; }).map(function(n){ var d={}; try{d=JSON.parse(n.texto);}catch(e){} return d; }).filter(function(d){ return d.data===tKey; }).sort(function(a,b){ return String(a.hora||'99').localeCompare(String(b.hora||'99')); });
+    var lemHojeL=lembretes.filter(function(n){ return tKey===String(muralInfo(n).when||'').slice(0,10); });
+    var bdHojeL=aniv.filter(function(n){ return bdDiasAte(n.texto)===0; });
+    var items=[];
+    cal.forEach(function(d){ items.push({ic:'calendar-days',cls:'ev',txt:(d.hora?('<b>'+esc(d.hora)+'</b> &middot; '):'')+esc(d.titulo||'Evento'),tag:'Evento'}); });
+    lemHojeL.forEach(function(n){ items.push({ic:'message-circle',cls:'lm',txt:esc(muralInfo(n).titulo),tag:'Lembrete'}); });
+    bdHojeL.forEach(function(n){ items.push({ic:'cake',cls:'bd',txt:'Anivers&aacute;rio de <b>'+esc(n.autor||'')+'</b>',tag:'\ud83c\udf82'}); });
+    notifs.forEach(function(n){ var msg=''; try{msg=JSON.parse(n.texto).msg;}catch(e){msg=cleanTxt(n.texto);} items.push({ic:'bell',cls:'nt',txt:esc(msg||'\u2014'),tag:'Aviso'}); });
+    var d=new Date(); var DS=['domingo','segunda-feira','ter&ccedil;a-feira','quarta-feira','quinta-feira','sexta-feira','s&aacute;bado']; var MS=['janeiro','fevereiro','mar&ccedil;o','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+    var dataStr=DS[d.getDay()]+', '+d.getDate()+' de '+MS[d.getMonth()];
+    var sub=''; if(tasks.length){ sub=tasks.length+' tarefa'+(tasks.length>1?'s':'')+' pendente'+(tasks.length>1?'s':'')+(urg?(' &middot; '+urg+' urgente'+(urg>1?'s':'')):''); }
+    var html='<div class="brief-top"><div><div class="brief-h">'+svg('calendar-days')+' Resumo de hoje</div><div class="brief-date">'+dataStr+'</div></div>'+(sub?'<div class="brief-sub">'+sub+'</div>':'')+'</div>';
+    if(items.length){ html+='<div class="brief-list">'+items.map(function(it){ return '<div class="brief-it '+it.cls+'"><span class="bi-ic">'+svg(it.ic)+'</span><span class="bi-tx">'+it.txt+'</span><span class="bi-tag">'+it.tag+'</span></div>'; }).join('')+'</div>'; }
+    else { html+='<div class="brief-empty">Nada agendado para hoje &mdash; sem eventos, lembretes ou avisos. Bom trabalho! \ud83d\udc4d</div>'; }
+    brief.innerHTML=html; brief.style.display='block'; mountIcons(brief);
+  })();
 
   function bdg(id,v){ var e=document.getElementById(id); if(e){ if(v>0){ e.style.display=''; e.textContent=v; } else e.style.display='none'; } }
   bdg('nbTar',tasks.length); bdg('nbLem',lembretes.length);
