@@ -1042,7 +1042,7 @@ function pushCloud(tries){
   if(!BACKEND) return;
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify({json:serialize()})})
-    .then(r=>r.json()).then(j=>{ setStatus('ok','Guardado na nuvem'); })
+    .then(r=>r.json()).then(j=>{ setStatus('ok','online'); })
     .catch(e=>{ if(tries<3){ setTimeout(()=>pushCloud(tries+1),2000); } else { setStatus('off','Sem liga\u00e7\u00e3o \u2014 guardado no dispositivo'); } });
 }
 function pullCloud(tries){
@@ -1059,7 +1059,7 @@ function pullCloud(tries){
       loading=false;
       if(userEditedDuringLoad){ save(); }   // envia para a nuvem o que ele escreveu durante o arranque
       checkCofreReset();
-      setStatus('ok','Guardado na nuvem');
+      setStatus('ok','online');
     })
     .catch(e=>{ if(tries<3){ setTimeout(()=>pullCloud(tries+1),2000); } else { loading=false; if(userEditedDuringLoad){ save(); } checkCofreReset(); setStatus('off','Sem liga\u00e7\u00e3o \u2014 a usar dados do dispositivo'); } });
 }
