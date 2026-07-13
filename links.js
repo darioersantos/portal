@@ -13,6 +13,12 @@ window.PORTAL_LINKS = {
   contagem:  "cofre.html",
   lembretes: "lembretes.html",
   notas:     "notas.html",
+  calendario: "calendario.html",
+  incidencias: "incidencias.html",
+  permanencia: "permanencia.html",
+  roturas:    "roturas.html",
+  vendas:     "vendas-web.html",
+  planeamento: "planeamento.html",
   checklists: "checklists.html",
 
   /* ---- Templates ---- */
