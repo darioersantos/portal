@@ -11,6 +11,7 @@ window.PORTAL_NAV = [
     {k:'notificacoes', ic:'bell', nm:'Notificações'},
     {k:'contagem', ic:'calculator', nm:'Contagem de Dinheiro', accent2:true},
     {k:'vendas', ic:'bar-chart-3', nm:'Análise de Vendas', accent:true},
+    {k:'planeamento', ic:'calendar-days', nm:'Planeamento'},
     {k:'superliga', ic:'trophy', nm:'Super Liga', dark:true}
   ]},
   {group:'Outros', items:[
