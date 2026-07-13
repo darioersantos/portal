@@ -3,10 +3,8 @@ window.PORTAL_NAV = [
   {group:null, items:[ {k:'__home', ic:'home', nm:'Início', active:true} ]},
   {group:'Operações', items:[
     {k:'lembretes', ic:'list-checks', nm:'Tarefas', badgeId:'nbTar'},
-    {k:'mural', ic:'message-circle', nm:'Lembretes', badgeId:'nbLem'},
-    {k:'calendario', ic:'calendar-days', nm:'Calendário'},
-    {k:'notas', ic:'square-pen', nm:'Bloco de Notas'},
-    {k:'incidencias', ic:'siren', nm:'Registo de Incidências'},
+    {k:'mural', ic:'calendar-days', nm:'Calendário', badgeId:'nbLem'},
+    {k:'incidencias', ic:'siren', nm:'Incidências de Manutenção'},
     {k:'permanencia', ic:'book-open', nm:'Relatório de Permanência'},
     {k:'roturas', ic:'package', nm:'Roturas'},
     {k:'notificacoes', ic:'bell', nm:'Notificações'},
@@ -18,6 +16,7 @@ window.PORTAL_NAV = [
   {group:'Outros', items:[
     {k:'checklists', ic:'clipboard-check', nm:'Checklist Abertura/Fecho'},
     {k:'limpeza', ic:'clipboard-list', nm:'Checklist de Loja'},
+    {k:'notas', ic:'square-pen', nm:'Bloco de Notas'},
     {k:'consumiveis', ic:'shopping-bag', nm:'Encomendas'},
     {k:'atas', ic:'file-text', nm:'Reuniões'},
     {k:'pontualidade', ic:'calendar-days', nm:'Atrasos e Faltas'},
