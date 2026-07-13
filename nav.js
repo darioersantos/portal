@@ -66,6 +66,29 @@ window.PORTAL_NAV = [
   ]}
 ];
 
+/* ==== leitura mais rapida: pedir os dados sem a "bagagem" pesada (light) ====
+   As paginas de Formacao/Vendas/Planeamento precisam das seccoes grandes
+   (_pfhist / _vendas / _vendasHist / _plan). TODAS as outras paginas passam a
+   pedir "?action=notas&light=1" para o backend devolver tudo MENOS essas seccoes
+   (na Google Sheets o _pfhist sozinho sao ~3,7 MB). Retrocompativel: se o backend
+   ainda nao souber do parametro, ignora-o e devolve tudo na mesma. */
+(function(){
+  try{
+    var HEAVY=/(vendas-web|planeamento|atendimento_cliente|entrada|onlines|palmilhas|provadores|sprays|szclub)\.html/i;
+    if(HEAVY.test(location.pathname||'')) return;
+    var of=window.fetch; if(typeof of!=='function') return;
+    window.fetch=function(input, init){
+      try{
+        if(typeof input==='string' && input.indexOf('action=notas')>=0 && input.indexOf('light=')<0){
+          var mth=(init&&init.method)?String(init.method).toUpperCase():'GET';
+          if(mth==='GET'){ input += (input.indexOf('?')>=0?'&':'?')+'light=1'; }
+        }
+      }catch(e){}
+      return of.call(this, input, init);
+    };
+  }catch(e){}
+})();
+
 /* ==== ajustes globais partilhados (todas as paginas que carregam o nav.js) ==== */
 (function(){
   /* 1) CSS global: selects uniformes + efeitos premium (tapes, ripple, entrada, hover, pull-to-refresh) */
