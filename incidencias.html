@@ -220,6 +220,7 @@
 
 
 
+
   /* ===== Notas ===== */
   .nt-wrap{max-width:760px;}
   #ntModal{position:fixed;inset:0;z-index:90;background:rgba(20,24,30,.5);display:none;align-items:flex-start;justify-content:center;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));overflow-y:auto;}
@@ -274,12 +275,12 @@
 <div class="main">
   <header class="topbar">
     <button class="menu-btn" id="menuBtn"><span data-ic="menu"></span></button>
-    <div class="tb-hi"><h1>Registo de Incid&#xea;ncias</h1><p>Incid&#xea;ncias e ocorr&#xea;ncias da loja.</p></div>
+    <div class="tb-hi"><h1>Registo de Incid&#xea;ncias</h1><p>Avarias e manuten&#xe7;&#xe3;o da loja.</p></div>
     <div class="tb-right"><div class="tb-icon" id="btnPrint" title="Imprimir"><span data-ic="printer"></span></div> <div class="tb-icon add" id="ntNew" title="Nova incid&#xea;ncia"><span data-ic="plus"></span></div></div>
   </header>
   <div class="content"><div class="nt-wrap">
   <div class="panel">
-    <div class="p-head"><h2>Incid&#xea;ncias</h2><span class="cnt" id="ntCnt">0</span></div>
+    <div class="p-head"><h2>Incid&#xea;ncias de manuten&#xe7;&#xe3;o</h2><span class="cnt" id="ntCnt">0</span></div>
     <div class="rows" id="ntLista"><div class="empty">A carregar...</div></div>
   </div>
 </div></div>
@@ -289,7 +290,7 @@
 <div id="ntModal"><div class="bx">
   <h3>Nova incid&#xea;ncia</h3>
   <label for="ntTexto">Nota</label>
-  <textarea id="ntTexto" placeholder="Descreve a incid&#xea;ncia (ex.: cliente reclamou da fila, alarme falhou, produto danificado). Aceita **negrito** e listas com -"></textarea>
+  <textarea id="ntTexto" placeholder="Descreve a avaria ou incid&#xea;ncia de manuten&#xe7;&#xe3;o (ex.: ar condicionado avariado, l&#xe2;mpada fundida no corredor 3, fechadura da porta com problema). Aceita **negrito** e listas com -"></textarea>
   <label for="ntAutor">Registado por</label>
   <select id="ntAutor" data-staff data-ph="Seleciona o teu nome"></select>
   <div class="acts"><button type="button" class="cancel" id="ntCancel">Cancelar</button><button type="button" class="save" id="ntSave">Guardar incid&#xea;ncia</button></div>
@@ -349,6 +350,23 @@ IC.image='<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9"
 IC.plus='<path d="M5 12h14"/><path d="M12 5v14"/>';
 IC['trash-2']='<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>';
 IC.check='<path d="M20 6 9 17l-5-5"/>';
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+
 IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
@@ -654,6 +672,7 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 
 
 
+
 /* ===== Modulo ===== */
 
 var SEC='_incidencias';
@@ -680,7 +699,7 @@ function render(){
   var l=document.getElementById('ntLista'); l.innerHTML='';
   var abertos=DADOS.filter(function(n){return !isDone(n);}).length;
   document.getElementById('ntCnt').textContent=abertos;
-  if(!DADOS.length){ l.innerHTML='<div class="empty">Ainda n\u00e3o h\u00e1 incid\u00eancias registadas.</div>'; return; }
+  if(!DADOS.length){ l.innerHTML='<div class="empty">Ainda n\u00e3o h\u00e1 incid\u00eancias de manuten\u00e7\u00e3o.</div>'; return; }
   DADOS.slice().sort(function(a,b){ return (isDone(a)-isDone(b)) || (new Date(b.data)-new Date(a.data)); }).forEach(function(n){
     var row=document.createElement('div'); row.className='nota'+(isDone(n)?' done':'');
     row.innerHTML='<button class="chk" title="Marcar como resolvido">'+svg('check')+'</button>'+
