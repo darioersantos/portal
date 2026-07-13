@@ -199,6 +199,7 @@
   .brief-it.rt .bi-ic{background:#eef2ff;} .brief-it.rt .bi-ic .ico{color:#4f6ef5;}
   .brief-it .bi-tx{flex:1;min-width:0;font-size:13.5px;font-weight:600;color:#3a4048;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .brief-it .bi-tag{flex:none;font-size:11px;font-weight:800;color:var(--muted2);}
+  .brief-it .bi-tag svg{width:15px;height:15px;stroke:#d6337f;vertical-align:middle;fill:none;stroke-width:2;}
   .brief-empty{margin-top:12px;font-size:13.5px;color:var(--muted);font-weight:600;}
   .notif-banner{background:linear-gradient(135deg,#23262b,#111417);color:#fff;border-radius:15px;padding:13px 16px;margin-bottom:18px;display:flex;align-items:center;gap:13px;cursor:pointer;box-shadow:0 8px 24px rgba(16,24,40,.18);}
   .notif-banner:hover{background:#000;}
@@ -373,9 +374,9 @@
 
       <div class="col-r">
         <div class="panel">
-          <div class="p-head"><h2>Notifica&#xe7;&#xf5;es recentes</h2><span class="more" data-go="notificacoes">Ver todas <span data-ic="chevron-right"></span></span></div>
-          <div class="rows" id="listNot"><div class="empty">A carregar&#x2026;</div></div>
-          <button class="ghostbtn" data-go="notificacoes">Ver todas as notifica&#xe7;&#xf5;es</button>
+          <div class="p-head"><h2>Roturas por repor</h2><span class="cnt" id="cntRot">0</span><span class="more" data-go="roturas">Ver todas <span data-ic="chevron-right"></span></span></div>
+          <div class="rows" id="listRot"><div class="empty">A carregar&#x2026;</div></div>
+          <button class="ghostbtn" data-go="roturas">Ver todas as roturas</button>
         </div>
       </div>
     </div>
@@ -531,7 +532,7 @@ function render(notas){
     var bdHojeL=aniv.filter(function(n){ return bdDiasAte(n.texto)===0; });
     var items=[];
     lemHojeL.forEach(function(n){ items.push({ic:'calendar-days',cls:'ev',txt:esc(muralInfo(n).titulo),tag:'Calend&aacute;rio',k:'mural'}); });
-    bdHojeL.forEach(function(n){ items.push({ic:'cake',cls:'bd',txt:'Anivers&aacute;rio de <b>'+esc(n.autor||'')+'</b>',tag:'\ud83c\udf82',k:'aniversario'}); });
+    bdHojeL.forEach(function(n){ items.push({ic:'cake',cls:'bd',txt:'Anivers&aacute;rio de <b>'+esc(n.autor||'')+'</b>',tag:svg('cake'),k:'aniversario'}); });
     notifs.forEach(function(n){ var msg=''; try{msg=JSON.parse(n.texto).msg;}catch(e){msg=cleanTxt(n.texto);} items.push({ic:'bell',cls:'nt',txt:esc(msg||'\u2014'),tag:'Aviso',k:'notificacoes'}); });
     var rot=notas.filter(function(n){ return String(n.seccao)==='_roturas' && !isDone(n); }).length;
     if(rot){ items.push({ic:'package',cls:'rt',txt:'<b>'+rot+'</b> artigo'+(rot>1?'s':'')+' em rutura por repor',tag:'Roturas',k:'roturas'}); }
@@ -571,9 +572,16 @@ function render(notas){
   var lsorted=lembretes.slice().sort(function(a,b){ return String(muralInfo(a).when).localeCompare(String(muralInfo(b).when)); });
   ll.innerHTML=lembretes.length?lsorted.slice(0,7).map(function(n){ var m=muralInfo(n); var w=fmtWhen(m.when); return '<div class="trow"><span class="stat hoje"></span><span class="t-txt">'+esc(m.titulo)+'</span>'+(w?'<span class="t-tag hoje">'+esc(w)+'</span>':'')+'</div>'; }).join(''):'<div class="empty">Sem eventos.</div>';
 
-  /* Notificacoes */
-  var ln=document.getElementById('listNot');
-  ln.innerHTML=notifs.length?notifs.slice(0,5).map(function(n){ var msg=''; try{ msg=(JSON.parse(n.texto).msg)||''; }catch(e){ msg=cleanTxt(n.texto); } return '<div class="lrow"><div class="l-ic">'+svg('bell')+'</div><div class="l-info"><div class="l-txt">'+esc(msg||'Notifica\u00e7\u00e3o')+'</div><div class="l-meta">Notifica\u00e7\u00e3o no menu</div></div></div>'; }).join(''):'<div class="empty">Sem notifica\u00e7\u00f5es ativas.</div>';
+  /* Roturas por repor */
+  var AREANM={calcado:'Cal\u00e7ado',textil:'T\u00eaxtil',acess:'Acess\u00f3rios'};
+  function rotArea(t){ var m=String(t||'').match(/^\[\[AREA:([a-z]+)\]\]/); return m?m[1]:''; }
+  function rotTxt(t){ return String(t||'').replace(/^\[\[AREA:[a-z]+\]\]/,'').replace(/\[\[FOTO:[^\]]*\]\]/g,'').trim(); }
+  var roturas=notas.filter(function(n){ return String(n.seccao)==='_roturas' && !isDone(n); });
+  var lrEl=document.getElementById('listRot'); var cntRotEl=document.getElementById('cntRot');
+  if(cntRotEl) cntRotEl.textContent=roturas.length;
+  if(lrEl){
+    lrEl.innerHTML=roturas.length?roturas.slice(0,6).map(function(n){ var a=rotArea(n.texto); var an=AREANM[a]||''; return '<div class="lrow"><div class="l-ic">'+svg('package')+'</div><div class="l-info"><div class="l-txt">'+esc(rotTxt(n.texto)||'(artigo)')+'</div><div class="l-meta">'+(an?esc(an):'Sem \u00e1rea')+(n.autor?' &middot; '+esc(n.autor):'')+'</div></div></div>'; }).join(''):'<div class="empty">Sem roturas por repor. \ud83d\udc4d</div>';
+  }
 
   /* Aniversarios (painel removido; popup no proprio dia mantem-se) */
   var asorted=aniv.slice().sort(function(a,b){ return bdDiasAte(a.texto)-bdDiasAte(b.texto); });
@@ -641,7 +649,7 @@ var QUICK=[
   {k:'mural', nm:'Calend\u00e1rio'},
   {k:'notas', nm:'Notas'},
   {k:'notificacoes', nm:'Notifica\u00e7\u00f5es'},
-  {k:'consumiveis', nm:'Encomendas'}
+  {k:'roturas', nm:'Roturas'}
 ];
 function renderQuick(){
   var host=document.getElementById('quickGrid'); if(!host) return;
