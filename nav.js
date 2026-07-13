@@ -78,3 +78,41 @@ window.PORTAL_NAV = [
     nav.addEventListener('scroll', function(){ try{ sessionStorage.setItem('sz_navscroll', nav.scrollTop); }catch(e){} }, {passive:true});
   });
 })();
+
+/* ==== Puxar para atualizar (pull-to-refresh) - PWA + browser mobile ==== */
+(function(){
+  if(!('ontouchstart' in window)) return;
+  var TH=72, startY=0, pulling=false, dist=0, ind=null;
+  function mkInd(){
+    if(ind) return ind;
+    ind=document.createElement('div'); ind.id='sz-ptr';
+    ind.style.cssText='position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:center;height:0;overflow:hidden;z-index:9999;pointer-events:none;background:transparent;';
+    ind.innerHTML='<div style="display:flex;align-items:center;gap:8px;color:#FF8100;font:800 13px -apple-system,BlinkMacSystemFont,sans-serif;"><svg class="sz-ptr-a" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg><span class="sz-ptr-t">Puxa para atualizar</span></div>';
+    document.body.appendChild(ind); return ind;
+  }
+  function fixedAncestor(el){ while(el && el!==document.body){ try{ var p=getComputedStyle(el).position; if((p==='fixed'||p==='sticky') && el.className && String(el.className).indexOf('topbar')<0) return true; }catch(e){} el=el.parentElement; } return false; }
+  function atTop(){ var se=document.scrollingElement||document.documentElement; return (window.pageYOffset||se.scrollTop||0)<=0; }
+  window.addEventListener('touchstart', function(e){
+    if(e.touches.length!==1 || !atTop() || fixedAncestor(e.target)){ pulling=false; return; }
+    startY=e.touches[0].clientY; pulling=true; dist=0;
+  }, {passive:true});
+  window.addEventListener('touchmove', function(e){
+    if(!pulling) return;
+    dist=e.touches[0].clientY-startY;
+    if(dist<=0 || !atTop()){ pulling=false; if(ind) ind.style.height='0'; return; }
+    e.preventDefault();
+    var el=mkInd(); el.style.transition='none'; el.style.height=Math.min(dist*0.5,90)+'px';
+    var a=el.querySelector('.sz-ptr-a'); if(a) a.style.transform='rotate('+Math.min(dist*2,360)+'deg)';
+    var t=el.querySelector('.sz-ptr-t'); if(t) t.textContent=(dist>TH)?'Solta para atualizar':'Puxa para atualizar';
+  }, {passive:false});
+  window.addEventListener('touchend', function(){
+    if(!pulling) return; pulling=false;
+    if(dist>TH){
+      var el=mkInd(); el.style.transition='height .15s'; el.style.height='54px';
+      var t=el.querySelector('.sz-ptr-t'); if(t) t.textContent='A atualizar…';
+      var a=el.querySelector('.sz-ptr-a'); if(a){ a.style.transform=''; a.style.animation='sz-ptr-spin .7s linear infinite'; }
+      setTimeout(function(){ try{ location.reload(); }catch(e){ location.href=location.href; } }, 200);
+    } else if(ind){ ind.style.transition='height .18s'; ind.style.height='0'; }
+  }, {passive:true});
+  try{ var st=document.createElement('style'); st.textContent='@keyframes sz-ptr-spin{to{transform:rotate(360deg)}}'; (document.head||document.documentElement).appendChild(st); }catch(e){}
+})();
