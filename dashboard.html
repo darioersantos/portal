@@ -177,7 +177,8 @@
   .notif-banner{background:linear-gradient(135deg,#23262b,#111417);color:#fff;border-radius:15px;padding:13px 16px;margin-bottom:18px;display:flex;align-items:center;gap:13px;cursor:pointer;box-shadow:0 8px 24px rgba(16,24,40,.18);}
   .notif-banner:hover{background:#000;}
   .notif-banner .nb-ic{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex:none;}
-  .notif-banner .nb-ic .ico{width:20px;height:20px;color:#ffb45e;}
+  .notif-banner .nb-ic .ico{width:20px;height:20px;color:#ffb45e;transform-origin:top center;animation:bellShake 2.6s ease-in-out infinite;}
+  @keyframes bellShake{0%,58%,100%{transform:rotate(0);}62%{transform:rotate(14deg);}66%{transform:rotate(-11deg);}70%{transform:rotate(8deg);}74%{transform:rotate(-6deg);}78%{transform:rotate(3deg);}82%{transform:rotate(0);}}
   .notif-banner .nb-txt{flex:1;min-width:0;}
   .notif-banner .nb-txt b{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#ffb45e;}
   .notif-banner .nb-msg{font-size:14px;font-weight:600;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
