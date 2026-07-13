@@ -164,7 +164,7 @@
     .main{margin-left:0;min-width:0;}
     .menu-btn{display:flex !important;}
     .content{padding:6px calc(14px + env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));}
-    .topbar{padding:calc(12px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) 10px calc(14px + env(safe-area-inset-left));gap:11px;flex-wrap:wrap;}
+    .topbar{padding:calc(26px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) 12px calc(14px + env(safe-area-inset-left));gap:11px;flex-wrap:wrap;}
     .tb-hi{min-width:0;}
     .tb-hi h1{font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .tb-hi p{display:none;}
@@ -173,12 +173,12 @@
   }
   /* App instalada (PWA/standalone): topo sempre abaixo da barra de estado e tocavel */
   @media all and (display-mode:standalone){
-    .topbar{padding-top:max(env(safe-area-inset-top),46px);background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;}
-    .sb-brand{padding-top:max(env(safe-area-inset-top),46px);}
+    .topbar{padding-top:calc(max(env(safe-area-inset-top),44px) + 16px);background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;}
+    .sb-brand{padding-top:calc(max(env(safe-area-inset-top),44px) + 8px);}
   }
   @media all and (display-mode:fullscreen){
-    .topbar{padding-top:max(env(safe-area-inset-top),46px);background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;}
-    .sb-brand{padding-top:max(env(safe-area-inset-top),46px);}
+    .topbar{padding-top:calc(max(env(safe-area-inset-top),44px) + 16px);background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;}
+    .sb-brand{padding-top:calc(max(env(safe-area-inset-top),44px) + 8px);}
   }
   .menu-btn{display:none;width:42px;height:42px;border-radius:11px;background:var(--card);border:1px solid var(--line2);align-items:center;justify-content:center;color:#4a515b;cursor:pointer;}
   .sb-backdrop{position:fixed;inset:0;background:rgba(20,24,30,.4);z-index:39;display:none;}
@@ -192,17 +192,24 @@
   .tk-empty{font-size:12.5px;color:var(--muted2);padding:8px 2px;}
 
 
+
+
+
+
   /* ===== Notas ===== */
-  .nt-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:18px;align-items:start;}
-  @media(max-width:900px){.nt-grid{grid-template-columns:minmax(0,1fr);}}
-  .nt-form label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:2px 0 6px;}
-  .nt-form label.two{margin-top:14px;}
-  .nt-form textarea{width:100%;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);min-height:210px;resize:vertical;}
-  .nt-form select{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
-  .nt-form textarea:focus,.nt-form select:focus{outline:none;border-color:var(--accent);}
-  .nt-form .save{width:100%;margin-top:16px;background:linear-gradient(135deg,#FF8100,#E06E00);color:#fff;border:none;border-radius:13px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 16px rgba(230,98,0,.28);}
-  .nt-form .save:disabled{opacity:.6;}
-  .nt-form .save .ico{width:18px;height:18px;stroke-width:2.4;}
+  .nt-wrap{max-width:760px;}
+  #ntModal{position:fixed;inset:0;z-index:90;background:rgba(20,24,30,.5);display:none;align-items:flex-start;justify-content:center;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));overflow-y:auto;}
+  #ntModal.show{display:flex;}
+  #ntModal .bx{background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:100%;max-width:480px;padding:22px 22px 20px;}
+  #ntModal h3{margin:0 0 6px;font-size:18px;font-weight:800;}
+  #ntModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #ntModal textarea{width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);min-height:180px;resize:vertical;}
+  #ntModal select{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #ntModal textarea:focus,#ntModal select:focus{outline:none;border-color:var(--accent);}
+  #ntModal .acts{display:flex;gap:10px;margin-top:18px;}
+  #ntModal .acts button{flex:1;padding:13px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;border:none;}
+  #ntModal .acts .cancel{background:#f0eeeb;color:var(--muted);}
+  #ntModal .acts .save{background:linear-gradient(135deg,#FF8100,#E06E00);color:#fff;}
   .nota{display:flex;align-items:flex-start;gap:11px;padding:12px 4px;border-bottom:1px solid var(--line);}
   .nota:last-child{border-bottom:none;}
   .nota .chk{flex:none;width:24px;height:24px;border:2px solid var(--line2);border-radius:7px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:transparent;margin-top:1px;}
@@ -244,17 +251,9 @@
   <header class="topbar">
     <button class="menu-btn" id="menuBtn"><span data-ic="menu"></span></button>
     <div class="tb-hi"><h1>Notas</h1><p>Apontamentos da equipa de direcao.</p></div>
-    <div class="tb-right"><button class="tk-newbtn" id="btnPrint" title="Imprimir"><span data-ic="printer"></span> Imprimir</button></div>
+    <div class="tb-right"><div class="tb-icon" id="btnPrint" title="Imprimir"><span data-ic="printer"></span></div> <button class="tk-newbtn" id="ntNew"><span data-ic="plus"></span> Novo apontamento</button></div>
   </header>
-  <div class="content"><div class="nt-grid">
-  <div class="panel nt-form">
-    <div class="p-head"><h2>Novo apontamento</h2></div>
-    <label class="two" for="ntTexto">Nota</label>
-    <textarea id="ntTexto" placeholder="Escreve aqui o apontamento (ex.: falar com o fornecedor, verificar montra...). Aceita **negrito**, titulos com # e listas com -"></textarea>
-    <label class="two" for="ntAutor">Escrito por (equipa de direcao)</label>
-    <select id="ntAutor" data-staff data-area="sup" data-ph="Seleciona (equipa de direcao)"></select>
-    <button class="save" id="ntSave"><span data-ic="plus"></span> Guardar apontamento</button>
-  </div>
+  <div class="content"><div class="nt-wrap">
   <div class="panel">
     <div class="p-head"><h2>Apontamentos</h2><span class="cnt" id="ntCnt">0</span></div>
     <div class="rows" id="ntLista"><div class="empty">A carregar...</div></div>
@@ -263,6 +262,14 @@
 </div>
 
 <div id="printArea"></div>
+<div id="ntModal"><div class="bx">
+  <h3>Novo apontamento</h3>
+  <label for="ntTexto">Nota</label>
+  <textarea id="ntTexto" placeholder="Escreve aqui o apontamento (ex.: falar com o fornecedor, verificar montra...). Aceita **negrito**, titulos com # e listas com -"></textarea>
+  <label for="ntAutor">Escrito por (equipa de direcao)</label>
+  <select id="ntAutor" data-staff data-area="sup" data-ph="Seleciona (equipa de direcao)"></select>
+  <div class="acts"><button type="button" class="cancel" id="ntCancel">Cancelar</button><button type="button" class="save" id="ntSave">Guardar apontamento</button></div>
+</div></div>
 
 <script>
 "use strict";
@@ -318,6 +325,34 @@ IC.image='<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9"
 IC.plus='<path d="M5 12h14"/><path d="M12 5v14"/>';
 IC['trash-2']='<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>';
 IC.check='<path d="M20 6 9 17l-5-5"/>';
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+
 IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
@@ -435,6 +470,10 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 
 
 
+
+
+
+
 /* ===== Modulo ===== */
 
 var SEC='_apontamentos';
@@ -491,12 +530,20 @@ document.getElementById('ntSave').addEventListener('click',function(){
     .then(function(r){return r.json();}).then(function(j){
       var id=(j&&j.id!=null)?j.id:('tmp_'+Date.now());
       DADOS.unshift({id:id, seccao:SEC, autor:autor, texto:texto, data:new Date().toISOString(), done:false});
-      render();
+      render(); closeModal();
       document.getElementById('ntTexto').value=''; var a=document.getElementById('ntAutor'); if(a) a.value='';
       bust(); setTimeout(function(){bust();carregar();},1800); setTimeout(function(){bust();carregar();},4200);
     }).catch(function(){ alert('Nao foi possivel guardar. Verifica a ligacao.'); })
     .then(function(){ btn.disabled=false; });
 });
+/* modal (dinamica igual aos Lembretes) */
+var ntModal=document.getElementById('ntModal');
+function openModal(){ document.getElementById('ntTexto').value=''; var a=document.getElementById('ntAutor'); if(a) a.value=''; ntModal.classList.add('show'); if(window.SZinitStaff){ try{ window.SZinitStaff(ntModal); }catch(e){} } setTimeout(function(){ var t=document.getElementById('ntTexto'); if(t) t.focus(); },60); }
+function closeModal(){ ntModal.classList.remove('show'); }
+document.getElementById('ntNew').addEventListener('click',openModal);
+document.getElementById('ntCancel').addEventListener('click',closeModal);
+ntModal.addEventListener('click',function(e){ if(e.target===ntModal) closeModal(); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
 function marcar(n, done){ n.done=done; render(); bust(); fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_done', id:n.id, done:done})}).catch(function(){}); }
 function apagar(id){ if(!confirm('Apagar este apontamento?')) return; DADOS=DADOS.filter(function(x){return String(x.id)!==String(id);}); render(); bust(); fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_del', id:id})}).catch(function(){}); }
 function imprimir(){
