@@ -4,6 +4,7 @@ window.PORTAL_NAV = [
   {group:'Operações', items:[
     {k:'lembretes', ic:'list-checks', nm:'Tarefas', badgeId:'nbTar'},
     {k:'mural', ic:'message-circle', nm:'Lembretes', badgeId:'nbLem'},
+    {k:'calendario', ic:'calendar-days', nm:'Calendário'},
     {k:'notas', ic:'square-pen', nm:'Bloco de Notas'},
     {k:'incidencias', ic:'siren', nm:'Registo de Incidências'},
     {k:'permanencia', ic:'book-open', nm:'Relatório de Permanência'},
