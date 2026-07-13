@@ -800,7 +800,8 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 "use strict";
 const BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
 const SEC='_satisf';
-const ESCALA=[{v:1,t:'Discordo'},{v:2,t:'Neutro'},{v:3,t:'Concordo'}];
+const ESCALA=[{v:1,t:'N\u00e3o'},{v:2,t:'Neutro'},{v:3,t:'Sim'}];
+const MAILBOX_SVG='<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"/><path d="M6 5c1.5 0 3 1.5 3 3v6"/><path d="M9 11h13"/><path d="M17 15v2"/></svg>';
 let CATS=[
   {id:'1', nome:'Satisfa\u00e7\u00e3o Geral', qs:[
     'Estou satisfeito/a por trabalhar nesta loja.',
@@ -932,8 +933,8 @@ function showThanks(){
 /* ---------- RESULTADOS ---------- */
 function mostrarResultados(){
   var box=document.getElementById('resContent');
-  if(sessionStorage.getItem('portalOK')!=='1'){
-    box.innerHTML='<div class="locked"><div class="big">\ud83d\udd12</div><p>\u00c1rea de resultados reservada \u00e0 dire\u00e7\u00e3o.<br>Entra pelo portal para consultar as estat\u00edsticas.</p></div>';
+  if(sessionStorage.getItem('resOK')!=='1'){
+    box.innerHTML='<div class="locked"><div class="big">'+MAILBOX_SVG+'</div><p>\u00c1rea de resultados protegida por palavra-passe.<br>Toca em "Resultados" e introduz a palavra-passe.</p></div>';
     return;
   }
   if(!BACKEND){ box.innerHTML='<div class="status">Sem liga\u00e7\u00e3o \u00e0 nuvem.</div>'; return; }
@@ -955,7 +956,7 @@ function fmtMes(k){ var p=k.split('-'); var m=['Jan','Fev','Mar','Abr','Mai','Ju
 
 function renderResultados(subs){
   var box=document.getElementById('resContent');
-  if(!subs.length){ box.innerHTML='<div class="locked"><div class="big">\ud83d\udced</div><p>Ainda n\u00e3o h\u00e1 respostas ao inqu\u00e9rito.</p></div>'; return; }
+  if(!subs.length){ box.innerHTML='<div class="locked"><div class="big">'+MAILBOX_SVG+'</div><p>Ainda n\u00e3o h\u00e1 respostas ao inqu\u00e9rito.</p></div>'; return; }
   var N=subs.length;
   // recolher por categoria/pergunta
   var catAvgs=[], allVals=[];
@@ -1131,7 +1132,15 @@ function showTab(which){
   if(perg) mostrarPergEditor();
 }
 document.getElementById('tabResp').addEventListener('click',function(){ showTab('resp'); });
-document.getElementById('tabRes').addEventListener('click',function(){ showTab('res'); });
+document.getElementById('tabRes').addEventListener('click',function(){
+  if(sessionStorage.getItem('resOK')!=='1'){
+    var p=prompt('Palavra-passe para ver os resultados:');
+    if(p===null) return;
+    if(String(p).trim()!=='1011'){ alert('Palavra-passe incorreta.'); return; }
+    try{ sessionStorage.setItem('resOK','1'); }catch(e){}
+  }
+  showTab('res');
+});
 document.getElementById('tabPerg').addEventListener('click',function(){ showTab('perg'); });
 document.getElementById('btnSubmit').addEventListener('click',submit);
 
