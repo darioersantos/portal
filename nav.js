@@ -75,16 +75,38 @@ window.PORTAL_NAV = [
 (function(){
   try{
     var HEAVY=/(vendas-web|planeamento|atendimento_cliente|entrada|onlines|palmilhas|provadores|sprays|szclub)\.html/i;
-    if(HEAVY.test(location.pathname||'')) return;
+    var heavyPage=HEAVY.test(location.pathname||'');
     var of=window.fetch; if(typeof of!=='function') return;
     window.fetch=function(input, init){
+      var isNotasGet=false, url=input, self=this;
       try{
-        if(typeof input==='string' && input.indexOf('action=notas')>=0 && input.indexOf('light=')<0){
+        if(typeof input==='string' && input.indexOf('action=notas')>=0){
           var mth=(init&&init.method)?String(init.method).toUpperCase():'GET';
-          if(mth==='GET'){ input += (input.indexOf('?')>=0?'&':'?')+'light=1'; }
+          if(mth==='GET'){ isNotasGet=true; if(!heavyPage && input.indexOf('light=')<0){ url=input+(input.indexOf('?')>=0?'&':'?')+'light=1'; } }
         }
       }catch(e){}
-      return of.call(this, input, init);
+      if(!isNotasGet) return of.call(self, input, init);
+      /* pedido dos dados: repete ate 3x com tempo-limite, para aguentar falhas intermitentes do Google */
+      var tries=0;
+      function wait(){ return new Promise(function(res){ setTimeout(res, 900); }); }
+      function go(){
+        tries++;
+        var ctrl=null; try{ ctrl=new AbortController(); }catch(e){}
+        var opt={}; try{ if(init){ for(var k in init){ opt[k]=init[k]; } } }catch(e){}
+        if(ctrl) opt.signal=ctrl.signal;
+        var timer=setTimeout(function(){ try{ ctrl&&ctrl.abort(); }catch(e){} }, 13000);
+        return of.call(self, url, opt).then(function(r){
+          clearTimeout(timer);
+          if(r && r.ok) return r;
+          if(tries<3) return wait().then(go);
+          return r;
+        }).catch(function(err){
+          clearTimeout(timer);
+          if(tries<3) return wait().then(go);
+          throw err;
+        });
+      }
+      try{ return go(); }catch(e){ return of.call(self, input, init); }
     };
   }catch(e){}
 })();
