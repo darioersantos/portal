@@ -77,36 +77,43 @@ window.PORTAL_NAV = [
     var HEAVY=/(vendas-web|planeamento|atendimento_cliente|entrada|onlines|palmilhas|provadores|sprays|szclub)\.html/i;
     var heavyPage=HEAVY.test(location.pathname||'');
     var of=window.fetch; if(typeof of!=='function') return;
-    window.fetch=function(input, init){
-      var isNotasGet=false, url=input, self=this;
-      try{
-        if(typeof input==='string' && input.indexOf('action=notas')>=0){
-          var mth=(init&&init.method)?String(init.method).toUpperCase():'GET';
-          if(mth==='GET'){ isNotasGet=true; if(!heavyPage && input.indexOf('light=')<0){ url=input+(input.indexOf('?')>=0?'&':'?')+'light=1'; } }
-        }
-      }catch(e){}
-      if(!isNotasGet) return of.call(self, input, init);
-      /* pedido dos dados: repete ate 3x com tempo-limite, para aguentar falhas intermitentes do Google */
+    function wait(){ return new Promise(function(res){ setTimeout(res, 900); }); }
+    function netFetch(self, url, init){
       var tries=0;
-      function wait(){ return new Promise(function(res){ setTimeout(res, 900); }); }
       function go(){
         tries++;
         var ctrl=null; try{ ctrl=new AbortController(); }catch(e){}
         var opt={}; try{ if(init){ for(var k in init){ opt[k]=init[k]; } } }catch(e){}
         if(ctrl) opt.signal=ctrl.signal;
         var timer=setTimeout(function(){ try{ ctrl&&ctrl.abort(); }catch(e){} }, 13000);
-        return of.call(self, url, opt).then(function(r){
-          clearTimeout(timer);
-          if(r && r.ok) return r;
-          if(tries<3) return wait().then(go);
-          return r;
-        }).catch(function(err){
-          clearTimeout(timer);
-          if(tries<3) return wait().then(go);
-          throw err;
-        });
+        return of.call(self, url, opt).then(function(r){ clearTimeout(timer); if(r&&r.ok) return r; if(tries<3) return wait().then(go); return r; })
+          .catch(function(err){ clearTimeout(timer); if(tries<3) return wait().then(go); throw err; });
       }
-      try{ return go(); }catch(e){ return of.call(self, input, init); }
+      return go();
+    }
+    function ckey(url){ return 'sz_notas_c'+(String(url).indexOf('light=1')>=0?'L':'F'); }
+    function cget(k){ try{ var t=localStorage.getItem(k); if(t && t.length>20) return t; }catch(e){} return null; }
+    function cset(k,t){ try{ if(t && t.length>20 && t.length<2600000) localStorage.setItem(k,t); }catch(e){} }
+    function mkResp(t){ try{ return new Response(t, {status:200, headers:{'Content-Type':'application/json'}}); }catch(e){ return null; } }
+    window.fetch=function(input, init){
+      var self=this;
+      try{ if(typeof input==='string' && input.indexOf('script.google.com')>=0){ var mth0=(init&&init.method)?String(init.method).toUpperCase():'GET'; if(mth0==='POST' && init && typeof init.body==='string' && /nota_(add|done|del)/.test(init.body)){ try{ sessionStorage.setItem('sz_notas_dirty','1'); }catch(e){} } } }catch(e){}
+      var isNotasGet=false, url=input;
+      try{ if(typeof input==='string' && input.indexOf('action=notas')>=0){ var mth=(init&&init.method)?String(init.method).toUpperCase():'GET'; if(mth==='GET'){ isNotasGet=true; if(!heavyPage && input.indexOf('light=')<0){ url=input+(input.indexOf('?')>=0?'&':'?')+'light=1'; } } } }catch(e){}
+      if(!isNotasGet) return of.call(self, input, init);
+      try{
+        var K=ckey(url);
+        var dirty=false; try{ dirty=sessionStorage.getItem('sz_notas_dirty')==='1'; }catch(e){}
+        var cached=dirty?null:cget(K);
+        if(cached){ var resp=mkResp(cached); if(resp){
+          netFetch(self, url, init).then(function(r){ if(r&&r.ok){ r.clone().text().then(function(t){ cset(K,t); }).catch(function(){}); } }).catch(function(){});
+          return Promise.resolve(resp);
+        } }
+        return netFetch(self, url, init).then(function(r){
+          if(r&&r.ok){ r.clone().text().then(function(t){ cset(K,t); try{ sessionStorage.removeItem('sz_notas_dirty'); }catch(e){} }).catch(function(){}); }
+          return r;
+        }).catch(function(err){ var c=cget(K); var cr=c?mkResp(c):null; if(cr) return cr; throw err; });
+      }catch(e){ return of.call(self, input, init); }
     };
   }catch(e){}
 })();
