@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="SPZ Portal">
-<title>Anivers&#xe1;rio &middot; Sport Zone Vasco da Gama</title>
+<title>Anivers&#xE1;rio &middot; Sport Zone Vasco da Gama</title>
 <script src="config.js"></script>
 <script src="links.js"></script>
 <script src="roster.js"></script>
@@ -259,7 +259,8 @@
 
   .aniv{display:flex;align-items:center;gap:12px;padding:12px 6px;border-bottom:1px solid var(--line);}
   .aniv:last-child{border-bottom:none;}
-  .aniv .cake{font-size:22px;}
+  .aniv .cake{width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:var(--accent-dark);display:flex;align-items:center;justify-content:center;flex:none;}
+  .aniv .cake .ico{width:20px;height:20px;}
   .aniv .info{flex:1;min-width:0;}
   .aniv .nome{font-size:15px;font-weight:700;}
   .aniv .data{font-size:13px;color:var(--muted);}
@@ -296,7 +297,7 @@
 <div class="main">
   <header class="topbar">
     <button class="menu-btn" id="menuBtn"><span data-ic="menu"></span></button>
-    <div class="tb-hi"><h1>Anivers&#xe1;rio</h1><p>Registo de anivers&#xe1;rios da equipa.</p></div>
+    <div class="tb-hi"><h1>Anivers&#xE1;rio</h1><p>Registo de anivers&#xE1;rios da equipa.</p></div>
     <div class="tb-right"></div>
   </header>
   <div class="content">
@@ -306,29 +307,29 @@
 
 <main>
   <div class="card" id="cardForm">
-    <h2 id="formTitle">Adicionar anivers&#xe1;rio</h2>
-    <p class="sz-admin" style="color:var(--muted);font-size:13px;margin:2px 0 12px;">Quando um colaborador fizer anos, aparece automaticamente uma <b>notifica&#xe7;&#xe3;o no menu principal</b> (e um aviso) a lembrar do anivers&#xe1;rio. <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#d6337f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg></p>
+    <h2 id="formTitle">Adicionar anivers&#xE1;rio</h2>
+    <p class="sz-admin" style="color:var(--muted);font-size:13px;margin:2px 0 12px;">Quando um colaborador fizer anos, aparece automaticamente uma <b>notifica&#xE7;&#xE3;o no menu principal</b> (e um aviso) a lembrar do anivers&#xE1;rio. <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E06E00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg></p>
     <div class="field"><label for="nome">Colaborador</label><select id="nome" data-staff data-ph="Seleciona o teu nome"></select></div>
     <div class="field"><label for="nasc">Data de nascimento</label><input type="date" id="nasc"></div>
-    <button class="save" id="btnSave">&#xff0b; Guardar anivers&#xe1;rio</button>
+    <button class="save" id="btnSave">&#xFF0B; Guardar anivers&#xE1;rio</button>
   </div>
 
   <div class="card" id="cardThanks" style="display:none;text-align:center;">
     <div style="font-size:54px;line-height:1;"><i data-lu="party-popper"></i></div>
     <h2 style="margin:12px 0 4px;">Obrigado!</h2>
-    <p style="color:var(--muted);margin:0;">O teu anivers&#xe1;rio foi guardado.</p>
+    <p style="color:var(--muted);margin:0;">O teu anivers&#xE1;rio foi guardado.</p>
     <button class="save" id="btnOutro" style="margin-top:16px;">Registar outro</button>
   </div>
 
   <div class="card" id="shareBox" style="display:none;background:linear-gradient(135deg,#ffffff,#fff7ed);border:1.5px solid #ffe2c0;">
     <div style="font-weight:800;font-size:14px;color:var(--ink);margin-bottom:3px;">Partilhar com o staff</div>
-    <div style="font-size:12.5px;color:var(--muted2);margin-bottom:10px;">Envia este link para cada colaborador registar o seu anivers&#xe1;rio, sem entrar no painel.</div>
+    <div style="font-size:12.5px;color:var(--muted2);margin-bottom:10px;">Envia este link para cada colaborador registar o seu anivers&#xE1;rio, sem entrar no painel.</div>
     <button type="button" class="save" id="btnShare" style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;"><i data-lu="link"></i> Copiar link de partilha</button>
   </div>
 
   <div class="card" id="cardLista">
     <div style="display:flex;align-items:center;gap:10px;">
-      <h2 style="flex:1;margin:0;">Anivers&#xe1;rios (por proximidade)</h2>
+      <h2 style="flex:1;margin:0;">Anivers&#xE1;rios (por proximidade)</h2>
       <button id="btnExport" type="button" style="background:var(--accent);color:#fff;border:none;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;"><i data-lu="download"></i> Exportar</button>
     </div>
     <div id="lista" style="margin-top:10px;"><div class="status">A carregar&#x2026;</div></div>
@@ -673,7 +674,7 @@ IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
 
-var SL_FOTOS={'Ant\u00f3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00fajo':'images/img_04.jpg','Ricardo Eus\u00e9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00e3o Paiva':'images/img_10.jpg','Jo\u00e3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00e2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00e9rgio Correia':'images/img_21.jpg','Andr\u00e9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00fajo':'images/img_25.jpg','Lu\u00eds Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00e2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00e3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00e7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00edrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00faria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00e1rio Santos':'images/img_51.jpg','Beatriz Jer\u00f3nimo':'images/img_52.jpg'};
+var SL_FOTOS={'Ant\u00F3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00FAjo':'images/img_04.jpg','Ricardo Eus\u00E9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00E3o Paiva':'images/img_10.jpg','Jo\u00E3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00E2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00E9rgio Correia':'images/img_21.jpg','Andr\u00E9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00FAjo':'images/img_25.jpg','Lu\u00EDs Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00E2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00E3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00E7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00EDrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00FAria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00E1rio Santos':'images/img_51.jpg','Beatriz Jer\u00F3nimo':'images/img_52.jpg'};
 var NAV=(window.PORTAL_NAV||[]);
 
 var BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
@@ -763,17 +764,17 @@ function diasAte(s){ var p=parts(s); if(!p) return 99999; var n=new Date(); n.se
 
 function render(){
   const l=document.getElementById('lista'); l.innerHTML='';
-  if(!DADOS.length){ l.innerHTML='<div class="status">Ainda n\u00e3o h\u00e1 anivers\u00e1rios guardados.</div>'; return; }
+  if(!DADOS.length){ l.innerHTML='<div class="status">Ainda n\u00E3o h\u00E1 anivers\u00E1rios guardados.</div>'; return; }
   const lista=DADOS.slice().sort((a,b)=>diasAte(a.texto)-diasAte(b.texto));
   lista.forEach(function(n){
     const dias=diasAte(n.texto), hoje=(dias===0);
     let quando;
-    if(dias===0) quando='<span class="hojetag">Hoje \ud83c\udf89</span>';
-    else if(dias===1) quando='<span class="hojetag" style="background:#15803d;">Amanh\u00e3</span>';
+    if(dias===0) quando='<span class="hojetag">Hoje \uD83C\uDF89</span>';
+    else if(dias===1) quando='<span class="hojetag" style="background:#15803d;">Amanh\u00E3</span>';
     else quando='<span class="hojetag" style="background:#fff;color:var(--accent-ink);border:1px solid var(--line);">Faltam '+dias+' dias</span>';
     const row=document.createElement('div'); row.className='aniv'+(hoje?' hoje':'');
-    row.innerHTML='<span class="cake"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#d6337f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg></span><div class="info"><div class="nome">'+esc(n.autor||'\u2014')+' '+quando+'</div>'+
-      '<div class="data">'+fmt(n.texto)+' \u00b7 '+idade(n.texto)+' anos</div></div>'+
+    row.innerHTML='<span class="cake"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg></span><div class="info"><div class="nome">'+esc(n.autor||'\u2014')+' '+quando+'</div>'+
+      '<div class="data">'+fmt(n.texto)+' \u00B7 '+idade(n.texto)+' anos</div></div>'+
       '<button class="del" data-id="'+esc(n.id)+'">\u2715</button>';
     row.querySelector('.del').onclick=function(){ apagar(n.id); };
     l.appendChild(row);
@@ -781,23 +782,23 @@ function render(){
 }
 
 function exportar(){
-  if(!DADOS.length){ alert('Ainda n\u00e3o h\u00e1 anivers\u00e1rios para exportar.'); return; }
+  if(!DADOS.length){ alert('Ainda n\u00E3o h\u00E1 anivers\u00E1rios para exportar.'); return; }
   const lista=DADOS.slice().sort((a,b)=>diasAte(a.texto)-diasAte(b.texto));
   let csv='Nome,Data de nascimento,Idade,Proximo aniversario (dias)\n';
   lista.forEach(function(n){ csv+='"'+String(n.autor||'').replace(/"/g,'""')+'","'+fmt(n.texto)+'","'+idade(n.texto)+'","'+diasAte(n.texto)+'"\n'; });
-  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='aniversarios.csv';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
 function carregar(){
-  if(!BACKEND){ document.getElementById('lista').innerHTML='<div class="status">Sem liga\u00e7\u00e3o \u00e0 nuvem.</div>'; return; }
+  if(!BACKEND){ document.getElementById('lista').innerHTML='<div class="status">Sem liga\u00E7\u00E3o \u00E0 nuvem.</div>'; return; }
   fetch(BACKEND+'?action=notas&t='+Date.now())
     .then(r=>r.json()).then(function(j){
       if(j&&j.ok&&Array.isArray(j.notas)){ DADOS=j.notas.filter(n=>String(n.seccao)===ANIV); render(); }
-      else{ document.getElementById('lista').innerHTML='<div class="status">A nuvem ainda n\u00e3o est\u00e1 ativa. Avisa o respons\u00e1vel.</div>'; }
+      else{ document.getElementById('lista').innerHTML='<div class="status">A nuvem ainda n\u00E3o est\u00E1 ativa. Avisa o respons\u00E1vel.</div>'; }
     })
-    .catch(function(){ document.getElementById('lista').innerHTML='<div class="status">Sem liga\u00e7\u00e3o. Recarrega.</div>'; });
+    .catch(function(){ document.getElementById('lista').innerHTML='<div class="status">Sem liga\u00E7\u00E3o. Recarrega.</div>'; });
 }
 
 document.getElementById('btnSave').addEventListener('click',function(){
@@ -805,7 +806,7 @@ document.getElementById('btnSave').addEventListener('click',function(){
   const nasc=document.getElementById('nasc').value;
   if(!nome){ alert('Seleciona o teu nome.'); return; }
   if(!nasc){ alert('Escolhe a data de nascimento.'); return; }
-  if(!BACKEND){ alert('Sem liga\u00e7\u00e3o \u00e0 nuvem.'); return; }
+  if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
   const btn=this; btn.disabled=true; btn.textContent='A guardar\u2026';
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify({action:'nota_add', seccao:ANIV, autor:nome, texto:'@'+nasc})})
@@ -814,16 +815,16 @@ document.getElementById('btnSave').addEventListener('click',function(){
         if(MANAGER){ carregar(); } else { document.getElementById('cardForm').style.display='none'; document.getElementById('cardThanks').style.display='block'; window.scrollTo(0,0); } }
       else throw new Error('erro');
     })
-    .catch(function(){ alert('N\u00e3o foi poss\u00edvel guardar. Tenta de novo.'); })
-    .then(function(){ btn.disabled=false; btn.textContent='\uff0b Guardar anivers\u00e1rio'; });
+    .catch(function(){ alert('N\u00E3o foi poss\u00EDvel guardar. Tenta de novo.'); })
+    .then(function(){ btn.disabled=false; btn.textContent='\uFF0B Guardar anivers\u00E1rio'; });
 });
 
 function apagar(id){
-  if(!confirm('Apagar este anivers\u00e1rio?')) return;
+  if(!confirm('Apagar este anivers\u00E1rio?')) return;
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify({action:'nota_del', id:id})})
     .then(r=>r.json()).then(function(){ DADOS=DADOS.filter(x=>String(x.id)!==String(id)); render(); })
-    .catch(function(){ alert('N\u00e3o foi poss\u00edvel apagar.'); });
+    .catch(function(){ alert('N\u00E3o foi poss\u00EDvel apagar.'); });
 }
 
 /* Manager (entrou com codigo) ve lista + exportar; staff (link publico) so regista o seu */
@@ -834,7 +835,7 @@ if(MANAGER){
 }else{
   document.getElementById('cardLista').style.display='none';
   var _hb=document.getElementById('homeBtn'); if(_hb) _hb.style.display='none';
-  document.getElementById('formTitle').textContent='Regista o teu anivers\u00e1rio';
+  document.getElementById('formTitle').textContent='Regista o teu anivers\u00E1rio';
 }
 document.getElementById('btnOutro').addEventListener('click',function(){
   document.getElementById('cardThanks').style.display='none';
