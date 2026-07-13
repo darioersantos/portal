@@ -66,6 +66,26 @@ window.PORTAL_NAV = [
   ]}
 ];
 
+/* ==== MODO PUBLICO: links partilhados (?publico=1) mostram so o formulario, sem menu/topo/login ==== */
+(function(){
+  try{
+    if(!/[?&]publico=1/.test(location.search||'')) return;
+    var d=document.documentElement; d.setAttribute('data-public','1');
+    var css='[data-public] .sidebar,[data-public] .sb-backdrop,[data-public] .topbar,[data-public] .menu-btn,[data-public] #login,[data-public] #shareBox,[data-public] .sz-admin,[data-public] .tabs{display:none !important;}'
+      +'[data-public] .main{margin-left:0 !important;min-height:0 !important;}'
+      +'[data-public] .content{max-width:640px;margin:0 auto;padding:16px calc(16px + env(safe-area-inset-right)) 46px calc(16px + env(safe-area-inset-left)) !important;}'
+      +'[data-public] body{background:#f5f6f8;}';
+    var s=document.createElement('style'); s.textContent=css; (document.head||d).appendChild(s);
+    document.addEventListener('DOMContentLoaded',function(){
+      try{ var c=document.querySelector('.content'); if(c && !document.getElementById('szPubHead')){
+        var h=document.createElement('div'); h.id='szPubHead'; h.style.cssText='display:flex;align-items:center;gap:11px;margin:0 0 18px;';
+        h.innerHTML='<div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#FF8100,#E05500);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex:none;">SZ</div><div><div style="font-weight:800;font-size:15px;color:#1a1d21;">Sport Zone Vasco da Gama</div><div style="font-size:12px;color:#8b929c;">Formulário</div></div>';
+        c.insertBefore(h,c.firstChild);
+      } }catch(e){}
+    });
+  }catch(e){}
+})();
+
 /* ==== leitura mais rapida: pedir os dados sem a "bagagem" pesada (light) ====
    As paginas de Formacao/Vendas/Planeamento precisam das seccoes grandes
    (_pfhist / _vendas / _vendasHist / _plan). TODAS as outras paginas passam a
