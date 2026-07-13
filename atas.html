@@ -1197,14 +1197,18 @@ document.addEventListener('keydown',function(e){ if(e.key!=='Escape') return; if
   var rec=null, ligado=false;
   btn.addEventListener('click',function(){
     if(ligado){ try{ rec.stop(); }catch(e){} return; }
-    rec=new SR(); rec.lang='pt-PT'; rec.interimResults=false; rec.continuous=true;
+    rec=new SR(); rec.lang='pt-PT'; rec.interimResults=true; rec.continuous=true;
     var ta=document.getElementById('fonte');
-    rec.onstart=function(){ ligado=true; btn.classList.add('rec'); };
-    rec.onend=function(){ ligado=false; btn.classList.remove('rec'); };
+    var baseText='';
+    rec.onstart=function(){ ligado=true; btn.classList.add('rec'); baseText=ta.value; };
+    rec.onend=function(){ ligado=false; btn.classList.remove('rec'); ta.value=baseText; };
     rec.onerror=function(){ ligado=false; btn.classList.remove('rec'); };
     rec.onresult=function(ev){
-      var s=''; for(var i=ev.resultIndex;i<ev.results.length;i++){ if(ev.results[i].isFinal) s+=ev.results[i][0].transcript; }
-      if(s){ ta.value=(ta.value?ta.value.replace(/\s*$/,'')+' ':'')+s.trim(); }
+      var fin='', interim='';
+      for(var i=ev.resultIndex;i<ev.results.length;i++){ var tr=ev.results[i][0].transcript; if(ev.results[i].isFinal) fin+=tr; else interim+=tr; }
+      if(fin){ baseText=(baseText?baseText.replace(/\s*$/,'')+' ':'')+fin.trim(); }
+      ta.value=baseText+(interim?((baseText?' ':'')+interim):'');
+      ta.scrollTop=ta.scrollHeight;
     };
     try{ rec.start(); }catch(e){ ligado=false; btn.classList.remove('rec'); }
   });
