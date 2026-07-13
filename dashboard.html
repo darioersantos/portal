@@ -374,9 +374,9 @@
 
       <div class="col-r">
         <div class="panel">
-          <div class="p-head"><h2>Roturas por repor</h2><span class="cnt" id="cntRot">0</span><span class="more" data-go="roturas">Ver todas <span data-ic="chevron-right"></span></span></div>
+          <div class="p-head"><h2>Ruturas por repor</h2><span class="cnt" id="cntRot">0</span><span class="more" data-go="roturas">Ver todas <span data-ic="chevron-right"></span></span></div>
           <div class="rows" id="listRot"><div class="empty">A carregar&#x2026;</div></div>
-          <button class="ghostbtn" data-go="roturas">Ver todas as roturas</button>
+          <button class="ghostbtn" data-go="roturas">Ver todas as ruturas</button>
         </div>
       </div>
     </div>
@@ -535,7 +535,7 @@ function render(notas){
     bdHojeL.forEach(function(n){ items.push({ic:'cake',cls:'bd',txt:'Anivers&aacute;rio de <b>'+esc(n.autor||'')+'</b>',tag:svg('cake'),k:'aniversario'}); });
     notifs.forEach(function(n){ var msg=''; try{msg=JSON.parse(n.texto).msg;}catch(e){msg=cleanTxt(n.texto);} items.push({ic:'bell',cls:'nt',txt:esc(msg||'\u2014'),tag:'Aviso',k:'notificacoes'}); });
     var rot=notas.filter(function(n){ return String(n.seccao)==='_roturas' && !isDone(n); }).length;
-    if(rot){ items.push({ic:'package',cls:'rt',txt:'<b>'+rot+'</b> artigo'+(rot>1?'s':'')+' em rutura por repor',tag:'Roturas',k:'roturas'}); }
+    if(rot){ items.push({ic:'package',cls:'rt',txt:'<b>'+rot+'</b> artigo'+(rot>1?'s':'')+' em rutura por repor',tag:'Ruturas',k:'roturas'}); }
     var inc=notas.filter(function(n){ return String(n.seccao)==='_incidencias' && !isDone(n); }).length;
     if(inc){ items.push({ic:'siren',cls:'ic',txt:'<b>'+inc+'</b> incid&ecirc;ncia'+(inc>1?'s':'')+' por reportar no Salesforce',tag:'Incid&ecirc;ncias',k:'incidencias'}); }
     var d=new Date(); var DS=['domingo','segunda-feira','ter&ccedil;a-feira','quarta-feira','quinta-feira','sexta-feira','s&aacute;bado']; var MS=['janeiro','fevereiro','mar&ccedil;o','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
@@ -580,7 +580,7 @@ function render(notas){
   var lrEl=document.getElementById('listRot'); var cntRotEl=document.getElementById('cntRot');
   if(cntRotEl) cntRotEl.textContent=roturas.length;
   if(lrEl){
-    lrEl.innerHTML=roturas.length?roturas.slice(0,6).map(function(n){ var a=rotArea(n.texto); var an=AREANM[a]||''; return '<div class="lrow"><div class="l-ic">'+svg('package')+'</div><div class="l-info"><div class="l-txt">'+esc(rotTxt(n.texto)||'(artigo)')+'</div><div class="l-meta">'+(an?esc(an):'Sem \u00e1rea')+(n.autor?' &middot; '+esc(n.autor):'')+'</div></div></div>'; }).join(''):'<div class="empty">Sem roturas por repor. \ud83d\udc4d</div>';
+    lrEl.innerHTML=roturas.length?roturas.slice(0,6).map(function(n){ var a=rotArea(n.texto); var an=AREANM[a]||''; return '<div class="lrow"><div class="l-ic">'+svg('package')+'</div><div class="l-info"><div class="l-txt">'+esc(rotTxt(n.texto)||'(artigo)')+'</div><div class="l-meta">'+(an?esc(an):'Sem \u00e1rea')+(n.autor?' &middot; '+esc(n.autor):'')+'</div></div></div>'; }).join(''):'<div class="empty">Sem ruturas por repor. \ud83d\udc4d</div>';
   }
 
   /* Aniversarios (painel removido; popup no proprio dia mantem-se) */
@@ -649,7 +649,7 @@ var QUICK=[
   {k:'mural', nm:'Calend\u00e1rio'},
   {k:'notas', nm:'Notas'},
   {k:'notificacoes', nm:'Notifica\u00e7\u00f5es'},
-  {k:'roturas', nm:'Roturas'}
+  {k:'roturas', nm:'Ruturas'}
 ];
 function renderQuick(){
   var host=document.getElementById('quickGrid'); if(!host) return;
