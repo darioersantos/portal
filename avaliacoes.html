@@ -379,7 +379,6 @@
 
   <div class="actions">
     <button class="btn save" id="btnSave" type="button"><i data-lu="save"></i> Guardar avalia&#xe7;&#xe3;o</button>
-    <button class="btn print" id="btnPrint" type="button"><i data-lu="printer"></i> Imprimir / PDF</button>
     <button class="btn reset" id="btnReset" type="button"><i data-lu="trash-2"></i> Nova avalia&#xe7;&#xe3;o</button>
   </div>
 
@@ -906,7 +905,6 @@ function montarPrint(d){
   document.getElementById('printArea').innerHTML=html;
 }
 function imprimir(){ montarPrint(st); setTimeout(function(){ window.print(); },120); }
-document.getElementById('btnPrint').addEventListener('click',imprimir);
 document.getElementById('btnPrintTop').addEventListener('click',imprimir);
 
 /* ---------- guardar na nuvem ---------- */
