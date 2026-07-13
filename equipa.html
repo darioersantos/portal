@@ -239,6 +239,8 @@
 
 
 
+
+
   .eq-bar{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:10px 12px;margin-bottom:14px;box-shadow:0 2px 8px rgba(20,24,30,.04);}
   .eq-bar .nav{width:38px;height:38px;border-radius:11px;border:1.5px solid var(--line2);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink);flex:none;}
   .eq-bar .nav .ico{width:18px;height:18px;}
@@ -246,6 +248,18 @@
   .eq-bar .today{border:none;background:var(--accent-soft);color:var(--accent-dark);border-radius:11px;padding:10px 14px;font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit;flex:none;}
   .eq-dow{font-size:13px;font-weight:700;color:var(--muted2);margin:0 2px 12px;}
   .eq-dow b{color:var(--accent-dark);}
+  .eq-file{font-size:12px;font-weight:700;color:var(--muted2);display:flex;align-items:center;gap:6px;margin:-6px 2px 12px;}
+  .eq-file .ico{width:14px;height:14px;color:var(--accent);}
+  .eq-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+  .eq-chip{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line2);background:var(--card);border-radius:999px;padding:7px 12px;font-size:12.5px;font-weight:800;color:var(--ink);cursor:pointer;font-family:inherit;transition:opacity .15s;}
+  .eq-chip .dot{width:9px;height:9px;border-radius:50%;flex:none;}
+  .eq-chip .c{background:var(--line);border-radius:999px;padding:0 6px;font-size:11px;color:var(--muted);}
+  .eq-chip.off{opacity:.42;} .eq-chip.off .dot{background:#c4c8d0 !important;}
+  .eq-secdot{width:9px;height:9px;border-radius:50%;flex:none;}
+  .eq-chart .xlbl.ffl{fill:#e0413e;font-weight:800;}
+  .eq-cleg{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10.5px;font-weight:700;color:var(--muted2);margin-top:8px;justify-content:center;}
+  .eq-cleg .d1{width:11px;height:8px;border-radius:2px;background:#dfe6fb;display:inline-block;}
+  .eq-cleg .d2{width:11px;height:4px;border-radius:2px;background:#e0413e;display:inline-block;margin-left:8px;}
   .eq-chart{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:14px 14px 10px;margin-bottom:14px;}
   .eq-chart h3{margin:0;font-size:14px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .eq-chart h3 .ico{width:16px;height:16px;color:var(--accent);}
@@ -316,8 +330,7 @@
   <div class="content"><div id="eqBar"></div><div id="eqBody"></div>
 <input type="file" id="eqPhoto" accept="image/*" style="display:none">
 <div id="eqModal"><div class="bx">
-  <h3>Adicionar pessoa</h3>
-  <div class="sub" style="font-size:12.5px;color:var(--muted2);margin-bottom:4px;">Para estagi&#xe1;rios, tempor&#xe1;rios ou quem n&#xe3;o est&#xe1; no hor&#xe1;rio.</div>
+  <h3>Adicionar colaborador</h3>
   <label for="eqNome">Nome</label>
   <input type="text" id="eqNome" placeholder="Ex.: Jo&#xe3;o Silva">
   <label for="eqSec">Sec&#xe7;&#xe3;o</label>
@@ -383,6 +396,40 @@ IC.image='<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9"
 IC.plus='<path d="M5 12h14"/><path d="M12 5v14"/>';
 IC['trash-2']='<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>';
 IC.check='<path d="M20 6 9 17l-5-5"/>';
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+
 IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
@@ -1030,6 +1077,8 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 
 
 
+
+
 /* ===== Modulo ===== */
 
 IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
@@ -1042,6 +1091,7 @@ IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16
 IC.plus=IC.plus||'<path d="M5 12h14"/><path d="M12 5v14"/>';
 IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
 IC['bar-chart-3']=IC['bar-chart-3']||'<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>';
+IC['file-text']=IC['file-text']||'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h5"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>';
 var ESC=null, EDITS={byDay:{}}, FOTOS={};
 var SL_BASE='https://manager9yc.github.io/superliga/';
 var SL_FOTOS={'Ant\u00f3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00fajo':'images/img_04.jpg','Ricardo Eus\u00e9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00e3o Paiva':'images/img_10.jpg','Jo\u00e3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00e2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00e9rgio Correia':'images/img_21.jpg','Andr\u00e9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00fajo':'images/img_25.jpg','Lu\u00eds Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00e2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00e3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00e7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00edrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00faria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00e1rio Santos':'images/img_51.jpg','Beatriz Jer\u00f3nimo':'images/img_52.jpg'};
@@ -1049,7 +1099,10 @@ function eqNorm(s){ try{ return String(s||'').normalize('NFD').replace(/[\u0300-
 var SL_FOTOS_N={}; (function(){ for(var k in SL_FOTOS){ SL_FOTOS_N[eqNorm(k)]=SL_BASE+SL_FOTOS[k]; } })();
 function slFotoN(nome){ return SL_FOTOS_N[eqNorm(nome)]||''; }
 var SEC_ORDER=['Dire\u00e7\u00e3o','Caixa','Cal\u00e7ado','T\u00eaxtil','Log\u00edstica','Visual','SAF','Est\u00e1gios','Tempor\u00e1rio','Outros'];
-var AV_COLORS=['#FF8100','#2563eb','#10b981','#a855f7','#ef4444','#0891b2','#d6337f','#65a30d','#f59e0b','#6366f1'];
+var SEC_COLORS={'Dire\u00e7\u00e3o':'#4f6ef5','Caixa':'#0e7490','Cal\u00e7ado':'#FF8100','T\u00eaxtil':'#db2777','Log\u00edstica':'#059669','Visual':'#7c3aed','SAF':'#475569','Est\u00e1gios':'#d97706','Tempor\u00e1rio':'#4d7c0f','Outros':'#6b7280'};
+function secColor(sec){ return SEC_COLORS[sec]||'#6b7280'; }
+var FF={};        /* footfall por hora {hora:ff} (do _vendas) */
+var EQHIDE={};    /* sec\u00e7\u00f5es escondidas pelo filtro */
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function pad2(n){return ('0'+n).slice(-2);}
 function toast(m){ var t=document.getElementById('eqToast'); if(!t){ t=document.createElement('div'); t.id='eqToast'; t.style.cssText='position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:#1a1d21;color:#fff;padding:11px 18px;border-radius:12px;font-size:13.5px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.3);opacity:0;transition:.2s;z-index:220;max-width:86vw;text-align:center;'; document.body.appendChild(t);} t.textContent=m; t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)'; clearTimeout(t._t); t._t=setTimeout(function(){ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; },2600); }
@@ -1127,7 +1180,7 @@ function importPDF(file){
           var items=tc.items.map(function(it){return {s:(it.str||'').trim(), x:it.transform[4], y:it.transform[5]};}).filter(function(i){return i.s;});
           var res=parseEscala(items);
           if(res.err){ toast(res.err); return; }
-          ESC=res.esc; saveEscala(); pickToday(); render(); toast('Hor\u00e1rio lido \u2713 \u2014 '+ESC.people.length+' pessoas ('+ESC.label+')');
+          ESC=res.esc; ESC.file=(file&&file.name)?String(file.name).replace(/\.pdf$/i,''):''; saveEscala(); pickToday(); render(); toast('Hor\u00e1rio lido \u2713 \u2014 '+ESC.people.length+' pessoas ('+ESC.label+')');
         }).catch(function(err){ toast('N\u00e3o consegui ler o PDF. '+err); });
     };
     rd.readAsArrayBuffer(file);
@@ -1154,20 +1207,29 @@ function addPerson(nome,sec,s,e){ var key=fmtISO(selDate); EDITS.byDay=EDITS.byD
 
 /* ---- gr\u00e1fico staff ao longo do dia ---- */
 function staffChart(list){
-  var H0=7,H1=23,W=340,H=132,top=16,bot=18,plot=H-top-bot;
+  var H0=7,H1=23,W=340,H=138,top=22,bot=18,plot=H-top-bot;
   var hours=[]; for(var h=H0;h<=H1;h++) hours.push(h);
   var counts=hours.map(function(h){ var a=h*60,b=(h+1)*60,c=0; list.forEach(function(p){ if(p.s<b && p.e>a) c++; }); return c; });
   var maxc=Math.max.apply(null,counts.concat([1]));
   var peak=counts.indexOf(maxc);
+  var ffVals=hours.map(function(h){ return FF[h]||0; });
+  var maxff=Math.max.apply(null, ffVals.concat([0]));
+  var sortedFF=ffVals.slice().sort(function(a,b){return b-a;});
+  var ffThresh=sortedFF.length>=4?sortedFF[3]:(sortedFF[sortedFF.length-1]||1);
+  function isFF(i){ return maxff>0 && ffVals[i]>0 && ffVals[i]>=ffThresh; }
   var n=hours.length, gap=3, bw=(W-gap*(n-1))/n;
   var svg='';
-  counts.forEach(function(c,i){ var bh=maxc?(c/maxc)*plot:0; var x=i*(bw+gap); var y=(top+plot)-bh;
+  counts.forEach(function(c,i){ var bh=maxc?(c/maxc)*plot:0; var x=i*(bw+gap); var y=(top+plot)-bh; var ff=isFF(i);
     svg+='<rect class="eq-bar-r'+(i===peak&&c>0?' peak':'')+'" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(0,bh).toFixed(1)+'" rx="1.5"/>';
+    if(ff){ svg+='<rect x="'+x.toFixed(1)+'" y="'+(top-8).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="4" rx="2" fill="#e0413e"/>'; }
     if(c>0) svg+='<text class="vlbl" x="'+(x+bw/2).toFixed(1)+'" y="'+(y-3).toFixed(1)+'" text-anchor="middle">'+c+'</text>';
-    if(i%2===0) svg+='<text class="xlbl" x="'+(x+bw/2).toFixed(1)+'" y="'+(H-5)+'" text-anchor="middle">'+hours[i]+'h</text>';
+    if(i%2===0 || ff) svg+='<text class="xlbl'+(ff?' ffl':'')+'" x="'+(x+bw/2).toFixed(1)+'" y="'+(H-5)+'" text-anchor="middle">'+hours[i]+'h</text>';
   });
-  var peakTxt=(maxc>0)?('Pico \u00e0s '+hours[peak]+'h com '+maxc+' pessoas'):'';
-  return '<div class="eq-chart"><h3>'+svg2('bar-chart-3')+' Staff ao longo do dia</h3><div class="sub">'+peakTxt+'</div><svg viewBox="0 0 '+W+' '+H+'">'+svg+'</svg></div>';
+  var peakTxt=(maxc>0)?('Pico de equipa \u00e0s '+hours[peak]+'h ('+maxc+' pessoas)'):'';
+  var ffHours=hours.filter(function(h,i){return isFF(i);});
+  var ffTxt=ffHours.length?(' &middot; <b style="color:#e0413e">Maior fluxo de vendas: '+ffHours.map(function(h){return h+'h';}).join(', ')+'</b>'):'';
+  var legend=maxff>0?'<div class="eq-cleg"><span class="d1"></span>equipa por hora <span class="d2"></span>horas de maior fluxo de vendas</div>':'';
+  return '<div class="eq-chart"><h3>'+svg2('bar-chart-3')+' Staff ao longo do dia</h3><div class="sub">'+peakTxt+ffTxt+'</div><svg viewBox="0 0 '+W+' '+H+'">'+svg+'</svg>'+legend+'</div>';
 }
 function svg2(n){ return svg(n); }
 
@@ -1183,22 +1245,28 @@ function renderBar(){
   document.getElementById('eqDate').onchange=function(e){ var p=e.target.value.split('-'); if(p.length===3){ selDate=new Date(+p[0],+p[1]-1,+p[2]); render(); } };
   mountIcons(bar);
 }
-function avatarHTML(nome){ var url=FOTOS[nome]||slFotoN(nome); var ini=esc(initials(nome)); var inner=url?('<img src="'+url+'" alt="">'):('<span class="eq-ini">'+ini+'</span>'); return '<div class="eq-av" data-nm="'+esc(nome)+'" data-ini="'+ini+'" style="background:'+avColor(nome)+'">'+inner+'<span class="cam">'+svg('camera')+'</span></div>'; }
+function avatarHTML(nome, sec){ var url=FOTOS[nome]||slFotoN(nome); var ini=esc(initials(nome)); var inner=url?('<img src="'+url+'" alt="">'):('<span class="eq-ini">'+ini+'</span>'); return '<div class="eq-av" data-nm="'+esc(nome)+'" data-ini="'+ini+'" style="background:'+secColor(sec)+'">'+inner+'<span class="cam">'+svg('camera')+'</span></div>'; }
 function render(){
   renderBar();
   var body=document.getElementById('eqBody');
   if(!ESC){ body.innerHTML='<div class="eq-empty"><div class="big">'+svg('users')+'</div>Ainda n\u00e3o importaste o hor\u00e1rio.<br>Importa o hor\u00e1rio mensal (PDF) para veres a equipa de cada dia.<br><button class="imp" id="eqImport2">'+svg('upload')+' Importar hor\u00e1rio (PDF)</button></div>'; document.getElementById('eqImport2').onclick=function(){ document.getElementById('eqFile').click(); }; mountIcons(body); return; }
   var _dw=DOW[selDate.getDay()]; _dw=_dw.charAt(0).toUpperCase()+_dw.slice(1);
   var dowStr='<div class="eq-dow"><b>'+_dw+'</b> &middot; '+selDate.getDate()+' de '+MONS[selDate.getMonth()]+' de '+selDate.getFullYear()+'</div>';
+  var fileStr=ESC.file?('<div class="eq-file">'+svg('file-text')+' Hor\u00e1rio: <b>'+esc(ESC.file)+'</b></div>'):'';
   var dt=dayTeam();
-  if(dt.wrongMonth){ body.innerHTML=dowStr+'<div class="eq-note">O hor\u00e1rio carregado \u00e9 de <b>'+esc(ESC.label)+'</b>. Escolhe um dia desse m\u00eas para veres a equipa (ou importa o hor\u00e1rio do m\u00eas atual).</div>'; mountIcons(body); return; }
-  var list=dt.list;
+  if(dt.wrongMonth){ body.innerHTML=dowStr+fileStr+'<div class="eq-note">O hor\u00e1rio carregado \u00e9 de <b>'+esc(ESC.label)+'</b>. Escolhe um dia desse m\u00eas para veres a equipa (ou importa o hor\u00e1rio do m\u00eas atual).</div>'; mountIcons(body); return; }
+  var full=dt.list;
+  var allGroups={}; full.forEach(function(p){ (allGroups[p.sec]=allGroups[p.sec]||[]).push(p); });
+  var order=SEC_ORDER.slice(); Object.keys(allGroups).forEach(function(s){ if(order.indexOf(s)<0) order.push(s); });
+  var chips='<div class="eq-filter">';
+  order.forEach(function(sec){ var lst=allGroups[sec]; if(!lst||!lst.length) return; var off=EQHIDE[sec]; chips+='<button class="eq-chip'+(off?' off':'')+'" data-sec="'+esc(sec)+'"><span class="dot" style="background:'+secColor(sec)+'"></span>'+esc(sec)+'<span class="c">'+lst.length+'</span></button>'; });
+  chips+='</div>';
+  var list=full.filter(function(p){ return !EQHIDE[p.sec]; });
   var groups={}; list.forEach(function(p){ (groups[p.sec]=groups[p.sec]||[]).push(p); });
-  var order=SEC_ORDER.slice(); Object.keys(groups).forEach(function(s){ if(order.indexOf(s)<0) order.push(s); });
-  var html=dowStr;
+  var html=dowStr+fileStr+chips;
   html+=staffChart(list);
-  html+='<button class="eq-add" id="eqAddBtn">'+svg('plus')+' Adicionar pessoa (estagi\u00e1rio / tempor\u00e1rio)</button>';
-  if(!list.length){ html+='<div class="eq-empty"><div class="big">'+svg('moon')+'</div>Ningu\u00e9m escalado neste dia.<br>Podes adicionar quem estiver de servi\u00e7o.</div>'; body.innerHTML=html; wire(body); return; }
+  html+='<button class="eq-add" id="eqAddBtn">'+svg('plus')+' Adicionar colaborador</button>';
+  if(!list.length){ html+='<div class="eq-empty"><div class="big">'+svg('moon')+'</div>'+(full.length?'Nenhuma equipa selecionada \u2014 escolhe acima.':'Ningu\u00e9m escalado neste dia.<br>Podes adicionar quem estiver de servi\u00e7o.')+'</div>'; body.innerHTML=html; wire(body, groups, order); return; }
   html+='<div class="eq-tot">'+list.length+' pessoa'+(list.length>1?'s':'')+' de servi\u00e7o \u00b7 '+esc(ESC.label)+'</div>';
   /* intervalo do dia + r\u00e9gua + linhas de grelha (barra direta, sem pausa) */
   var lo=Infinity,hi=-Infinity; list.forEach(function(p){ lo=Math.min(lo,p.s); hi=Math.max(hi,p.e); });
@@ -1215,11 +1283,11 @@ function render(){
   order.forEach(function(sec){
     var lst=groups[sec]; if(!lst||!lst.length) return;
     lst.sort(function(a,b){ return a.s-b.s || a.nome.localeCompare(b.nome); });
-    html+='<div class="eq-sec"><div class="eq-sh">'+svg('users')+' '+esc(sec)+'<span class="cnt">'+lst.length+'</span></div><div class="eq-list">';
+    html+='<div class="eq-sec"><div class="eq-sh" style="background:'+secColor(sec)+'14;color:'+secColor(sec)+'"><span class="eq-secdot" style="background:'+secColor(sec)+'"></span>'+esc(sec)+'<span class="cnt" style="color:'+secColor(sec)+'">'+lst.length+'</span></div><div class="eq-list">';
     lst.forEach(function(p,idx){
       var l=pctL(p.s), w=pctL(p.e)-l;
-      var bar='<div class="eq-shift" style="left:'+l.toFixed(2)+'%;width:'+Math.max(1,w).toFixed(2)+'%;background:'+avColor(p.nome)+'"><span>'+hhmm(p.s)+'</span><span class="t2">'+hhmm(p.e)+'</span></div>';
-      html+='<div class="eq-prow'+(p.extra?' extra':'')+'"><div class="eq-pname">'+avatarHTML(p.nome)+'<div class="eq-nm" title="'+esc(p.nome)+'">'+esc(p.nome)+(p.extra?'<span class="eq-badge">extra</span>':'')+'</div><button class="rm" data-sec="'+esc(sec)+'" data-i="'+idx+'" title="Remover">'+svg('x')+'</button></div><div class="eq-track" style="'+glBg+'">'+bar+'</div></div>';
+      var bar='<div class="eq-shift" style="left:'+l.toFixed(2)+'%;width:'+Math.max(1,w).toFixed(2)+'%;background:'+secColor(sec)+'"><span>'+hhmm(p.s)+'</span><span class="t2">'+hhmm(p.e)+'</span></div>';
+      html+='<div class="eq-prow'+(p.extra?' extra':'')+'"><div class="eq-pname">'+avatarHTML(p.nome, sec)+'<div class="eq-nm" title="'+esc(p.nome)+'">'+esc(p.nome)+(p.extra?'<span class="eq-badge">extra</span>':'')+'</div><button class="rm" data-sec="'+esc(sec)+'" data-i="'+idx+'" title="Remover">'+svg('x')+'</button></div><div class="eq-track" style="'+glBg+'">'+bar+'</div></div>';
     });
     html+='</div></div>';
   });
@@ -1227,6 +1295,7 @@ function render(){
 }
 function wire(body, groups, order){
   mountIcons(body);
+  body.querySelectorAll('.eq-chip').forEach(function(el){ el.onclick=function(){ var s=el.getAttribute('data-sec'); if(EQHIDE[s]) delete EQHIDE[s]; else EQHIDE[s]=1; try{ sessionStorage.setItem('sz_eqhide', JSON.stringify(EQHIDE)); }catch(e){} render(); }; });
   var ab=document.getElementById('eqAddBtn'); if(ab) ab.onclick=openAdd;
   var imp=document.getElementById('eqImport2'); if(imp) imp.onclick=function(){ document.getElementById('eqFile').click(); };
   body.querySelectorAll('.eq-av[data-nm]').forEach(function(el){ el.onclick=function(){ pickPhoto(el.getAttribute('data-nm')); }; });
@@ -1264,10 +1333,13 @@ document.getElementById('eqSave').addEventListener('click',function(){
 function saveEscala(){ try{ localStorage.setItem('sz_escala', JSON.stringify(ESC)); }catch(e){} if(!BACKEND||!ESC) return; try{ sessionStorage.removeItem('sz_notas_cache'); }catch(e){} fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_add',seccao:'_escala',autor:ESC.label||'',texto:JSON.stringify(ESC)})}).catch(function(){}); }
 function saveEdits(){ try{ localStorage.setItem('sz_escala_edit', JSON.stringify(EDITS)); }catch(e){} if(!BACKEND) return; try{ sessionStorage.removeItem('sz_notas_cache'); }catch(e){} fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_add',seccao:'_escalaEdit',autor:'',texto:JSON.stringify(EDITS)})}).catch(function(){}); }
 function saveFotos(){ try{ localStorage.setItem('sz_fotos', JSON.stringify(FOTOS)); }catch(e){} if(!BACKEND) return; try{ sessionStorage.removeItem('sz_notas_cache'); }catch(e){} fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_add',seccao:'_fotos',autor:'',texto:JSON.stringify(FOTOS)})}).catch(function(){}); }
+function loadFF(v){ if(v&&v.hourly){ FF={}; v.hourly.forEach(function(h){ var hh=parseInt(String(h.l).slice(0,2),10); if(!isNaN(hh)) FF[hh]=+h.ff||0; }); try{ localStorage.setItem('sz_ff', JSON.stringify(FF)); }catch(e){} } }
 function loadEscala(){
   try{ var ls=localStorage.getItem('sz_escala'); if(ls){ var e=JSON.parse(ls); if(e&&e.people) ESC=e; } }catch(e){}
   try{ var le=localStorage.getItem('sz_escala_edit'); if(le){ var e2=JSON.parse(le); if(e2&&e2.byDay) EDITS=e2; } }catch(e){}
   try{ var lf=localStorage.getItem('sz_fotos'); if(lf){ var f=JSON.parse(lf); if(f) FOTOS=f; } }catch(e){}
+  try{ var lff=localStorage.getItem('sz_ff'); if(lff){ var ff=JSON.parse(lff); if(ff) FF=ff; } }catch(e){}
+  try{ var lh=sessionStorage.getItem('sz_eqhide'); if(lh){ EQHIDE=JSON.parse(lh)||{}; } }catch(e){}
   pickToday(); render();
   if(!BACKEND) return;
   fetch(BACKEND+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){
@@ -1275,6 +1347,7 @@ function loadEscala(){
     var e=latest('_escala'); if(e&&e.people){ ESC=e; }
     var ed=latest('_escalaEdit'); if(ed&&ed.byDay){ EDITS=ed; }
     var fo=latest('_fotos'); if(fo&&typeof fo==='object'){ FOTOS=fo; }
+    loadFF(latest('_vendas'));
     pickToday(); render();
   }).catch(function(){});
 }
