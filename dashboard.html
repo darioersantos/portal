@@ -195,6 +195,8 @@
   .brief-it .bi-ic{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--accent-soft);} .brief-it .bi-ic .ico{width:16px;height:16px;color:var(--accent-dark);}
   .brief-it.bd .bi-ic{background:#fdecf4;} .brief-it.bd .bi-ic .ico{color:#d6337f;}
   .brief-it.nt .bi-ic{background:#fdecec;} .brief-it.nt .bi-ic .ico{color:var(--red);}
+  .brief-it.ic .bi-ic{background:#fdecec;} .brief-it.ic .bi-ic .ico{color:var(--red);}
+  .brief-it.rt .bi-ic{background:#eef2ff;} .brief-it.rt .bi-ic .ico{color:#4f6ef5;}
   .brief-it .bi-tx{flex:1;min-width:0;font-size:13.5px;font-weight:600;color:#3a4048;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .brief-it .bi-tag{flex:none;font-size:11px;font-weight:800;color:var(--muted2);}
   .brief-empty{margin-top:12px;font-size:13.5px;color:var(--muted);font-weight:600;}
@@ -529,17 +531,22 @@ function render(notas){
     var lemHojeL=lembretes.filter(function(n){ return tKey===String(muralInfo(n).when||'').slice(0,10); });
     var bdHojeL=aniv.filter(function(n){ return bdDiasAte(n.texto)===0; });
     var items=[];
-    cal.forEach(function(d){ items.push({ic:'calendar-days',cls:'ev',txt:(d.hora?('<b>'+esc(d.hora)+'</b> &middot; '):'')+esc(d.titulo||'Evento'),tag:'Evento'}); });
-    lemHojeL.forEach(function(n){ items.push({ic:'message-circle',cls:'lm',txt:esc(muralInfo(n).titulo),tag:'Lembrete'}); });
-    bdHojeL.forEach(function(n){ items.push({ic:'cake',cls:'bd',txt:'Anivers&aacute;rio de <b>'+esc(n.autor||'')+'</b>',tag:'\ud83c\udf82'}); });
-    notifs.forEach(function(n){ var msg=''; try{msg=JSON.parse(n.texto).msg;}catch(e){msg=cleanTxt(n.texto);} items.push({ic:'bell',cls:'nt',txt:esc(msg||'\u2014'),tag:'Aviso'}); });
+    cal.forEach(function(d){ items.push({ic:'calendar-days',cls:'ev',txt:(d.hora?('<b>'+esc(d.hora)+'</b> &middot; '):'')+esc(d.titulo||'Evento'),tag:'Evento',k:'calendario'}); });
+    lemHojeL.forEach(function(n){ items.push({ic:'message-circle',cls:'lm',txt:esc(muralInfo(n).titulo),tag:'Lembrete',k:'mural'}); });
+    bdHojeL.forEach(function(n){ items.push({ic:'cake',cls:'bd',txt:'Anivers&aacute;rio de <b>'+esc(n.autor||'')+'</b>',tag:'\ud83c\udf82',k:'aniversario'}); });
+    notifs.forEach(function(n){ var msg=''; try{msg=JSON.parse(n.texto).msg;}catch(e){msg=cleanTxt(n.texto);} items.push({ic:'bell',cls:'nt',txt:esc(msg||'\u2014'),tag:'Aviso',k:'notificacoes'}); });
+    var rot=notas.filter(function(n){ return String(n.seccao)==='_roturas' && !isDone(n); }).length;
+    if(rot){ items.push({ic:'package',cls:'rt',txt:'<b>'+rot+'</b> artigo'+(rot>1?'s':'')+' em rutura por repor',tag:'Roturas',k:'roturas'}); }
+    var inc=notas.filter(function(n){ return String(n.seccao)==='_incidencias' && !isDone(n); }).length;
+    if(inc){ items.push({ic:'siren',cls:'ic',txt:'<b>'+inc+'</b> incid&ecirc;ncia'+(inc>1?'s':'')+' por reportar no Salesforce',tag:'Incid&ecirc;ncias',k:'incidencias'}); }
     var d=new Date(); var DS=['domingo','segunda-feira','ter&ccedil;a-feira','quarta-feira','quinta-feira','sexta-feira','s&aacute;bado']; var MS=['janeiro','fevereiro','mar&ccedil;o','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
     var dataStr=DS[d.getDay()]+', '+d.getDate()+' de '+MS[d.getMonth()];
     var sub=''; if(tasks.length){ sub=tasks.length+' tarefa'+(tasks.length>1?'s':'')+' pendente'+(tasks.length>1?'s':'')+(urg?(' &middot; '+urg+' urgente'+(urg>1?'s':'')):''); }
     var html='<div class="brief-top"><div><div class="brief-h">'+svg('calendar-days')+' Resumo de hoje</div><div class="brief-date">'+dataStr+'</div></div>'+(sub?'<div class="brief-sub">'+sub+'</div>':'')+'</div>';
-    if(items.length){ html+='<div class="brief-list">'+items.map(function(it){ return '<div class="brief-it '+it.cls+'"><span class="bi-ic">'+svg(it.ic)+'</span><span class="bi-tx">'+it.txt+'</span><span class="bi-tag">'+it.tag+'</span></div>'; }).join('')+'</div>'; }
-    else { html+='<div class="brief-empty">Nada agendado para hoje &mdash; sem eventos, lembretes ou avisos. Bom trabalho! \ud83d\udc4d</div>'; }
+    if(items.length){ html+='<div class="brief-list">'+items.map(function(it){ return '<div class="brief-it '+it.cls+'"'+(it.k?' data-k="'+it.k+'"':'')+'><span class="bi-ic">'+svg(it.ic)+'</span><span class="bi-tx">'+it.txt+'</span><span class="bi-tag">'+it.tag+'</span></div>'; }).join('')+'</div>'; }
+    else { html+='<div class="brief-empty">Nada agendado para hoje &mdash; sem eventos, lembretes, avisos ou pend&ecirc;ncias. Bom trabalho! \ud83d\udc4d</div>'; }
     brief.innerHTML=html; brief.style.display='block'; mountIcons(brief);
+    brief.querySelectorAll('.brief-it[data-k]').forEach(function(el){ el.style.cursor='pointer'; el.onclick=function(e){ e.stopPropagation(); go(el.getAttribute('data-k')); }; });
   })();
 
   function bdg(id,v){ var e=document.getElementById(id); if(e){ if(v>0){ e.style.display=''; e.textContent=v; } else e.style.display='none'; } }
