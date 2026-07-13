@@ -439,6 +439,7 @@ var NAV=[
     {k:'lembretes', ic:'list-checks', nm:'Tarefas', badgeId:'nbTar'},
     {k:'mural', ic:'message-circle', nm:'Lembretes', badgeId:'nbLem'},
     {k:'notas', ic:'square-pen', nm:'Notas'},
+    {k:'vendas', ic:'bar-chart-3', nm:'An\u00e1lise de Vendas'},
     {k:'contagem', ic:'calculator', nm:'Contagem de Dinheiro'},
     {k:'notificacoes', ic:'bell', nm:'Notifica\u00e7\u00f5es'},
     {k:'superliga', ic:'trophy', nm:'Super Liga', dark:true}
@@ -496,7 +497,7 @@ var NAV=[
 ];
 
 /* paginas web integradas (versao desktop). Os restantes modulos abrem as paginas existentes. */
-var WEB_PAGES={ lembretes:'tarefas.html', mural:'mural-web.html', notas:'notas-web.html', consumiveis:'encomendas-web.html' };
+var WEB_PAGES={ lembretes:'tarefas.html', mural:'mural-web.html', notas:'notas-web.html', consumiveis:'encomendas-web.html', vendas:'vendas-web.html' };
 function go(key){
   if(key==='__home') return;
   var url=WEB_PAGES[key]||LINKS[key];
