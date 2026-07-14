@@ -525,7 +525,8 @@ function render(notas){
   var tasks=notas.filter(function(n){ return !/^_/.test(String(n.seccao||'')) && !isDone(n); });
   var lembretes=notas.filter(function(n){ return String(n.seccao)==='_mural' && !isDone(n); });
   var notifs=notas.filter(function(n){ return String(n.seccao)==='_notif' && !isDone(n); });
-  var aniv=notas.filter(function(n){ return String(n.seccao)==='_aniversario'; });
+  /* aniversarios: vem da Base de Dados Staff (data nascimento) + registos antigos _aniversario */
+  var aniv=(function(){ var out=[], seen={}; notas.forEach(function(n){ if(String(n.seccao)==='_staffdb'){ var d={}; try{d=JSON.parse(n.texto);}catch(e){} if(d&&d.nasc){ var nm=((d.pn||'')+' '+(d.un||'')).trim(); out.push({autor:nm||n.autor||'', texto:d.nasc}); if(nm) seen[nm.toLowerCase()]=1; } } }); notas.forEach(function(n){ if(String(n.seccao)==='_aniversario'){ var nm=String(n.autor||'').trim().toLowerCase(); if(!seen[nm]){ out.push({autor:n.autor, texto:n.texto}); } } }); return out; })();
 
   /* KPIs */
   var urg=tasks.filter(function(n){ return isUrgent(n.texto); }).length;
