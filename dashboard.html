@@ -163,6 +163,9 @@
   .lrow .l-meta{font-size:12px;color:var(--muted);}
   .lrow .l-when{font-size:12px;color:var(--muted2);font-weight:700;flex:none;text-align:right;}
   .lrow .l-when.hoje{color:var(--accent-dark);}
+  .lrow.rot-old{background:#fef6f6;border-radius:10px;}
+  .lrow .l-ic.old{background:#fdecec;color:var(--red);}
+  .lrow .l-when.old{color:var(--red);font-weight:800;}
   .empty{padding:22px 6px;text-align:center;color:var(--muted2);font-size:13px;}
 
   .ghostbtn{width:100%;margin-top:12px;padding:10px;border:1px solid var(--line2);background:#fafbfc;border-radius:11px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
@@ -206,6 +209,8 @@
   .notif-banner .nb-ic{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex:none;}
   .notif-banner .nb-ic .ico{width:20px;height:20px;color:#ffb45e;transform-origin:top center;animation:bellShake 2.6s ease-in-out infinite;}
   @keyframes bellShake{0%,58%,100%{transform:rotate(0);}62%{transform:rotate(14deg);}66%{transform:rotate(-11deg);}70%{transform:rotate(8deg);}74%{transform:rotate(-6deg);}78%{transform:rotate(3deg);}82%{transform:rotate(0);}}
+  .notif-banner.bd .nb-txt b{color:#ffd07a;}
+  .notif-banner.bd .nb-ic .ico{animation:none;color:#ffd07a;}
   .notif-banner .nb-txt{flex:1;min-width:0;}
   .notif-banner .nb-txt b{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#ffb45e;}
   .notif-banner .nb-msg{font-size:14px;font-weight:600;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -551,13 +556,17 @@ function render(notas){
   function bdg(id,v){ var e=document.getElementById(id); if(e){ if(v>0){ e.style.display=''; e.textContent=v; } else e.style.display='none'; } }
   bdg('nbTar',tasks.length); bdg('nbLem',lembretes.length);
   var nd=document.getElementById('notifDot'); if(nd&&notifs.length>0){ nd.style.display='flex'; nd.textContent=notifs.length; }
-  /* Banner preto no topo com a notificacao ativa */
+  /* Banner preto no topo: aniversarios de HOJE (automatico) + notificacoes ativas */
   var nb=document.getElementById('notifBanner');
   if(nb){
-    if(notifs.length){
-      var nmsg=''; try{ nmsg=(JSON.parse(notifs[0].texto).msg)||''; }catch(e){ nmsg=cleanTxt(notifs[0].texto); }
-      nb.innerHTML='<span class="nb-ic">'+svg('bell')+'</span><div class="nb-txt"><b>Notifica&#231;&#227;o'+(notifs.length>1?(' &middot; '+notifs.length+' ativas'):'')+'</b><div class="nb-msg">'+esc(nmsg||'\u2014')+'</div></div>'+svg('chevron-right');
-      nb.style.display='flex'; nb.onclick=function(){ go('mural'); }; mountIcons(nb);
+    var bItems=[];
+    aniv.filter(function(n){ return bdDiasAte(n.texto)===0; }).forEach(function(n){ var nome=String(n.autor||'').trim(); if(nome) bItems.push({tipo:'bd', ic:'cake', et:'Anivers\u00E1rio', msg:'Hoje \u00E9 anivers\u00E1rio de '+nome+'! \uD83C\uDF89', k:'aniversario'}); });
+    notifs.forEach(function(n){ var m=''; try{ m=(JSON.parse(n.texto).msg)||''; }catch(e){ m=cleanTxt(n.texto); } bItems.push({tipo:'nt', ic:'bell', et:'Notifica\u00E7\u00E3o', msg:m||'\u2014', k:'mural'}); });
+    if(bItems.length){
+      var it0=bItems[0]; var extra=(bItems.length>1)?(' &middot; '+bItems.length+' avisos'):'';
+      nb.className='notif-banner'+(it0.tipo==='bd'?' bd':'');
+      nb.innerHTML='<span class="nb-ic">'+svg(it0.ic)+'</span><div class="nb-txt"><b>'+it0.et+extra+'</b><div class="nb-msg">'+esc(it0.msg)+'</div></div>'+svg('chevron-right');
+      nb.style.display='flex'; nb.onclick=function(){ go(it0.k); }; mountIcons(nb);
     } else { nb.style.display='none'; }
   }
 
@@ -576,11 +585,12 @@ function render(notas){
   var AREANM={calcado:'Cal\u00E7ado',textil:'T\u00EAxtil',acess:'Acess\u00F3rios'};
   function rotArea(t){ var m=String(t||'').match(/^\[\[AREA:([a-z]+)\]\]/); return m?m[1]:''; }
   function rotTxt(t){ return String(t||'').replace(/^\[\[AREA:[a-z]+\]\]/,'').replace(/\[\[FOTO:[^\]]*\]\]/g,'').trim(); }
+  function diasDesde(iso){ if(!iso) return 0; var x=new Date(iso); if(isNaN(x)) return 0; var d=new Date(); d.setHours(0,0,0,0); var x0=new Date(x.getFullYear(),x.getMonth(),x.getDate()); return Math.max(0,Math.round((d-x0)/86400000)); }
   var roturas=notas.filter(function(n){ return String(n.seccao)==='_roturas' && !isDone(n); });
   var lrEl=document.getElementById('listRot'); var cntRotEl=document.getElementById('cntRot');
   if(cntRotEl) cntRotEl.textContent=roturas.length;
   if(lrEl){
-    lrEl.innerHTML=roturas.length?roturas.slice(0,6).map(function(n){ var a=rotArea(n.texto); var an=AREANM[a]||''; return '<div class="lrow"><div class="l-ic">'+svg('package')+'</div><div class="l-info"><div class="l-txt">'+esc(rotTxt(n.texto)||'(artigo)')+'</div><div class="l-meta">'+(an?esc(an):'Sem \u00E1rea')+(n.autor?' &middot; '+esc(n.autor):'')+'</div></div></div>'; }).join(''):'<div class="empty">Sem ruturas por repor. \uD83D\uDC4D</div>';
+    lrEl.innerHTML=roturas.length?roturas.slice(0,6).map(function(n){ var a=rotArea(n.texto); var an=AREANM[a]||''; var dd=diasDesde(n.data); var velho=(dd>=3); var when=(dd>=1)?('<div class="l-when'+(velho?' old':'')+'">'+(dd===1?'h\u00E1 1 dia':('h\u00E1 '+dd+' dias'))+'</div>'):''; return '<div class="lrow'+(velho?' rot-old':'')+'"><div class="l-ic'+(velho?' old':'')+'">'+svg('package')+'</div><div class="l-info"><div class="l-txt">'+esc(rotTxt(n.texto)||'(artigo)')+'</div><div class="l-meta">'+(an?esc(an):'Sem \u00E1rea')+(n.autor?' &middot; '+esc(n.autor):'')+'</div></div>'+when+'</div>'; }).join(''):'<div class="empty">Sem ruturas por repor. \uD83D\uDC4D</div>';
   }
 
   /* Aniversarios (painel removido; popup no proprio dia mantem-se) */
