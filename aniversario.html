@@ -306,7 +306,7 @@
 
 
 <main>
-  <div class="card" id="cardForm">
+  <div class="card" id="cardForm" style="display:none">
     <h2 id="formTitle">Adicionar anivers&#xE1;rio</h2>
     <p class="sz-admin" style="color:var(--muted);font-size:13px;margin:2px 0 12px;">Quando um colaborador fizer anos, aparece automaticamente uma <b>notifica&#xE7;&#xE3;o no menu principal</b> (e um aviso) a lembrar do anivers&#xE1;rio. <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E06E00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg></p>
     <div class="field"><label for="nome">Colaborador</label><select id="nome" data-staff data-ph="Seleciona o teu nome"></select></div>
@@ -774,9 +774,7 @@ function render(){
     else quando='<span class="hojetag" style="background:#fff;color:var(--accent-ink);border:1px solid var(--line);">Faltam '+dias+' dias</span>';
     const row=document.createElement('div'); row.className='aniv'+(hoje?' hoje':'');
     row.innerHTML='<span class="cake"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg></span><div class="info"><div class="nome">'+esc(n.autor||'\u2014')+' '+quando+'</div>'+
-      '<div class="data">'+fmt(n.texto)+' \u00B7 '+idade(n.texto)+' anos</div></div>'+
-      '<button class="del" data-id="'+esc(n.id)+'">\u2715</button>';
-    row.querySelector('.del').onclick=function(){ apagar(n.id); };
+      '<div class="data">'+fmt(n.texto)+' \u00B7 '+idade(n.texto)+' anos</div></div>';
     l.appendChild(row);
   });
 }
@@ -795,7 +793,13 @@ function carregar(){
   if(!BACKEND){ document.getElementById('lista').innerHTML='<div class="status">Sem liga\u00E7\u00E3o \u00E0 nuvem.</div>'; return; }
   fetch(BACKEND+'?action=notas&t='+Date.now())
     .then(r=>r.json()).then(function(j){
-      if(j&&j.ok&&Array.isArray(j.notas)){ DADOS=j.notas.filter(n=>String(n.seccao)===ANIV); render(); }
+      if(j&&j.ok&&Array.isArray(j.notas)){
+        /* fonte: Base de Dados Staff (data de nascimento) + registos antigos de aniversario */
+        var out=[], seen={};
+        j.notas.forEach(function(n){ if(String(n.seccao)==='_staffdb'){ var d={}; try{d=JSON.parse(n.texto);}catch(e){} if(d&&d.nasc){ var nm=((d.pn||'')+' '+(d.un||'')).trim(); out.push({id:n.id, autor:nm||n.autor||'', texto:d.nasc}); if(nm) seen[nm.toLowerCase()]=1; } } });
+        j.notas.forEach(function(n){ if(String(n.seccao)===ANIV){ var nm=String(n.autor||'').trim().toLowerCase(); if(!seen[nm]){ out.push({id:n.id, autor:n.autor, texto:n.texto}); } } });
+        DADOS=out; render();
+      }
       else{ document.getElementById('lista').innerHTML='<div class="status">A nuvem ainda n\u00E3o est\u00E1 ativa. Avisa o respons\u00E1vel.</div>'; }
     })
     .catch(function(){ document.getElementById('lista').innerHTML='<div class="status">Sem liga\u00E7\u00E3o. Recarrega.</div>'; });
@@ -831,7 +835,6 @@ function apagar(id){
 if(MANAGER){
   document.getElementById('btnExport').addEventListener('click',exportar);
   carregar();
-  (function(){ var sbx=document.getElementById('shareBox'), sb=document.getElementById('btnShare'); if(sbx) sbx.style.display='block'; if(sb) sb.onclick=function(){ var link=location.href.split('?')[0].split('#')[0]+'?publico=1'; var o=sb.innerHTML; function done(){ sb.textContent='\u2713 Link copiado!'; setTimeout(function(){ sb.innerHTML=o; },1700); } if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(link).then(done,done); } else { try{ prompt('Copia o link:', link); }catch(e){} } }; })();
 }else{
   document.getElementById('cardLista').style.display='none';
   var _hb=document.getElementById('homeBtn'); if(_hb) _hb.style.display='none';
