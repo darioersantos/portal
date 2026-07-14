@@ -23,7 +23,7 @@ window.PORTAL_LINKS = {
   checklists: "checklists.html",
 
   /* ---- Templates ---- */
-  sinaletica:        "",
+  sinaletica:        "https://docs.google.com/spreadsheets/u/0/d/1DqbdSbdVBYKKRLIf7iauCs_2VmAvlIRTqPeUO1sqVP0/htmlview#gid=456097186",
   alarmes:           "https://drive.google.com/file/d/1FJr5hK1XPvl2XRpuU0rAfUiHORnPaoz7/view",
   entradas_saidas:   "https://drive.google.com/file/d/1pnUORTmETUZDkP5jaHHl1muzGi0LMmYq/view",
   dispositivos:      "https://drive.google.com/file/d/1knTUy67BRsD1BIuWizEvMCJZnUZpIuPp/view",
@@ -41,6 +41,7 @@ window.PORTAL_LINKS = {
   notificacoes:      "notificacoes.html",
 
   /* ---- Formularios ---- */
+  staffdb:           "staffdb.html",
   happyhour:         "happyhour.html",
   limpeza:           "limpeza.html",
   alarmado:          "alarmado.html",
