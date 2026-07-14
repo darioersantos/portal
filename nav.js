@@ -169,6 +169,18 @@ window.PORTAL_NAV = [
   .sb-item.accent4 .ico{color:#fff;}
   .sb-item.accent4.active{background:linear-gradient(135deg,#ff8a33,#4f7cff);}
   .sb-item.accent4.active::before{display:none;}
+  /* Horario do Staff: azul claro */
+  .sb-item.accent5{background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#1e40af;margin:5px 0;box-shadow:0 3px 10px rgba(59,130,246,.20);font-weight:800;}
+  .sb-item.accent5:hover{background:linear-gradient(135deg,#e4efff,#cbe0ff);}
+  .sb-item.accent5 .ico{color:#2563eb;}
+  .sb-item.accent5.active{background:linear-gradient(135deg,#c7ddff,#a9c9ff);}
+  .sb-item.accent5.active::before{display:none;}
+  /* Formacoes: roxo claro */
+  .sb-item.accent6{background:linear-gradient(135deg,#ede9fe,#ddd6fe);color:#6d28d9;margin:5px 0;box-shadow:0 3px 10px rgba(139,92,246,.20);font-weight:800;}
+  .sb-item.accent6:hover{background:linear-gradient(135deg,#f2edff,#e5ddff);}
+  .sb-item.accent6 .ico{color:#7c3aed;}
+  .sb-item.accent6.active{background:linear-gradient(135deg,#e3dcff,#d0c4fb);}
+  .sb-item.accent6.active::before{display:none;}
 
   /* --- feedback tatil ao tocar --- */
   button,.btn,.ghostbtn,.qtile,.kpi,.tb-icon,.more,.sb-item,.brief-it,[data-go],.tab,.jmbtn,.lb-iconbtn,.av-print,.jchk{transition:transform .14s cubic-bezier(.34,1.4,.64,1),box-shadow .22s ease,background-color .2s ease,border-color .2s ease,filter .2s ease;}
@@ -241,29 +253,39 @@ window.PORTAL_NAV = [
 
 /* ==== correcoes globais do menu (propaga a todas as paginas) ==== */
 (function(){
+  /* icones do menu que podem faltar/ser apagados nalgumas paginas -> ficam SEMPRE garantidos */
+  var MENUIC={
+    'trending-up':'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+    'calendar-days':'<rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/>',
+    'graduation-cap':'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>',
+    'contact':'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>',
+    'award':'<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>',
+    'users':'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    'clock':'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+    'book-open':'<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
+    'cake':'<path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3M12 8v3M17 8v3"/>',
+    'umbrella':'<path d="M22 12a10.06 10.06 0 0 0-20 0Z"/><path d="M12 12v8a2 2 0 0 0 4 0"/><path d="M12 2v1"/>',
+    'calendar-clock':'<path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="18" cy="18" r="4"/><path d="M18 16.5V18l1 1"/>'
+  };
+  var ACC={topvendas:'accent3', planeamento:'accent4', equipa:'accent5', formacoes:'accent6'};
+  function ensureIcons(){ if(typeof window.IC==='object' && window.IC){ var added=0; for(var k in MENUIC){ if(!window.IC[k]){ window.IC[k]=MENUIC[k]; added++; } } return added; } return 0; }
+  function applyAccents(){ for(var k in ACC){ var el=document.querySelector('.sb-item[data-k="'+k+'"]'); if(el) el.classList.add(ACC[k]); } }
   document.addEventListener('DOMContentLoaded', function(){
     try{
-      /* 1) garantir icones do menu que possam faltar em paginas mais antigas
-            (ex.: "Produtividade"/trending-up so aparecia na propria pagina) */
-      if(typeof window.IC==='object' && window.IC){
-        var need={
-          'trending-up':'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
-          'calendar-days':'<rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/>',
-          'graduation-cap':'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>',
-          'contact':'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>',
-          'award':'<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>'
-        };
-        var falta=false;
-        for(var k in need){ if(!window.IC[k]){ window.IC[k]=need[k]; falta=true; } }
-        if(falta && typeof window.renderSidebar==='function'){ try{ window.renderSidebar(); }catch(e){} }
+      var added=ensureIcons();
+      /* garantir que QUALQUER futura reconstrucao do menu mantem icones + cores */
+      if(typeof window.renderSidebar==='function' && !window.renderSidebar._szWrap){
+        var orig=window.renderSidebar;
+        window.renderSidebar=function(){ ensureIcons(); var r=orig.apply(this, arguments); applyAccents(); return r; };
+        window.renderSidebar._szWrap=1;
       }
-      /* 2) clicar no logotipo/marca da barra lateral -> pagina principal */
+      /* se faltavam icones, reconstruir o menu ja renderizado (uma vez) */
+      if(added>0 && typeof window.renderSidebar==='function'){ try{ window.renderSidebar(); }catch(e){} }
+      applyAccents();
+      /* clicar no logotipo/marca -> pagina principal */
       var br=document.querySelector('.sb-brand');
       if(br && !br._szHome){ br._szHome=1; br.style.cursor='pointer'; br.setAttribute('title','Ir para o inicio');
         br.addEventListener('click', function(){ location.href='dashboard.html'; }); }
-      /* 3) destaques especiais (renderSidebar nao trata accent3/accent4) */
-      var tv=document.querySelector('.sb-item[data-k="topvendas"]'); if(tv) tv.classList.add('accent3');
-      var pv=document.querySelector('.sb-item[data-k="planeamento"]'); if(pv) pv.classList.add('accent4');
     }catch(e){}
   });
 })();
