@@ -1423,6 +1423,7 @@ var HLBL={caixas:'Contagem das Caixas', cofre:'Contagem de Cofre', banco:'Ingres
 var HIC={caixas:'receipt', cofre:'lock', banco:'landmark'};
 var histTipo=null, HISTDATA=[];
 function chefia(){ return (sessionStorage.getItem('sz_user')||'').trim(); }
+function supervisorNome(){ return String((state.cofre&&state.cofre.nome)||(state.cofreNoite&&state.cofreNoite.nome)||(state.cofreManha&&state.cofreManha.nome)||'').trim(); }
 function histDateFmt(iso){ var d=new Date(iso); if(isNaN(d)) return String(iso||''); return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear()+' \u00B7 '+('0'+d.getHours()).slice(-2)+'h'+('0'+d.getMinutes()).slice(-2); }
 function histDiaFmt(dia){ var p=String(dia||'').split('-'); return (p.length===3)?(p[2]+'/'+p[1]+'/'+p[0]):String(dia||''); }
 function histWhen(d){ return d.dia?histDiaFmt(d.dia):histDateFmt(d.quando); }
@@ -1482,8 +1483,8 @@ function histRender(){
 }
 function histGuardar(){
   if(!histTipo) return;
-  var quem=chefia();
-  if(!quem){ alert('N\u00E3o foi poss\u00EDvel identificar a chefia. Inicia sess\u00E3o primeiro.'); return; }
+  var quem=(histTipo==='cofre'||histTipo==='banco') ? (supervisorNome()||chefia()) : chefia();
+  if(!quem){ alert('N\u00E3o foi poss\u00EDvel identificar o supervisor. Seleciona o nome e assina no Cofre, ou inicia sess\u00E3o.'); return; }
   if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
   var val=TOTALS[histTipo]||0;
   if(!confirm('Guardar a contagem de '+HLBL[histTipo]+' com o valor '+euro(val)+'?')) return;
