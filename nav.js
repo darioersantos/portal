@@ -9,7 +9,8 @@ window.PORTAL_NAV = [
     {k:'contagem', ic:'calculator', nm:'Contagem de Dinheiro', accent2:true},
     {k:'superliga', ic:'trophy', nm:'Super Liga', dark:true},
     {k:'vendas', ic:'bar-chart-3', nm:'Análise de Vendas', accent:true},
-    {k:'planeamento', ic:'trending-up', nm:'Produtividade'}
+    {k:'planeamento', ic:'trending-up', nm:'Produtividade'},
+    {k:'topvendas', ic:'award', nm:'Top Vendas'}
   ]},
   {group:'Outros', items:[
     {k:'checklists', ic:'clipboard-check', nm:'Checklist Abertura/Fecho'},
@@ -231,7 +232,8 @@ window.PORTAL_NAV = [
           'trending-up':'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
           'calendar-days':'<rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/>',
           'graduation-cap':'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>',
-          'contact':'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>'
+          'contact':'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>',
+          'award':'<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>'
         };
         var falta=false;
         for(var k in need){ if(!window.IC[k]){ window.IC[k]=need[k]; falta=true; } }
