@@ -8,9 +8,9 @@ window.PORTAL_NAV = [
     {k:'roturas', ic:'package', nm:'Ruturas'},
     {k:'contagem', ic:'calculator', nm:'Contagem de Dinheiro', accent2:true},
     {k:'superliga', ic:'trophy', nm:'Super Liga', dark:true},
+    {k:'topvendas', ic:'award', nm:'Top Vendas', accent3:true},
     {k:'vendas', ic:'bar-chart-3', nm:'Análise de Vendas', accent:true},
-    {k:'planeamento', ic:'trending-up', nm:'Produtividade'},
-    {k:'topvendas', ic:'award', nm:'Top Vendas'}
+    {k:'planeamento', ic:'trending-up', nm:'Produtividade'}
   ]},
   {group:'Outros', items:[
     {k:'checklists', ic:'clipboard-check', nm:'Checklist Abertura/Fecho'},
@@ -151,6 +151,12 @@ window.PORTAL_NAV = [
   html,body{overscroll-behavior-y:contain;}
   /* evitar zoom por duplo-toque acidental (mantem scroll normal) */
   html{touch-action:manipulation;-webkit-text-size-adjust:100%;}
+  /* destaque amarelo (Top Vendas) */
+  .sb-item.accent3{background:linear-gradient(135deg,#fde047,#f4c400);color:#6b4e00;margin:5px 0;box-shadow:0 4px 12px rgba(234,179,8,.32);font-weight:800;}
+  .sb-item.accent3:hover{background:linear-gradient(135deg,#ffe86b,#ffd21f);color:#5a4200;}
+  .sb-item.accent3 .ico{color:#8a6500;}
+  .sb-item.accent3.active{background:linear-gradient(135deg,#ffe86b,#ffd21f);}
+  .sb-item.accent3.active::before{display:none;}
 
   /* --- feedback tatil ao tocar --- */
   button,.btn,.ghostbtn,.qtile,.kpi,.tb-icon,.more,.sb-item,.brief-it,[data-go],.tab,.jmbtn,.lb-iconbtn,.av-print,.jchk{transition:transform .14s cubic-bezier(.34,1.4,.64,1),box-shadow .22s ease,background-color .2s ease,border-color .2s ease,filter .2s ease;}
@@ -243,6 +249,8 @@ window.PORTAL_NAV = [
       var br=document.querySelector('.sb-brand');
       if(br && !br._szHome){ br._szHome=1; br.style.cursor='pointer'; br.setAttribute('title','Ir para o inicio');
         br.addEventListener('click', function(){ location.href='dashboard.html'; }); }
+      /* 3) destaque amarelo do Top Vendas (renderSidebar nao trata accent3) */
+      var tv=document.querySelector('.sb-item[data-k="topvendas"]'); if(tv) tv.classList.add('accent3');
     }catch(e){}
   });
 })();
