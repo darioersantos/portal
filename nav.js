@@ -1,6 +1,6 @@
 /* Menu lateral partilhado por todas as paginas. Editar AQUI muda a barra em toda a app. */
 window.PORTAL_NAV = [
-  {group:null, items:[ {k:'__home', ic:'home', nm:'Início', active:true}, {k:'equipa', ic:'users', nm:'Horário do Staff'} ]},
+  {group:null, items:[ {k:'__home', ic:'home', nm:'Início', active:true}, {k:'equipa', ic:'users', nm:'Horário do Staff'}, {k:'formacoes', ic:'graduation-cap', nm:'Formações'} ]},
   {group:'Operações', items:[
     {k:'lembretes', ic:'list-checks', nm:'Tarefas', badgeId:'nbTar'},
     {k:'mural', ic:'calendar-days', nm:'Lembretes', badgeId:'nbLem'},
@@ -9,8 +9,7 @@ window.PORTAL_NAV = [
     {k:'contagem', ic:'calculator', nm:'Contagem de Dinheiro', accent2:true},
     {k:'superliga', ic:'trophy', nm:'Super Liga', dark:true},
     {k:'vendas', ic:'bar-chart-3', nm:'Análise de Vendas', accent:true},
-    {k:'planeamento', ic:'trending-up', nm:'Produtividade'},
-    {k:'formacoes', ic:'graduation-cap', nm:'Formações'}
+    {k:'planeamento', ic:'trending-up', nm:'Produtividade'}
   ]},
   {group:'Outros', items:[
     {k:'checklists', ic:'clipboard-check', nm:'Checklist Abertura/Fecho'},
