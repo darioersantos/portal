@@ -32,6 +32,7 @@ window.PORTAL_NAV = [
     {k:'pf_palmilhas', ic:'footprints', nm:'Venda de palmilhas'}
   ]},
   {group:'Formulários', items:[
+    {k:'staffdb', ic:'contact', nm:'Base de Dados Staff'},
     {k:'happyhour', ic:'banknote', nm:'Happy Hour'},
     {k:'alarmado', ic:'tag', nm:'Alarmado'},
     {k:'admissao', ic:'user-plus', nm:'Pedido de Admissão'},
@@ -147,6 +148,8 @@ window.PORTAL_NAV = [
   *{-webkit-tap-highlight-color:transparent;}
   html{scroll-behavior:smooth;}
   html,body{overscroll-behavior-y:contain;}
+  /* evitar zoom por duplo-toque acidental (mantem scroll normal) */
+  html{touch-action:manipulation;-webkit-text-size-adjust:100%;}
 
   /* --- feedback tatil ao tocar --- */
   button,.btn,.ghostbtn,.qtile,.kpi,.tb-icon,.more,.sb-item,.brief-it,[data-go],.tab,.jmbtn,.lb-iconbtn,.av-print,.jchk{transition:transform .14s cubic-bezier(.34,1.4,.64,1),box-shadow .22s ease,background-color .2s ease,border-color .2s ease,filter .2s ease;}
@@ -177,12 +180,16 @@ window.PORTAL_NAV = [
   }
 
   /* --- pull-to-refresh badge --- */
-  #sz-ptr{position:fixed;top:0;left:0;right:0;display:flex;align-items:flex-end;justify-content:center;height:0;overflow:visible;z-index:9999;pointer-events:none;}
-  #sz-ptr .sz-ptr-badge{margin-bottom:10px;width:44px;height:44px;border-radius:50%;background:#fff;box-shadow:0 8px 24px rgba(20,24,30,.22);display:flex;align-items:center;justify-content:center;transform:scale(.5);transition:background-color .2s ease;}
-  #sz-ptr .sz-ptr-a{width:22px;height:22px;stroke:#FF8100;stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s ease,stroke .2s ease;}
-  #sz-ptr .sz-ptr-ring{display:none;width:22px;height:22px;border:3px solid #FF8100;border-top-color:transparent;border-radius:50%;}
-  #sz-ptr.armed .sz-ptr-badge{background:#eafaf1;}
-  #sz-ptr.armed .sz-ptr-a{stroke:#16a34a;}
+  #sz-ptr{position:fixed;top:0;left:0;right:0;display:flex;align-items:flex-end;justify-content:center;height:0;overflow:visible;z-index:99999;pointer-events:none;padding-top:env(safe-area-inset-top);}
+  #sz-ptr .sz-ptr-pill{margin-bottom:12px;display:flex;align-items:center;gap:9px;background:#fff;border-radius:999px;padding:8px 16px 8px 9px;box-shadow:0 12px 34px rgba(20,24,30,.30);transform:translateY(-4px) scale(.85);opacity:0;transition:opacity .16s ease,transform .16s ease,background-color .2s ease;}
+  #sz-ptr .sz-ptr-ic{width:30px;height:30px;border-radius:50%;background:#FF8100;display:flex;align-items:center;justify-content:center;flex:none;}
+  #sz-ptr .sz-ptr-a{width:17px;height:17px;stroke:#fff;stroke-width:2.8;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s cubic-bezier(.34,1.4,.64,1);}
+  #sz-ptr .sz-ptr-ring{display:none;width:16px;height:16px;border:2.6px solid #fff;border-top-color:transparent;border-radius:50%;}
+  #sz-ptr .sz-ptr-txt{font-size:13px;font-weight:800;color:#3a4048;white-space:nowrap;letter-spacing:-.1px;}
+  #sz-ptr.armed .sz-ptr-pill{background:#16a34a;}
+  #sz-ptr.armed .sz-ptr-ic{background:rgba(255,255,255,.28);}
+  #sz-ptr.armed .sz-ptr-txt{color:#fff;}
+  #sz-ptr.loading .sz-ptr-ic{background:#FF8100;}
   #sz-ptr.loading .sz-ptr-a{display:none;}
   #sz-ptr.loading .sz-ptr-ring{display:block;animation:sz-ptr-spin .7s linear infinite;}
   @keyframes sz-ptr-spin{to{transform:rotate(360deg)}}
@@ -223,7 +230,8 @@ window.PORTAL_NAV = [
         var need={
           'trending-up':'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
           'calendar-days':'<rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/>',
-          'graduation-cap':'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>'
+          'graduation-cap':'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>',
+          'contact':'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>'
         };
         var falta=false;
         for(var k in need){ if(!window.IC[k]){ window.IC[k]=need[k]; falta=true; } }
@@ -237,14 +245,27 @@ window.PORTAL_NAV = [
   });
 })();
 
+/* ==== evitar zoom acidental (pinch / gesto / duplo-toque) em toda a app ==== */
+(function(){
+  try{
+    var vp=document.querySelector('meta[name="viewport"]');
+    if(!vp){ vp=document.createElement('meta'); vp.setAttribute('name','viewport'); (document.head||document.documentElement).appendChild(vp); }
+    vp.setAttribute('content','width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+  }catch(e){}
+  /* iOS: bloquear o gesto de pinça e o zoom por dois dedos */
+  document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, {passive:false});
+  document.addEventListener('gesturechange', function(e){ e.preventDefault(); }, {passive:false});
+  document.addEventListener('touchmove', function(e){ if(e.touches && e.touches.length>1){ e.preventDefault(); } }, {passive:false});
+})();
+
 /* ==== Puxar para atualizar (pull-to-refresh) - PWA + browser mobile ==== */
 (function(){
   if(!('ontouchstart' in window)) return;
-  var TH=115, DZ=14, startY=0, pulling=false, dist=0, ind=null, busy=false;
+  var TH=92, DZ=12, startY=0, pulling=false, dist=0, ind=null, busy=false;
   function mkInd(){
     if(ind) return ind;
     ind=document.createElement('div'); ind.id='sz-ptr';
-    ind.innerHTML='<div class="sz-ptr-badge"><svg class="sz-ptr-a" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="m5 12 7 7 7-7"/></svg><span class="sz-ptr-ring"></span></div>';
+    ind.innerHTML='<div class="sz-ptr-pill"><span class="sz-ptr-ic"><svg class="sz-ptr-a" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="m5 12 7 7 7-7"/></svg><span class="sz-ptr-ring"></span></span><span class="sz-ptr-txt">Puxa para atualizar</span></div>';
     document.body.appendChild(ind); return ind;
   }
   function fixedAncestor(el){ while(el && el!==document.body){ try{ var p=getComputedStyle(el).position; if((p==='fixed'||p==='sticky') && (!el.className || String(el.className).indexOf('topbar')<0)) return true; }catch(e){} el=el.parentElement; } return false; }
@@ -256,14 +277,15 @@ window.PORTAL_NAV = [
   window.addEventListener('touchmove', function(e){
     if(!pulling) return;
     dist=e.touches[0].clientY-startY;
-    if(dist<=DZ || !atTop()){ if(ind){ ind.style.height='0'; ind.classList.remove('armed'); } if(dist<=0) pulling=false; return; }
+    if(dist<=DZ || !atTop()){ if(ind){ ind.style.height='0'; ind.classList.remove('armed'); var p0=ind.querySelector('.sz-ptr-pill'); if(p0){ p0.style.opacity='0'; p0.style.transform='translateY(-4px) scale(.85)'; } } if(dist<=0) pulling=false; return; }
     e.preventDefault();
     var pull=dist-DZ;
-    var el=mkInd(); el.style.transition='none'; el.style.height=Math.min(pull*0.5,96)+'px';
-    var prog=Math.min(pull/TH,1);
-    var badge=el.querySelector('.sz-ptr-badge'); if(badge) badge.style.transform='scale('+(0.5+prog*0.5)+')';
-    var a=el.querySelector('.sz-ptr-a'); if(a) a.style.transform='rotate('+(prog*180)+'deg)';
-    el.classList.toggle('armed', pull>TH);
+    var el=mkInd(); el.style.transition='none'; el.style.height=Math.min(pull*0.55,88)+'px';
+    var prog=Math.min(pull/TH,1); var armed=pull>TH;
+    var pill=el.querySelector('.sz-ptr-pill'); if(pill){ pill.style.opacity=Math.min(prog*1.5,1); pill.style.transform='translateY(0) scale('+(0.85+prog*0.15)+')'; }
+    var a=el.querySelector('.sz-ptr-a'); if(a) a.style.transform='rotate('+(armed?180:0)+'deg)';
+    var txt=el.querySelector('.sz-ptr-txt'); if(txt) txt.textContent=armed?'Solta para atualizar':'Puxa para atualizar';
+    el.classList.toggle('armed', armed);
   }, {passive:false});
   window.addEventListener('touchend', function(){
     if(!pulling) return; pulling=false;
@@ -271,10 +293,11 @@ window.PORTAL_NAV = [
     if(pull>TH && !busy){
       busy=true;
       var el=mkInd(); el.classList.remove('armed'); el.classList.add('loading');
-      el.style.transition='height .18s ease'; el.style.height='64px';
-      var badge=el.querySelector('.sz-ptr-badge'); if(badge) badge.style.transform='scale(1)';
-      try{ if(navigator.vibrate) navigator.vibrate(25); }catch(e){}
-      setTimeout(function(){ try{ location.reload(); }catch(e){ location.href=location.href; } }, 900);
-    } else if(ind){ ind.style.transition='height .2s ease'; ind.style.height='0'; ind.classList.remove('armed'); }
+      el.style.transition='height .18s ease'; el.style.height='58px';
+      var pill=el.querySelector('.sz-ptr-pill'); if(pill){ pill.style.opacity='1'; pill.style.transform='translateY(0) scale(1)'; }
+      var txt=el.querySelector('.sz-ptr-txt'); if(txt) txt.textContent='A atualizar…';
+      try{ if(navigator.vibrate) navigator.vibrate(22); }catch(e){}
+      setTimeout(function(){ try{ location.reload(); }catch(e){ location.href=location.href; } }, 850);
+    } else if(ind){ ind.style.transition='height .2s ease'; ind.style.height='0'; ind.classList.remove('armed'); var pill2=ind.querySelector('.sz-ptr-pill'); if(pill2){ pill2.style.opacity='0'; pill2.style.transform='translateY(-4px) scale(.85)'; } }
   }, {passive:true});
 })();
