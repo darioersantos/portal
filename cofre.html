@@ -460,6 +460,34 @@
   input[type=number]{-moz-appearance:textfield;}
   input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 
+  /* ===== Historico de contagens ===== */
+  .hist-row{margin-top:11px;}
+  .histbtn{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1.5px solid var(--line2);border-radius:11px;padding:10px 15px;font-size:13.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .histbtn:hover{border-color:#f0d6bd;color:var(--accent-dark);}
+  .histbtn i{width:16px;height:16px;}
+  .hist-overlay{position:fixed;inset:0;z-index:200;background:rgba(20,24,30,.5);display:none;align-items:flex-start;justify-content:center;padding:calc(26px + env(safe-area-inset-top)) 14px calc(26px + env(safe-area-inset-bottom));overflow-y:auto;}
+  .hist-overlay.open{display:flex;}
+  .hist-box{background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:100%;max-width:460px;padding:20px;}
+  .hist-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .hist-head h3{margin:0;font-size:18px;font-weight:800;flex:1;min-width:0;line-height:1.25;}
+  .hist-x{background:#f0eeeb;border:none;width:34px;height:34px;border-radius:10px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;flex:none;}
+  .hist-x i{width:18px;height:18px;}
+  .hist-save{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FF8100,#E06E00);color:#fff;border:none;border-radius:13px;padding:13px;font-size:14.5px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:16px;}
+  .hist-save i{width:17px;height:17px;}
+  .hist-save:disabled{opacity:.55;cursor:default;}
+  .hist-list{display:flex;flex-direction:column;}
+  .hist-item{display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid var(--line);}
+  .hist-item:last-child{border-bottom:none;}
+  .hist-ic{width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:var(--accent-dark);display:flex;align-items:center;justify-content:center;flex:none;}
+  .hist-ic i{width:19px;height:19px;}
+  .hist-info{flex:1;min-width:0;}
+  .hist-val{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;}
+  .hist-meta{font-size:12px;color:var(--muted);margin-top:2px;word-break:break-word;}
+  .hist-del{background:none;border:none;color:var(--muted2);cursor:pointer;padding:4px;flex:none;}
+  .hist-del:hover{color:var(--neg);}
+  .hist-del i{width:16px;height:16px;}
+  .hist-empty{text-align:center;color:var(--muted);font-size:13.5px;padding:22px 8px;line-height:1.5;}
+  @media print{ .hist-overlay,.hist-row,.histbtn{display:none !important;} }
 </style>
 </head>
 <body>
@@ -478,7 +506,7 @@
 <div class="main">
   <header class="topbar">
     <button class="menu-btn" id="menuBtn"><span data-ic="menu"></span></button>
-    <div class="tb-hi"><h1>Contagem de Dinheiro</h1><p>Cofre, banco, caixas e tills &#x2014; contagem di&#xe1;ria.</p></div>
+    <div class="tb-hi"><h1>Contagem de Dinheiro</h1><p>Cofre, banco, caixas e tills &#x2014; contagem di&#xE1;ria.</p></div>
     <div class="tb-right"><span class="saved" id="saveStatus"><span class="dot"></span><span class="saved-txt">Guardado</span></span></div>
   </header>
   <div class="content">
@@ -493,9 +521,9 @@
   <div class="tabview active" id="view-contagem">
 
     <div class="money-tiles">
-      <button type="button" class="money-tile active" id="tile-caixas" data-money="caixas"><i data-lu="receipt"></i><span class="mt-name">Contagem das Caixas</span><span class="mt-tot" id="badge-caixas">0 &#x20ac;</span></button>
-      <button type="button" class="money-tile" id="tile-cofre" data-money="cofre"><i data-lu="lock"></i><span class="mt-name">Contagem de Cofre</span><span class="mt-tot" id="badge-cofre">0 &#x20ac;</span></button>
-      <button type="button" class="money-tile" id="tile-banco" data-money="banco"><i data-lu="landmark"></i><span class="mt-name">Ingresso ao Banco</span><span class="mt-tot" id="badge-banco">0 &#x20ac;</span></button>
+      <button type="button" class="money-tile active" id="tile-caixas" data-money="caixas"><i data-lu="receipt"></i><span class="mt-name">Contagem das Caixas</span><span class="mt-tot" id="badge-caixas">0 &#x20AC;</span></button>
+      <button type="button" class="money-tile" id="tile-cofre" data-money="cofre"><i data-lu="lock"></i><span class="mt-name">Contagem de Cofre</span><span class="mt-tot" id="badge-cofre">0 &#x20AC;</span></button>
+      <button type="button" class="money-tile" id="tile-banco" data-money="banco"><i data-lu="landmark"></i><span class="mt-name">Ingresso ao Banco</span><span class="mt-tot" id="badge-banco">0 &#x20AC;</span></button>
     </div>
 
     <div class="money-section active" id="sec-caixas">
@@ -503,7 +531,8 @@
         <button type="button" class="clearbtn" id="btnClearCaixas"><i data-lu="trash-2"></i> Limpar contagem das caixas</button>
         <p class="hint">Preenche as retiradas e o Till Audit (com moedas) de cada caixa.</p>
         <div class="caixa-grid" id="caixas-container"></div>
-        <div class="grandtotal"><span><i data-lu="landmark"></i> TOTAL GERAL</span><b id="total-caixas">0 &#x20ac;</b></div>
+        <div class="grandtotal"><span><i data-lu="landmark"></i> TOTAL GERAL</span><b id="total-caixas">0 &#x20AC;</b></div>
+        <div class="hist-row"><button type="button" class="histbtn" data-hist="caixas"><i data-lu="history"></i> Hist&#xF3;rico de contagens</button></div>
       </div>
     </div>
 
@@ -511,32 +540,33 @@
       <div class="card-body">
         <button type="button" class="clearbtn" id="btnClearCofre"><i data-lu="trash-2"></i> Limpar contagem do cofre</button>
         <div class="periodo-seg" id="periodoSeg">
-          <button type="button" data-p="manha" class="active"><i data-lu="sunrise"></i> Manh&#xe3;</button>
+          <button type="button" data-p="manha" class="active"><i data-lu="sunrise"></i> Manh&#xE3;</button>
           <button type="button" data-p="noite"><i data-lu="moon"></i> Noite</button>
         </div>
         <div class="sub">Notas</div>
         <div id="cofre-notas"></div>
-        <div class="subtotal">Subtotal notas <b id="st-cofre-notas">0 &#x20ac;</b></div>
+        <div class="subtotal">Subtotal notas <b id="st-cofre-notas">0 &#x20AC;</b></div>
 
         <div class="sub">Mangas (sacos selados)</div>
         <div id="cofre-mangas"></div>
-        <div class="subtotal">Subtotal mangas <b id="st-cofre-mangas">0 &#x20ac;</b></div>
+        <div class="subtotal">Subtotal mangas <b id="st-cofre-mangas">0 &#x20AC;</b></div>
 
         <div class="sub">Saquetas / Rolos</div>
         <div id="cofre-saquetas"></div>
-        <div class="subtotal">Subtotal saquetas <b id="st-cofre-saquetas">0 &#x20ac;</b></div>
+        <div class="subtotal">Subtotal saquetas <b id="st-cofre-saquetas">0 &#x20AC;</b></div>
 
         <div class="sub">Moedas soltas</div>
         <div id="cofre-moedas"></div>
-        <div class="subtotal">Subtotal moedas <b id="st-cofre-moedas">0 &#x20ac;</b></div>
+        <div class="subtotal">Subtotal moedas <b id="st-cofre-moedas">0 &#x20AC;</b></div>
 
-        <div class="grandtotal"><span>TOTAL COFRE</span><b id="total-cofre">0 &#x20ac;</b></div>
+        <div class="grandtotal"><span>TOTAL COFRE</span><b id="total-cofre">0 &#x20AC;</b></div>
+        <div class="hist-row"><button type="button" class="histbtn" data-hist="cofre"><i data-lu="history"></i> Hist&#xF3;rico de contagens</button></div>
 
         <div class="field" style="margin-top:14px;">
-          <label for="metaCofre">Cofre alvo (&#x20ac;):</label>
+          <label for="metaCofre">Cofre alvo (&#x20AC;):</label>
           <input type="number" id="metaCofre" inputmode="decimal" step="50" style="width:110px;text-align:center;">
         </div>
-        <div class="diff ok" id="diff-cofre"><span><i data-lu="scale"></i> Diferen&#xe7;a face ao alvo</span><b>0 &#x20ac;</b></div>
+        <div class="diff ok" id="diff-cofre"><span><i data-lu="scale"></i> Diferen&#xE7;a face ao alvo</span><b>0 &#x20AC;</b></div>
 
         <div class="sig-block">
           <div class="sig-name">
@@ -563,13 +593,14 @@
       <div class="card-body">
         <div class="sub">Notas</div>
         <div id="banco-notas"></div>
-        <div class="subtotal">Subtotal notas <b id="st-banco-notas">0 &#x20ac;</b></div>
+        <div class="subtotal">Subtotal notas <b id="st-banco-notas">0 &#x20AC;</b></div>
 
         <div class="sub">Moedas soltas</div>
         <div id="banco-moedas"></div>
-        <div class="subtotal">Subtotal moedas <b id="st-banco-moedas">0 &#x20ac;</b></div>
+        <div class="subtotal">Subtotal moedas <b id="st-banco-moedas">0 &#x20AC;</b></div>
 
-        <div class="grandtotal"><span>TOTAL ENVIO AO BANCO</span><b id="total-banco">0 &#x20ac;</b></div>
+        <div class="grandtotal"><span>TOTAL ENVIO AO BANCO</span><b id="total-banco">0 &#x20AC;</b></div>
+        <div class="hist-row"><button type="button" class="histbtn" data-hist="banco"><i data-lu="history"></i> Hist&#xF3;rico de contagens</button></div>
       </div>
     </div>
 
@@ -579,6 +610,14 @@
 </main>
 
 
+  </div>
+</div>
+
+<div class="hist-overlay" id="histOverlay">
+  <div class="hist-box">
+    <div class="hist-head"><h3 id="histTitle">Hist&#xF3;rico</h3><button type="button" class="hist-x" id="histClose"><i data-lu="x"></i></button></div>
+    <button type="button" class="hist-save" id="histSave"><i data-lu="save"></i> <span id="histSaveLbl">Guardar contagem de hoje</span></button>
+    <div class="hist-list" id="histList"><div class="hist-empty">A carregar...</div></div>
   </div>
 </div>
 
@@ -916,7 +955,7 @@ IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
 
-var SL_FOTOS={'Ant\u00f3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00fajo':'images/img_04.jpg','Ricardo Eus\u00e9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00e3o Paiva':'images/img_10.jpg','Jo\u00e3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00e2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00e9rgio Correia':'images/img_21.jpg','Andr\u00e9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00fajo':'images/img_25.jpg','Lu\u00eds Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00e2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00e3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00e7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00edrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00faria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00e1rio Santos':'images/img_51.jpg','Beatriz Jer\u00f3nimo':'images/img_52.jpg'};
+var SL_FOTOS={'Ant\u00F3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00FAjo':'images/img_04.jpg','Ricardo Eus\u00E9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00E3o Paiva':'images/img_10.jpg','Jo\u00E3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00E2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00E9rgio Correia':'images/img_21.jpg','Andr\u00E9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00FAjo':'images/img_25.jpg','Lu\u00EDs Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00E2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00E3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00E7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00EDrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00FAria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00E1rio Santos':'images/img_51.jpg','Beatriz Jer\u00F3nimo':'images/img_52.jpg'};
 var NAV=(window.PORTAL_NAV||[]);
 
 var BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
@@ -985,7 +1024,7 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 <script>
 "use strict";
 
-/* ---------- Configura\u00e7\u00e3o das denomina\u00e7\u00f5es ---------- */
+/* ---------- Configura\u00E7\u00E3o das denomina\u00E7\u00F5es ---------- */
 const NOTAS    = [500,200,100,50,20,10,5].map(d=>({key:String(d), label:euro(d), valueEach:d}));
 const MOEDAS   = [2,1,0.5,0.2,0.1,0.05,0.02,0.01].map(d=>({key:String(d), label:euro(d), valueEach:d}));
 const MANGAS_DEF = [[2,375],[1,375],[0.5,600],[0.2,800],[0.1,800],[0.05,1000],[0.02,1500],[0.01,1500]];
@@ -994,6 +1033,7 @@ const SAQ_DEF  = [[2,50],[1,25],[0.5,20],[0.2,8],[0.1,4],[0.05,2.5],[0.02,1],[0.
 const SAQUETAS = SAQ_DEF.map(([d,v])=>({key:String(d), label:euro(d), sub:'rolo '+euro(v), valueEach:v}));
 
 const N_CAIXAS = 6;
+var TOTALS={caixas:0, cofre:0, banco:0};
 
 /* ---------- Estado ---------- */
 const STORE_KEY = 'contagem_vg_v1';
@@ -1022,7 +1062,7 @@ function loadLocal(){
 function serialize(){ var c=Object.assign({},state); delete c.cofre; return JSON.stringify(c); }
 function saveLocal(){ try{ localStorage.setItem(STORE_KEY,serialize()); }catch(e){} }
 
-/* ---------- Sincroniza\u00e7\u00e3o (nuvem) ---------- */
+/* ---------- Sincroniza\u00E7\u00E3o (nuvem) ---------- */
 let saveTimer;
 let loading=true;   // durante o arranque/leitura nao escreve na nuvem
 let userEditedDuringLoad=false;   // se o utilizador contar ANTES do pullCloud terminar, nao deixar a nuvem sobrepor
@@ -1043,7 +1083,7 @@ function pushCloud(tries){
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify({json:serialize()})})
     .then(r=>r.json()).then(j=>{ setStatus('ok','online'); })
-    .catch(e=>{ if(tries<3){ setTimeout(()=>pushCloud(tries+1),2000); } else { setStatus('off','Sem liga\u00e7\u00e3o \u2014 guardado no dispositivo'); } });
+    .catch(e=>{ if(tries<3){ setTimeout(()=>pushCloud(tries+1),2000); } else { setStatus('off','Sem liga\u00E7\u00E3o \u2014 guardado no dispositivo'); } });
 }
 function pullCloud(tries){
   tries=tries||0;
@@ -1061,7 +1101,7 @@ function pullCloud(tries){
       checkCofreReset();
       setStatus('ok','online');
     })
-    .catch(e=>{ if(tries<3){ setTimeout(()=>pullCloud(tries+1),2000); } else { loading=false; if(userEditedDuringLoad){ save(); } checkCofreReset(); setStatus('off','Sem liga\u00e7\u00e3o \u2014 a usar dados do dispositivo'); } });
+    .catch(e=>{ if(tries<3){ setTimeout(()=>pullCloud(tries+1),2000); } else { loading=false; if(userEditedDuringLoad){ save(); } checkCofreReset(); setStatus('off','Sem liga\u00E7\u00E3o \u2014 a usar dados do dispositivo'); } });
 }
 function setStatus(kind,txt){
   const el=document.getElementById('saveStatus'); if(!el) return;
@@ -1071,7 +1111,7 @@ function setStatus(kind,txt){
 
 /* ---------- Helpers ---------- */
 function euro(n){ return (Number(n)||0).toLocaleString('pt-PT',{style:'currency',currency:'EUR',minimumFractionDigits:2,maximumFractionDigits:2}); }
-/* O "dia" s\u00f3 muda a partir da 01:00 \u2014 a contagem \u00e9 feita at\u00e9 \u00e0 meia-noite e meia,
+/* O "dia" s\u00F3 muda a partir da 01:00 \u2014 a contagem \u00E9 feita at\u00E9 \u00E0 meia-noite e meia,
    por isso entre 00:00 e 00:59 continua a contar para o dia anterior. */
 function today(){ var d=new Date(); if(d.getHours()<1){ d=new Date(d.getTime()-3600*1000); } return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
 /* dia do cofre: muda a partir da 01:00 HORA DE PORTUGAL (Europe/Lisbon). A contagem do cofre zera de um dia p/ o outro a essa hora. */
@@ -1105,11 +1145,11 @@ function el(html){ const t=document.createElement('template'); t.innerHTML=html.
 function set(id,txt){ const e=document.getElementById(id); if(e) e.textContent=txt; }
 function escapeHtml(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
-/* ---------- Grupos de denomina\u00e7\u00f5es ---------- */
+/* ---------- Grupos de denomina\u00E7\u00F5es ---------- */
 function buildDenomGroup(containerId, defs, store, onChange){
   const c=document.getElementById(containerId); c.innerHTML='';
   defs.forEach(def=>{
-    const row=el(`<div class="drow"><div class="lbl">${def.label}${def.sub?`<small>${def.sub}</small>`:''}</div><input type="number" inputmode="numeric" min="0" step="1" placeholder="0"><div class="tot">0 \u20ac</div></div>`);
+    const row=el(`<div class="drow"><div class="lbl">${def.label}${def.sub?`<small>${def.sub}</small>`:''}</div><input type="number" inputmode="numeric" min="0" step="1" placeholder="0"><div class="tot">0 \u20AC</div></div>`);
     const input=row.querySelector('input'), tot=row.querySelector('.tot');
     if(store[def.key]) input.value=store[def.key];
     const recalc=()=>{ const q=num(input.value); if(q) store[def.key]=q; else delete store[def.key];
@@ -1136,7 +1176,7 @@ function calcCofre(){
         s=sumGroup(SAQUETAS,state.cofre.saquetas), mo=sumGroup(MOEDAS,state.cofre.moedas);
   set('st-cofre-notas',euro(n)); set('st-cofre-mangas',euro(m));
   set('st-cofre-saquetas',euro(s)); set('st-cofre-moedas',euro(mo));
-  const total=n+m+s+mo;
+  const total=n+m+s+mo; TOTALS.cofre=total;
   set('total-cofre',euro(total)); set('badge-cofre',euro(total));
   const diff=total-(state.cofre.meta||0);
   const d=document.getElementById('diff-cofre');
@@ -1188,7 +1228,7 @@ function initSignature(){
   if(!initSignature._win){ initSignature._win=true; window.addEventListener('pointerup',function(){ if(initSignature._end) initSignature._end(); }); }
   function refreshPh(){ ph.style.display=(!state.cofre.assinatura && !sigEnabled)?'':'none'; }
   const sigToggle=document.getElementById('sigToggle');
-  function setEnabled(on){ sigEnabled=on; cv.style.touchAction=on?'none':'pan-y'; cv.classList.toggle('signing',on); sigToggle.textContent=on?'\u2713 Terminar':'\u270d\ufe0f Assinar'; sigToggle.classList.toggle('on',on); refreshPh(); }
+  function setEnabled(on){ sigEnabled=on; cv.style.touchAction=on?'none':'pan-y'; cv.classList.toggle('signing',on); sigToggle.textContent=on?'\u2713 Terminar':'\u270D\uFE0F Assinar'; sigToggle.classList.toggle('on',on); refreshPh(); }
   sigToggle.onclick=function(){ setEnabled(!sigEnabled); };
   setEnabled(false);
   document.getElementById('sigClear').onclick=()=>{
@@ -1197,7 +1237,7 @@ function initSignature(){
     document.getElementById('sigPrint').removeAttribute('src');
     set('cofre-stamp',''); save();
   };
-  // ajustar tamanho quando o cart\u00e3o abre/vis\u00edvel
+  // ajustar tamanho quando o cart\u00E3o abre/vis\u00EDvel
   setTimeout(setupSize,30);
   if(!initSignature._resize){ initSignature._resize=true; window.addEventListener('resize',()=>{ if(cv.getBoundingClientRect().width) setupSize(); }); }
   const card=cv.closest('details'); if(card) card.addEventListener('toggle',()=>{ if(card.open) setTimeout(setupSize,30); });
@@ -1212,7 +1252,7 @@ function renderBanco(){
 function calcBanco(){
   const n=sumGroup(NOTAS,state.banco.notas), mo=sumGroup(MOEDAS,state.banco.moedas);
   set('st-banco-notas',euro(n)); set('st-banco-moedas',euro(mo));
-  const total=n+mo; set('total-banco',euro(total)); set('badge-banco',euro(total));
+  const total=n+mo; TOTALS.banco=total; set('total-banco',euro(total)); set('badge-banco',euro(total));
   save();
 }
 
@@ -1231,7 +1271,7 @@ function renderCaixas(){
       if(rem) rem.addEventListener('click',()=>{ cx.retiradas.splice(ri,1); renderCaixas(); save(); });
       card.appendChild(row);
     });
-    const add=el(`<button class="addret">\uff0b Retirada</button>`);
+    const add=el(`<button class="addret">\uFF0B Retirada</button>`);
     add.addEventListener('click',()=>{ cx.retiradas.push(''); renderCaixas(); save(); });
     card.appendChild(add);
     const arow=el(`<div class="crow audit"><label>Till Audit (c/ moedas)</label><input type="number" inputmode="decimal" step="0.01" placeholder="0,00"></div>`);
@@ -1239,7 +1279,7 @@ function renderCaixas(){
     if(cx.audit) ai.value=cx.audit;
     ai.addEventListener('input',()=>{cx.audit=ai.value;calcCaixas();save();});
     card.appendChild(arow);
-    card.appendChild(el(`<div class="ctot"><span>Total</span><b class="cx-total">0 \u20ac</b></div>`));
+    card.appendChild(el(`<div class="ctot"><span>Total</span><b class="cx-total">0 \u20AC</b></div>`));
     c.appendChild(card);
   });
   calcCaixas();
@@ -1251,10 +1291,10 @@ function calcCaixas(){
     const t=cx.retiradas.reduce((s,v)=>s+num(v),0)+num(cx.audit);
     card.querySelector('.cx-total').textContent=euro(t); grand+=t;
   });
-  set('total-caixas',euro(grand)); set('badge-caixas',euro(grand)); save();
+  TOTALS.caixas=grand; set('total-caixas',euro(grand)); set('badge-caixas',euro(grand)); save();
 }
 
-/* ---------- Navega\u00e7\u00e3o / Data / Print / Clear ---------- */
+/* ---------- Navega\u00E7\u00E3o / Data / Print / Clear ---------- */
 function showTab(name){
   document.querySelectorAll('.tabview').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
@@ -1282,9 +1322,9 @@ document.querySelectorAll('#periodoSeg button').forEach(b=>b.addEventListener('c
 
 document.getElementById('btnPrint').addEventListener('click',()=>{
   if(!((state.cofre&&state.cofre.nome||'').trim())){ alert('Escolhe o nome (equipa diretiva) antes de imprimir.'); var _n=document.getElementById('cofreNome'); if(_n) _n.focus(); return; }
-  const periodoTxt=(state.periodo==='noite')?'Contagem da Noite \ud83c\udf19':'Contagem da Manh\u00e3 \ud83c\udf05';
+  const periodoTxt=(state.periodo==='noite')?'Contagem da Noite \uD83C\uDF19':'Contagem da Manh\u00E3 \uD83C\uDF05';
   document.getElementById('printHead').innerHTML=
-    `<h1>Contagem de Cofre \u2014 Sport Zone Vasco da Gama</h1><p class="pperiodo">${periodoTxt}</p><p>Respons\u00e1vel: ${escapeHtml(state.cofre.nome||'')}</p>`;
+    `<h1>Contagem de Cofre \u2014 Sport Zone Vasco da Gama</h1><p class="pperiodo">${periodoTxt}</p><p>Respons\u00E1vel: ${escapeHtml(state.cofre.nome||'')}</p>`;
   const cofre=document.getElementById('card-cofre');
   const wasOpen=cofre.open; cofre.open=true;
   // Para caber numa folha: esconder contagens a zero na impressao
@@ -1311,9 +1351,9 @@ function pedirConfirm(titulo, msg, onYes){
   ov.onclick=function(e){ if(e.target===ov) fecha(); };
   ov.classList.add('open');
 }
-/* Limpar S\u00d3 o cofre (manh\u00e3+noite) e o banco. As caixas n\u00e3o s\u00e3o afetadas. */
+/* Limpar S\u00D3 o cofre (manh\u00E3+noite) e o banco. As caixas n\u00E3o s\u00E3o afetadas. */
 document.getElementById('btnClearCofre').addEventListener('click',()=>{
-  pedirConfirm('Limpar contagem do cofre?','Isto apaga a contagem do cofre e do banco. As caixas n\u00e3o s\u00e3o afetadas.',function(){
+  pedirConfirm('Limpar contagem do cofre?','Isto apaga a contagem do cofre e do banco. As caixas n\u00E3o s\u00E3o afetadas.',function(){
     state.cofreManha=freshCofre();
     state.cofreNoite=freshCofre();
     state.banco={notas:{}, moedas:{}};
@@ -1323,9 +1363,9 @@ document.getElementById('btnClearCofre').addEventListener('click',()=>{
     renderCofre(); renderBanco(); save();
   });
 });
-/* Limpar S\u00d3 as caixas. O cofre n\u00e3o \u00e9 afetado. */
+/* Limpar S\u00D3 as caixas. O cofre n\u00E3o \u00E9 afetado. */
 document.getElementById('btnClearCaixas').addEventListener('click',()=>{
-  pedirConfirm('Limpar contagem das caixas?','Isto apaga todas as contagens das caixas. O cofre n\u00e3o \u00e9 afetado.',function(){
+  pedirConfirm('Limpar contagem das caixas?','Isto apaga todas as contagens das caixas. O cofre n\u00E3o \u00E9 afetado.',function(){
     state.caixas=freshCaixas();
     renderCaixas(); calcCaixas(); save();
   });
@@ -1370,12 +1410,76 @@ function initAll(keepTab){
 // marca para o pullCloud NAO apagar o que ele escreveu (evita "nao gravou").
 document.addEventListener('input',function(){ if(loading) userEditedDuringLoad=true; }, true);
 (function(){ var sel=document.getElementById('cofreNome'); if(sel){ sel.addEventListener('change',function(){ if(state.cofre) state.cofre.nome=sel.value; save(); }); } })();
+
+/* ================= HISTORICO DE CONTAGENS (caixas / cofre / banco) ================= */
+var HIST_SEC='_contagem_hist';
+var HLBL={caixas:'Contagem das Caixas', cofre:'Contagem de Cofre', banco:'Ingresso ao Banco'};
+var HIC={caixas:'receipt', cofre:'lock', banco:'landmark'};
+var histTipo=null, HISTDATA=[];
+function chefia(){ return (sessionStorage.getItem('sz_user')||'').trim(); }
+function histDateFmt(iso){ var d=new Date(iso); if(isNaN(d)) return String(iso||''); return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear()+' \u00B7 '+('0'+d.getHours()).slice(-2)+'h'+('0'+d.getMinutes()).slice(-2); }
+function histParse(n){ var d={}; try{ d=JSON.parse(n.texto)||{}; }catch(e){ d={}; } return d; }
+function histOpen(tipo){
+  histTipo=tipo;
+  set('histTitle','Hist\u00F3rico \u00B7 '+HLBL[tipo]);
+  set('histSaveLbl','Guardar contagem de hoje ('+euro(TOTALS[tipo]||0)+')');
+  document.getElementById('histOverlay').classList.add('open');
+  histRender(); histFetch();
+}
+function histClose(){ document.getElementById('histOverlay').classList.remove('open'); }
+function histFetch(){
+  var l=document.getElementById('histList');
+  if(!BACKEND){ l.innerHTML='<div class="hist-empty">Sem liga\u00E7\u00E3o \u00E0 nuvem.</div>'; return; }
+  fetch(BACKEND+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){
+    if(j&&j.notas){ HISTDATA=j.notas.filter(function(n){return String(n.seccao)===HIST_SEC;}); histRender(); }
+    else l.innerHTML='<div class="hist-empty">N\u00E3o foi poss\u00EDvel carregar.</div>';
+  }).catch(function(){ l.innerHTML='<div class="hist-empty">Sem liga\u00E7\u00E3o. Tenta de novo.</div>'; });
+}
+function histRender(){
+  var l=document.getElementById('histList'); if(!l||!histTipo) return;
+  var items=HISTDATA.map(function(n){ return {id:n.id, autor:n.autor, d:histParse(n)}; })
+    .filter(function(o){ return o.d.tipo===histTipo; })
+    .sort(function(a,b){ return new Date(b.d.quando)-new Date(a.d.quando); });
+  if(!items.length){ l.innerHTML='<div class="hist-empty">Ainda n\u00E3o h\u00E1 contagens guardadas aqui.<br>Carrega em \u00ABGuardar contagem de hoje\u00BB quando terminares.</div>'; return; }
+  l.innerHTML=items.map(function(o){ return '<div class="hist-item"><div class="hist-ic"><i data-lu="'+(HIC[histTipo]||'clock')+'"></i></div>'
+    +'<div class="hist-info"><div class="hist-val">'+euro(o.d.valor||0)+'</div><div class="hist-meta">'+escapeHtml(histDateFmt(o.d.quando))+' \u00B7 '+escapeHtml(o.autor||o.d.quem||'\u2014')+'</div></div>'
+    +'<button class="hist-del" data-id="'+escapeHtml(o.id)+'" title="Apagar"><i data-lu="trash-2"></i></button></div>'; }).join('');
+  l.querySelectorAll('.hist-del').forEach(function(b){ b.onclick=function(){ histDel(b.getAttribute('data-id')); }; });
+  if(window.lucideRepl) window.lucideRepl(l);
+}
+function histGuardar(){
+  if(!histTipo) return;
+  var quem=chefia();
+  if(!quem){ alert('N\u00E3o foi poss\u00EDvel identificar a chefia. Inicia sess\u00E3o primeiro.'); return; }
+  if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
+  var val=TOTALS[histTipo]||0;
+  if(!confirm('Guardar a contagem de '+HLBL[histTipo]+' com o valor '+euro(val)+'?')) return;
+  var payload={tipo:histTipo, valor:val, quando:new Date().toISOString(), quem:quem};
+  var btn=document.getElementById('histSave'); btn.disabled=true;
+  fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_add', seccao:HIST_SEC, autor:quem, texto:JSON.stringify(payload)})})
+    .then(function(r){return r.json();}).then(function(j){
+      var nid=(j&&(j.id!=null?j.id:(j.nota&&j.nota.id!=null?j.nota.id:('tmp_'+Date.now()))));
+      HISTDATA.unshift({id:nid, seccao:HIST_SEC, autor:quem, texto:JSON.stringify(payload), data:payload.quando});
+      histRender(); setTimeout(histFetch,1600);
+    }).catch(function(){ alert('N\u00E3o foi poss\u00EDvel guardar. Tenta de novo.'); })
+    .then(function(){ btn.disabled=false; });
+}
+function histDel(id){
+  if(!confirm('Apagar esta contagem do hist\u00F3rico?')) return;
+  HISTDATA=HISTDATA.filter(function(n){ return String(n.id)!==String(id); }); histRender();
+  if(BACKEND) fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_del', id:id})}).catch(function(){});
+}
+document.querySelectorAll('.histbtn').forEach(function(b){ b.addEventListener('click', function(){ histOpen(b.getAttribute('data-hist')); }); });
+document.getElementById('histClose').addEventListener('click', histClose);
+document.getElementById('histSave').addEventListener('click', histGuardar);
+document.getElementById('histOverlay').addEventListener('click', function(e){ if(e.target===this) histClose(); });
+
 initAll();
 pullCloud();
 </script>
 <div class="cfm-ov" id="cfmOv">
   <div class="cfm-box">
-    <div class="cfm-ic">&#x1f5d1;&#xfe0f;</div>
+    <div class="cfm-ic">&#x1F5D1;&#xFE0F;</div>
     <div class="cfm-title" id="cfmTitle">Apagar?</div>
     <div class="cfm-msg" id="cfmMsg"></div>
     <div class="cfm-acts">
