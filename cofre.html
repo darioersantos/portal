@@ -475,6 +475,10 @@
   .hist-save{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FF8100,#E06E00);color:#fff;border:none;border-radius:13px;padding:13px;font-size:14.5px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:16px;}
   .hist-save i{width:17px;height:17px;}
   .hist-save:disabled{opacity:.55;cursor:default;}
+  .hist-note{display:flex;align-items:flex-start;gap:7px;font-size:11.5px;color:var(--muted);line-height:1.45;margin:-8px 0 16px;padding:9px 11px;background:#faf8f5;border-radius:11px;}
+  .hist-note i{width:14px;height:14px;flex:none;margin-top:1px;color:var(--accent-dark);}
+  .hist-note b{color:#4a515b;}
+  .hist-auto{background:var(--accent-soft);color:var(--accent-dark);border-radius:5px;padding:0 6px;font-weight:800;font-size:10px;text-transform:uppercase;}
   .hist-list{display:flex;flex-direction:column;}
   .hist-item{display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid var(--line);}
   .hist-item:last-child{border-bottom:none;}
@@ -617,6 +621,7 @@
   <div class="hist-box">
     <div class="hist-head"><h3 id="histTitle">Hist&#xF3;rico</h3><button type="button" class="hist-x" id="histClose"><i data-lu="x"></i></button></div>
     <button type="button" class="hist-save" id="histSave"><i data-lu="save"></i> <span id="histSaveLbl">Guardar contagem de hoje</span></button>
+    <div class="hist-note"><i data-lu="clock"></i><span>As contagens s&#xE3;o guardadas <b>automaticamente todas as noites</b> (por volta das 2h). Este bot&#xE3;o s&#xF3; &#xE9; preciso se quiseres guardar j&#xE1;.</span></div>
     <div class="hist-list" id="histList"><div class="hist-empty">A carregar...</div></div>
   </div>
 </div>
@@ -1120,7 +1125,7 @@ function cofreDayKey(){
     var f=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Lisbon',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hour12:false});
     var o={}; f.formatToParts(new Date()).forEach(function(pt){o[pt.type]=pt.value;});
     var y=+o.year,m=+o.month,d=+o.day,h=+o.hour;
-    var dt=new Date(Date.UTC(y,m-1,d)); if(h<1){ dt.setUTCDate(dt.getUTCDate()-1); }
+    var dt=new Date(Date.UTC(y,m-1,d)); if(h<2){ dt.setUTCDate(dt.getUTCDate()-1); }
     return dt.getUTCFullYear()+'-'+('0'+(dt.getUTCMonth()+1)).slice(-2)+'-'+('0'+dt.getUTCDate()).slice(-2);
   }catch(e){ return today(); }
 }
@@ -1129,6 +1134,7 @@ function checkCofreReset(){
   if(_cofreChecked) return; _cofreChecked=true;
   var key=cofreDayKey();
   if(state.cofreDay && state.cofreDay!==key){
+    autoSnapshot(state.cofreDay);   // grava o historico do dia que terminou ANTES de limpar
     state.cofreManha=freshCofre(); state.cofreNoite=freshCofre();
     state.banco={notas:{}, moedas:{}}; state.periodo='manha'; linkCofre(); initAll(true);
   }
@@ -1408,7 +1414,7 @@ function initAll(keepTab){
 
 // Se o utilizador comecar a contar enquanto a nuvem ainda esta a carregar,
 // marca para o pullCloud NAO apagar o que ele escreveu (evita "nao gravou").
-document.addEventListener('input',function(){ if(loading) userEditedDuringLoad=true; }, true);
+document.addEventListener('input',function(){ if(loading) userEditedDuringLoad=true; try{ var u=(sessionStorage.getItem('sz_user')||'').trim(); if(u) state.lastBy=u; }catch(e){} }, true);
 (function(){ var sel=document.getElementById('cofreNome'); if(sel){ sel.addEventListener('change',function(){ if(state.cofre) state.cofre.nome=sel.value; save(); }); } })();
 
 /* ================= HISTORICO DE CONTAGENS (caixas / cofre / banco) ================= */
@@ -1418,7 +1424,31 @@ var HIC={caixas:'receipt', cofre:'lock', banco:'landmark'};
 var histTipo=null, HISTDATA=[];
 function chefia(){ return (sessionStorage.getItem('sz_user')||'').trim(); }
 function histDateFmt(iso){ var d=new Date(iso); if(isNaN(d)) return String(iso||''); return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear()+' \u00B7 '+('0'+d.getHours()).slice(-2)+'h'+('0'+d.getMinutes()).slice(-2); }
+function histDiaFmt(dia){ var p=String(dia||'').split('-'); return (p.length===3)?(p[2]+'/'+p[1]+'/'+p[0]):String(dia||''); }
+function histWhen(d){ return d.dia?histDiaFmt(d.dia):histDateFmt(d.quando); }
+function histKey(d){ return d.dia?(d.dia+'T12:00'):d.quando; }
 function histParse(n){ var d={}; try{ d=JSON.parse(n.texto)||{}; }catch(e){ d={}; } return d; }
+/* ---- totais a partir do estado (para a gravacao automatica) ---- */
+function cofrePeriodTotal(cf){ if(!cf) return 0; return sumGroup(NOTAS,cf.notas||{})+sumGroup(MANGAS,cf.mangas||{})+sumGroup(SAQUETAS,cf.saquetas||{})+sumGroup(MOEDAS,cf.moedas||{}); }
+function bancoTotalOf(b){ b=b||{}; return sumGroup(NOTAS,b.notas||{})+sumGroup(MOEDAS,b.moedas||{}); }
+function caixasTotalOf(cxs){ return (cxs||[]).reduce(function(s,cx){ return s+(cx.retiradas||[]).reduce(function(a,v){return a+num(v);},0)+num(cx.audit); },0); }
+/* ---- gravacao AUTOMATICA do historico do dia que terminou (chamada no reset diario ~2h) ---- */
+function autoSnapshot(dia){
+  if(!BACKEND || !dia) return;
+  if(state.histSnap===dia) return;   // ja gravado este dia
+  state.histSnap=dia;
+  var lastBy=state.lastBy||'';
+  var cofreT=cofrePeriodTotal(state.cofreNoite)||cofrePeriodTotal(state.cofreManha);
+  var cofreQuem=(state.cofreNoite&&state.cofreNoite.nome)||(state.cofreManha&&state.cofreManha.nome)||lastBy;
+  var entradas=[];
+  if(cofreT>0) entradas.push({tipo:'cofre', valor:cofreT, quem:cofreQuem});
+  var bancoT=bancoTotalOf(state.banco); if(bancoT>0) entradas.push({tipo:'banco', valor:bancoT, quem:lastBy});
+  var caixasT=caixasTotalOf(state.caixas); if(caixasT>0) entradas.push({tipo:'caixas', valor:caixasT, quem:lastBy});
+  entradas.forEach(function(e){
+    var payload={tipo:e.tipo, valor:e.valor, quando:new Date().toISOString(), dia:dia, quem:e.quem, auto:true};
+    fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_add', seccao:HIST_SEC, autor:e.quem, texto:JSON.stringify(payload)})}).catch(function(){});
+  });
+}
 function histOpen(tipo){
   histTipo=tipo;
   set('histTitle','Hist\u00F3rico \u00B7 '+HLBL[tipo]);
@@ -1430,19 +1460,22 @@ function histClose(){ document.getElementById('histOverlay').classList.remove('o
 function histFetch(){
   var l=document.getElementById('histList');
   if(!BACKEND){ l.innerHTML='<div class="hist-empty">Sem liga\u00E7\u00E3o \u00E0 nuvem.</div>'; return; }
-  fetch(BACKEND+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){
-    if(j&&j.notas){ HISTDATA=j.notas.filter(function(n){return String(n.seccao)===HIST_SEC;}); histRender(); }
-    else l.innerHTML='<div class="hist-empty">N\u00E3o foi poss\u00EDvel carregar.</div>';
-  }).catch(function(){ l.innerHTML='<div class="hist-empty">Sem liga\u00E7\u00E3o. Tenta de novo.</div>'; });
+  /* XHR direto: o nav.js embrulha o fetch com cache; aqui queremos SEMPRE dados frescos */
+  try{
+    var x=new XMLHttpRequest(); x.open('GET', BACKEND+'?action=notas&t='+Date.now(), true);
+    x.onload=function(){ try{ var j=JSON.parse(x.responseText); if(j&&j.notas){ HISTDATA=j.notas.filter(function(n){return String(n.seccao)===HIST_SEC;}); histRender(); } else { l.innerHTML='<div class="hist-empty">N\u00E3o foi poss\u00EDvel carregar.</div>'; } }catch(e){ l.innerHTML='<div class="hist-empty">N\u00E3o foi poss\u00EDvel carregar.</div>'; } };
+    x.onerror=function(){ l.innerHTML='<div class="hist-empty">Sem liga\u00E7\u00E3o. Tenta de novo.</div>'; };
+    x.send();
+  }catch(e){ l.innerHTML='<div class="hist-empty">Sem liga\u00E7\u00E3o. Tenta de novo.</div>'; }
 }
 function histRender(){
   var l=document.getElementById('histList'); if(!l||!histTipo) return;
   var items=HISTDATA.map(function(n){ return {id:n.id, autor:n.autor, d:histParse(n)}; })
     .filter(function(o){ return o.d.tipo===histTipo; })
-    .sort(function(a,b){ return new Date(b.d.quando)-new Date(a.d.quando); });
-  if(!items.length){ l.innerHTML='<div class="hist-empty">Ainda n\u00E3o h\u00E1 contagens guardadas aqui.<br>Carrega em \u00ABGuardar contagem de hoje\u00BB quando terminares.</div>'; return; }
+    .sort(function(a,b){ return new Date(histKey(b.d))-new Date(histKey(a.d)); });
+  if(!items.length){ l.innerHTML='<div class="hist-empty">Ainda n\u00E3o h\u00E1 contagens guardadas aqui.<br>S\u00E3o gravadas automaticamente todas as noites.</div>'; return; }
   l.innerHTML=items.map(function(o){ return '<div class="hist-item"><div class="hist-ic"><i data-lu="'+(HIC[histTipo]||'clock')+'"></i></div>'
-    +'<div class="hist-info"><div class="hist-val">'+euro(o.d.valor||0)+'</div><div class="hist-meta">'+escapeHtml(histDateFmt(o.d.quando))+' \u00B7 '+escapeHtml(o.autor||o.d.quem||'\u2014')+'</div></div>'
+    +'<div class="hist-info"><div class="hist-val">'+euro(o.d.valor||0)+'</div><div class="hist-meta">'+escapeHtml(histWhen(o.d))+' \u00B7 '+escapeHtml(o.autor||o.d.quem||'\u2014')+(o.d.auto?' \u00B7 <span class="hist-auto">auto</span>':'')+'</div></div>'
     +'<button class="hist-del" data-id="'+escapeHtml(o.id)+'" title="Apagar"><i data-lu="trash-2"></i></button></div>'; }).join('');
   l.querySelectorAll('.hist-del').forEach(function(b){ b.onclick=function(){ histDel(b.getAttribute('data-id')); }; });
   if(window.lucideRepl) window.lucideRepl(l);
@@ -1454,7 +1487,7 @@ function histGuardar(){
   if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
   var val=TOTALS[histTipo]||0;
   if(!confirm('Guardar a contagem de '+HLBL[histTipo]+' com o valor '+euro(val)+'?')) return;
-  var payload={tipo:histTipo, valor:val, quando:new Date().toISOString(), quem:quem};
+  var payload={tipo:histTipo, valor:val, quando:new Date().toISOString(), dia:cofreDayKey(), quem:quem, auto:false};
   var btn=document.getElementById('histSave'); btn.disabled=true;
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_add', seccao:HIST_SEC, autor:quem, texto:JSON.stringify(payload)})})
     .then(function(r){return r.json();}).then(function(j){
