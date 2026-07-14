@@ -211,6 +211,16 @@
   @keyframes bellShake{0%,58%,100%{transform:rotate(0);}62%{transform:rotate(14deg);}66%{transform:rotate(-11deg);}70%{transform:rotate(8deg);}74%{transform:rotate(-6deg);}78%{transform:rotate(3deg);}82%{transform:rotate(0);}}
   .notif-banner.bd .nb-txt b{color:#ffd07a;}
   .notif-banner.bd .nb-ic .ico{animation:none;color:#ffd07a;}
+  .form-alert{background:linear-gradient(135deg,#fff7ed,#ffedd5);border:1px solid #fdba74;color:#7c2d12;border-radius:15px;padding:12px 14px;margin-bottom:18px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 6px 18px rgba(180,83,9,.10);}
+  .form-alert:hover{border-color:#fb923c;}
+  .form-alert .fa-ic{width:38px;height:38px;border-radius:11px;background:#ffedd5;display:flex;align-items:center;justify-content:center;flex:none;}
+  .form-alert .fa-ic .ico{width:20px;height:20px;color:#ea580c;}
+  .form-alert .fa-tx{flex:1;min-width:0;}
+  .form-alert .fa-tx b{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#c2410c;}
+  .form-alert .fa-msg{font-size:14px;font-weight:600;margin-top:2px;line-height:1.35;}
+  .form-alert .fa-x{background:rgba(124,45,18,.08);border:none;color:#7c2d12;width:28px;height:28px;border-radius:8px;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+  .form-alert .fa-x .ico{width:15px;height:15px;}
+  .form-alert .fa-x:hover{background:rgba(124,45,18,.16);}
   .notif-banner .nb-txt{flex:1;min-width:0;}
   .notif-banner .nb-txt b{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#ffb45e;}
   .notif-banner .nb-msg{font-size:14px;font-weight:600;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -352,6 +362,7 @@
 
   <div class="content">
     <div id="notifBanner" class="notif-banner" style="display:none"></div>
+    <div id="formAlert" class="form-alert" style="display:none"></div>
     <div class="brief" id="brief" data-go="mural" style="display:none"></div>
     <div class="kpis" id="kpis">
       <div class="kpi" data-go="lembretes"><div class="k-ic"><span data-ic="clipboard"></span></div><div><div class="k-lbl">Tarefas pendentes</div><div class="k-val" id="kTar">&#x2013;</div><div class="k-sub a" id="kTarSub">&#x2014;</div></div></div>
@@ -569,6 +580,28 @@ function render(notas){
       nb.style.display='flex'; nb.onclick=function(){ go(it0.k); }; mountIcons(nb);
     } else { nb.style.display='none'; }
   }
+
+  /* Alerta SEMANAL: colaboradores com formacoes abaixo de 80% */
+  (function(){
+    var fa=document.getElementById('formAlert'); if(!fa) return;
+    function isoWeek(dd){ var d=new Date(dd); d.setHours(0,0,0,0); d.setDate(d.getDate()+4-(d.getDay()||7)); var ys=new Date(d.getFullYear(),0,1); var wk=Math.ceil((((d-ys)/86400000)+1)/7); return d.getFullYear()+'-W'+wk; }
+    var fn=notas.filter(function(n){ return String(n.seccao)==='_formacoes'; });
+    if(!fn.length){ fa.style.display='none'; return; }
+    var latest=fn.slice().sort(function(a,b){ return new Date(b.data)-new Date(a.data); })[0];
+    var D=null; try{ D=JSON.parse(latest.texto); }catch(e){}
+    if(!D||!D.people||!D.people.length){ fa.style.display='none'; return; }
+    var nc=(D.courses&&D.courses.length)||1;
+    var below=D.people.filter(function(p){ var c=0,st=p.st||[]; for(var i=0;i<st.length;i++){ if(st[i]===2) c++; } return (100*c/nc)<80; }).length;
+    var wk=isoWeek(new Date()); var seen=''; try{ seen=localStorage.getItem('sz_formAlertWk')||''; }catch(e){}
+    if(below>0 && seen!==wk){
+      if(typeof IC!=='undefined' && !IC['graduation-cap']) IC['graduation-cap']='<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+      fa.innerHTML='<span class="fa-ic">'+svg('graduation-cap')+'</span><div class="fa-tx"><b>Forma\u00E7\u00F5es da equipa</b><div class="fa-msg"><b>'+below+'</b> colaborador'+(below>1?'es':'')+' com forma\u00E7\u00F5es abaixo de 80%. For\u00E7a a equipa a conclu\u00ED-las.</div></div><button class="fa-x" title="Dispensar por esta semana">'+svg('x')+'</button>';
+      fa.style.display='flex'; mountIcons(fa);
+      function marcar(){ try{ localStorage.setItem('sz_formAlertWk',wk); }catch(e){} }
+      fa.onclick=function(e){ if(e.target.closest('.fa-x')) return; marcar(); go('formacoes'); };
+      var xb=fa.querySelector('.fa-x'); if(xb) xb.onclick=function(e){ e.stopPropagation(); marcar(); fa.style.display='none'; };
+    } else { fa.style.display='none'; }
+  })();
 
   /* Tarefas */
   document.getElementById('cntTar').textContent=tasks.length;
