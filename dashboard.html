@@ -596,6 +596,7 @@ function render(notas){
     var wk=isoWeek(new Date()); var seen=''; try{ seen=localStorage.getItem('sz_formAlertWk')||''; }catch(e){}
     if(below>0 && seen!==wk){
       if(typeof IC!=='undefined' && !IC['graduation-cap']) IC['graduation-cap']='<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+      if(typeof IC!=='undefined' && !IC['x']) IC['x']='<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
       fa.innerHTML='<span class="fa-ic">'+svg('graduation-cap')+'</span><div class="fa-tx"><b>Forma\u00E7\u00F5es da equipa</b><div class="fa-msg"><b>'+below+'</b> colaborador'+(below>1?'es':'')+' com forma\u00E7\u00F5es abaixo de 80%. For\u00E7a a equipa a conclu\u00ED-las.</div></div><button class="fa-x" title="Dispensar por esta semana">'+svg('x')+'</button>';
       fa.style.display='flex'; mountIcons(fa);
       function marcar(){ try{ localStorage.setItem('sz_formAlertWk',wk); }catch(e){} }
