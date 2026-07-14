@@ -1,16 +1,30 @@
 /* Menu lateral partilhado por todas as paginas. Editar AQUI muda a barra em toda a app. */
 window.PORTAL_NAV = [
-  {group:null, items:[ {k:'__home', ic:'home', nm:'Início', active:true}, {k:'equipa', ic:'users', nm:'Horário do Staff'}, {k:'formacoes', ic:'graduation-cap', nm:'Formações'} ]},
+  {group:null, items:[
+    {k:'__home', ic:'home', nm:'Início', active:true},
+    {k:'superliga', ic:'trophy', nm:'Super Liga', dark:true},
+    {k:'contagem', ic:'calculator', nm:'Contagem de Dinheiro', accent2:true},
+    {k:'topvendas', ic:'award', nm:'Top Vendas', accent3:true},
+    {k:'vendas', ic:'bar-chart-3', nm:'Análise de Vendas', accent:true},
+    {k:'planeamento', ic:'trending-up', nm:'Produtividade', accent4:true}
+  ]},
   {group:'Operações', items:[
     {k:'lembretes', ic:'list-checks', nm:'Tarefas', badgeId:'nbTar'},
     {k:'mural', ic:'calendar-days', nm:'Lembretes', badgeId:'nbLem'},
-    {k:'permanencia', ic:'book-open', nm:'Relatório de Permanência'},
     {k:'roturas', ic:'package', nm:'Ruturas'},
-    {k:'contagem', ic:'calculator', nm:'Contagem de Dinheiro', accent2:true},
-    {k:'superliga', ic:'trophy', nm:'Super Liga', dark:true},
-    {k:'topvendas', ic:'award', nm:'Top Vendas', accent3:true},
-    {k:'vendas', ic:'bar-chart-3', nm:'Análise de Vendas', accent:true},
-    {k:'planeamento', ic:'trending-up', nm:'Produtividade'}
+    {k:'permanencia', ic:'book-open', nm:'Relatório de Permanência'}
+  ]},
+  {group:'Staff', items:[
+    {k:'equipa', ic:'users', nm:'Horário do Staff'},
+    {k:'formacoes', ic:'graduation-cap', nm:'Formações'},
+    {k:'staffdb', ic:'contact', nm:'Base de Dados Staff'},
+    {k:'pontualidade', ic:'calendar-days', nm:'Atrasos e Faltas'},
+    {k:'aniversario', ic:'cake', nm:'Aniversários'},
+    {k:'folgas', ic:'calendar-clock', nm:'Pedido de Trocas e Folgas'},
+    {k:'ferias', ic:'umbrella', nm:'Pedido de Férias'},
+    {k:'limitacoes_horario', ic:'clock', nm:'Limitações de Horário'},
+    {k:'competencias', ic:'bar-chart-3', nm:'Mapa de Competências'},
+    {k:'caderno', ic:'book-open', nm:'Caderno de Acompanhamento'}
   ]},
   {group:'Outros', items:[
     {k:'checklists', ic:'clipboard-check', nm:'Checklist Abertura/Fecho'},
@@ -18,10 +32,7 @@ window.PORTAL_NAV = [
     {k:'incidencias', ic:'siren', nm:'Incidências de Manutenção'},
     {k:'notas', ic:'square-pen', nm:'Bloco de Notas'},
     {k:'consumiveis', ic:'shopping-bag', nm:'Encomendas'},
-    {k:'atas', ic:'file-text', nm:'Reuniões'},
-    {k:'pontualidade', ic:'calendar-days', nm:'Atrasos e Faltas'},
-    {k:'caderno', ic:'book-open', nm:'Caderno de Acompanhamento'},
-    {k:'competencias', ic:'bar-chart-3', nm:'Mapa de Competências'}
+    {k:'atas', ic:'file-text', nm:'Reuniões'}
   ]},
   {group:'Plano Formativo Interno', items:[
     {k:'pf_entrada', ic:'door-open', nm:'Entrada de loja'},
@@ -33,18 +44,13 @@ window.PORTAL_NAV = [
     {k:'pf_palmilhas', ic:'footprints', nm:'Venda de palmilhas'}
   ]},
   {group:'Formulários', items:[
-    {k:'staffdb', ic:'contact', nm:'Base de Dados Staff'},
     {k:'happyhour', ic:'banknote', nm:'Happy Hour'},
     {k:'alarmado', ic:'tag', nm:'Alarmado'},
     {k:'admissao', ic:'user-plus', nm:'Pedido de Admissão'},
     {k:'avaliacoes', ic:'star', nm:'Avaliações Mensais'},
     {k:'atendimento_loja', ic:'shopping-bag', nm:'Atendimento Loja'},
     {k:'atendimento_caixa', ic:'receipt', nm:'Atendimento Caixa'},
-    {k:'aniversario', ic:'cake', nm:'Aniversários'},
-    {k:'limitacoes_horario', ic:'clock', nm:'Limitações de Horário'},
-    {k:'satisfacao_staff', ic:'smile', nm:'Satisfação Staff'},
-    {k:'ferias', ic:'umbrella', nm:'Pedido de Férias'},
-    {k:'folgas', ic:'calendar-clock', nm:'Pedido de Trocas e Folgas'}
+    {k:'satisfacao_staff', ic:'smile', nm:'Satisfação Staff'}
   ]},
   {group:'Imprimíveis', items:[
     {k:'sinaletica', ic:'signpost', nm:'Sinalética'},
@@ -157,6 +163,12 @@ window.PORTAL_NAV = [
   .sb-item.accent3 .ico{color:#8a6500;}
   .sb-item.accent3.active{background:linear-gradient(135deg,#ffe86b,#ffd21f);}
   .sb-item.accent3.active::before{display:none;}
+  /* Produtividade: laranja com tom azulado (laranja -> azul) */
+  .sb-item.accent4{background:linear-gradient(135deg,#ff7a1a,#3d6ef5);color:#fff;margin:5px 0;box-shadow:0 4px 12px rgba(61,110,245,.30);font-weight:800;}
+  .sb-item.accent4:hover{background:linear-gradient(135deg,#ff8a33,#4f7cff);filter:brightness(1.03);}
+  .sb-item.accent4 .ico{color:#fff;}
+  .sb-item.accent4.active{background:linear-gradient(135deg,#ff8a33,#4f7cff);}
+  .sb-item.accent4.active::before{display:none;}
 
   /* --- feedback tatil ao tocar --- */
   button,.btn,.ghostbtn,.qtile,.kpi,.tb-icon,.more,.sb-item,.brief-it,[data-go],.tab,.jmbtn,.lb-iconbtn,.av-print,.jchk{transition:transform .14s cubic-bezier(.34,1.4,.64,1),box-shadow .22s ease,background-color .2s ease,border-color .2s ease,filter .2s ease;}
@@ -249,8 +261,9 @@ window.PORTAL_NAV = [
       var br=document.querySelector('.sb-brand');
       if(br && !br._szHome){ br._szHome=1; br.style.cursor='pointer'; br.setAttribute('title','Ir para o inicio');
         br.addEventListener('click', function(){ location.href='dashboard.html'; }); }
-      /* 3) destaque amarelo do Top Vendas (renderSidebar nao trata accent3) */
+      /* 3) destaques especiais (renderSidebar nao trata accent3/accent4) */
       var tv=document.querySelector('.sb-item[data-k="topvendas"]'); if(tv) tv.classList.add('accent3');
+      var pv=document.querySelector('.sb-item[data-k="planeamento"]'); if(pv) pv.classList.add('accent4');
     }catch(e){}
   });
 })();
