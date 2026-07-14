@@ -18,6 +18,7 @@ window.PORTAL_LINKS = {
   roturas:    "roturas.html",
   vendas:     "vendas-web.html",
   planeamento: "planeamento.html",
+  topvendas:  "topvendas.html",
   formacoes:  "formacoes.html",
   equipa:     "equipa.html",
   checklists: "checklists.html",
