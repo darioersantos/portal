@@ -39,7 +39,7 @@ window.PORTAL_NAV = [
     {k:'avaliacoes', ic:'star', nm:'Avaliações Mensais'},
     {k:'atendimento_loja', ic:'shopping-bag', nm:'Atendimento Loja'},
     {k:'atendimento_caixa', ic:'receipt', nm:'Atendimento Caixa'},
-    {k:'aniversario', ic:'cake', nm:'Aniversário'},
+    {k:'aniversario', ic:'cake', nm:'Aniversários'},
     {k:'limitacoes_horario', ic:'clock', nm:'Limitações de Horário'},
     {k:'satisfacao_staff', ic:'smile', nm:'Satisfação Staff'},
     {k:'ferias', ic:'umbrella', nm:'Pedido de Férias'},
