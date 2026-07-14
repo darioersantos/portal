@@ -258,6 +258,7 @@
 
 
 
+
   /* ===== Top Vendas ===== */
   .tv-wrap{max-width:1100px;}
   .tv-empty{text-align:center;padding:34px 12px;}
@@ -277,7 +278,22 @@
   .tv-search:focus,.tv-sel:focus{outline:none;border-color:var(--accent);}
   .tv-scan{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line2);background:#fff;border-radius:12px;padding:11px 15px;font-size:13.5px;font-weight:800;color:#4a515b;cursor:pointer;font-family:inherit;flex:none;}
   .tv-scan:hover{border-color:#f0d6bd;color:var(--accent-dark);} .tv-scan .ico{width:17px;height:17px;}
-  .tv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+  .tv-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+  .tv-chip{border:1.5px solid var(--line2);background:#fff;color:#4a515b;border-radius:999px;padding:9px 18px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;transition:.12s;}
+  .tv-chip:hover{border-color:#f0d6bd;} .tv-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  .tv-sel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:38px;}
+  .tv-bc{margin-top:8px;background:#fff;border:1px solid #f0f1f3;border-radius:7px;padding:4px 7px;cursor:pointer;}
+  .tv-bc svg{display:block;width:100%;height:32px;}
+  #tvBar{position:fixed;inset:0;z-index:135;background:rgba(15,18,22,.72);display:none;align-items:center;justify-content:center;padding:20px;}
+  #tvBar.open{display:flex;}
+  #tvBar .bx{background:#fff;border-radius:20px;padding:28px 24px 22px;max-width:440px;width:100%;text-align:center;position:relative;box-shadow:0 24px 70px rgba(0,0,0,.4);}
+  #tvBar .x{position:absolute;top:12px;right:14px;background:#f0eeeb;border:none;width:36px;height:36px;border-radius:11px;font-size:22px;line-height:1;cursor:pointer;color:var(--muted);font-family:inherit;}
+  #tvBar .nm{font-size:14px;font-weight:700;color:#3a4048;margin:2px 28px 20px;line-height:1.35;}
+  #tvBar .bcbig{background:#fff;padding:8px 4px;}
+  #tvBar .bcbig svg{width:100%;height:100px;display:block;}
+  #tvBar .cd{font-size:16px;font-weight:800;letter-spacing:4px;margin-top:12px;font-variant-numeric:tabular-nums;}
+  #tvBar .hint{font-size:12px;color:var(--muted);margin-top:8px;}
+  .tv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
   .tv-card{background:var(--card);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow-sm);padding:10px;position:relative;overflow:hidden;}
   .tv-card.hi{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
   .tv-rk{position:absolute;top:8px;left:8px;background:rgba(26,29,33,.82);color:#fff;font-size:11.5px;font-weight:800;border-radius:8px;padding:2px 8px;z-index:1;}
@@ -328,6 +344,7 @@
 </div>
 
 <div id="tvScan"><video id="tvVideo" playsinline muted></video><div class="bar"><span class="t" id="tvScanT">Aponta ao codigo de barras do artigo</span><button type="button" id="tvScanX">Fechar</button></div></div>
+<div id="tvBar"><div class="bx"><button class="x" id="tvBarX">&times;</button><div class="nm" id="tvBarNm"></div><div class="bcbig" id="tvBarBc"></div><div class="cd" id="tvBarCd"></div><div class="hint">Passa o scanner da loja por cima do codigo de barras.</div></div></div>
 
 <script>
 "use strict";
@@ -383,6 +400,26 @@ IC.image='<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9"
 IC.plus='<path d="M5 12h14"/><path d="M12 5v14"/>';
 IC['trash-2']='<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>';
 IC.check='<path d="M20 6 9 17l-5-5"/>';
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
 IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
@@ -1390,14 +1427,23 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 
 
 
+
 /* ===== Modulo ===== */
 
-var DATA=null, curSec=0, PDFLIB=null, hiCode='';
+var DATA=null, curSec=0, curCat='', PDFLIB=null, hiCode='';
 var ROWBAND=[[170,255],[362,447],[554,639],[746,843]];
 var COLBAND=[[-10,117],[117,235],[235,353],[353,471],[471,600]];
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function colOf(xc){ for(var c=0;c<5;c++){ if(xc>=COLBAND[c][0]&&xc<COLBAND[c][1]) return c; } return -1; }
 function rowOf(y){ for(var r=0;r<4;r++){ if(y>=ROWBAND[r][0]&&y<ROWBAND[r][1]) return r; } return -1; }
+/* --- codigo de barras Code 39 (para scanner da loja) --- */
+var TV39={'0':'nnnwwnwnn','1':'wnnwnnnnw','2':'nnwwnnnnw','3':'wnwwnnnnn','4':'nnnwwnnnw','5':'wnnwwnnnn','6':'nnwwwnnnn','7':'nnnwnnwnw','8':'wnnwnnwnn','9':'nnwwnnwnn','A':'wnnnnwnnw','B':'nnwnnwnnw','C':'wnwnnwnnn','D':'nnnnwwnnw','E':'wnnnwwnnn','F':'nnwnwwnnn','G':'nnnnnwwnw','H':'wnnnnwwnn','I':'nnwnnwwnn','J':'nnnnwwwnn','K':'wnnnnnnww','L':'nnwnnnnww','M':'wnwnnnnwn','N':'nnnnwnnww','O':'wnnnwnnwn','P':'nnwnwnnwn','Q':'nnnnnnwww','R':'wnnnnnwwn','S':'nnwnnnwwn','T':'nnnnwnwwn','U':'wwnnnnnnw','V':'nwwnnnnnw','W':'wwwnnnnnn','X':'nwnnwnnnw','Y':'wwnnwnnnn','Z':'nwwnwnnnn','-':'nwnnnnwnw','.':'wwnnnnwnn',' ':'nwwnnnwnn','*':'nwnnwnwnn'};
+function code39svg(code,h){ code=String(code||'').toUpperCase().replace(/[^0-9A-Z\-. ]/g,''); if(!code) return ''; var seq='*'+code+'*', nw=1, ww=2.6, gap=1, bars=[], x=0; h=h||40;
+  for(var i=0;i<seq.length;i++){ var pat=TV39[seq.charAt(i)]; if(!pat) continue; for(var j=0;j<9;j++){ var wd=(pat.charAt(j)==='w')?ww:nw; if(j%2===0) bars.push([x,wd]); x+=wd; } x+=gap; }
+  var rects=bars.map(function(b){ return '<rect x="'+b[0].toFixed(2)+'" y="0" width="'+b[1].toFixed(2)+'" height="'+h+'"/>'; }).join('');
+  return '<svg class="bc" viewBox="0 0 '+x.toFixed(1)+' '+h+'" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" fill="#111">'+rects+'</svg>'; }
+function catOf(t){ if(/^Accessories/i.test(t)) return 'Acess\u00F3rios'; if(/^Apparel/i.test(t)) return 'Vestu\u00E1rio'; if(/^Footwear/i.test(t)) return 'Cal\u00E7ado'; return 'Outros'; }
+function sectionsOfCat(cat){ var out=[]; DATA.sections.forEach(function(s,i){ if(!cat || catOf(s.title)===cat) out.push(i); }); return out; }
 function setStatus(t,pct){ var b=document.getElementById('tvBody'); if(!DATA){ b.innerHTML='<div class="tv-empty"><div class="tv-drop"><div class="tv-ic">'+svg('award')+'</div><h2>Top Vendas</h2><div class="tv-status">'+esc(t||'')+'</div>'+(pct!=null?'<div class="tv-prog"><i style="width:'+pct+'%"></i></div>':'')+'</div></div>'; } }
 async function loadPdfLib(){ if(PDFLIB) return PDFLIB; var m=await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.2.67/build/pdf.min.mjs'); m.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.2.67/build/pdf.worker.min.mjs'; PDFLIB=m; return m; }
 function mulM(m,n){ return [m[0]*n[0]+m[2]*n[1], m[1]*n[0]+m[3]*n[1], m[0]*n[2]+m[2]*n[3], m[1]*n[2]+m[3]*n[3], m[0]*n[4]+m[2]*n[5]+m[4], m[1]*n[4]+m[3]*n[5]+m[5]]; }
@@ -1432,7 +1478,7 @@ async function parsePDF(buf){
         else if(fn===OPS.paintImageXObject||fn===OPS.paintImageXObjectRepeat){ var e=ctm[4],f=ctm[5],hh=Math.abs(ctm[3]); var itop=H-(f+hh); if(itop<60) continue; var cc=Math.round((e-27)/118), rr=Math.round((itop-63)/192); if(cc<0||cc>4||rr<0||rr>3) continue; imgcells[cc+'_'+rr]=ar[0]; } }
     }catch(e){}
     for(var xi=0; xi<products.length; xi++){ var pp=products[xi]; var nm=imgcells[pp.col+'_'+pp.row];
-      if(nm){ var ob=await getImg(page,nm); if(ob && ob.bitmap && ob.width){ try{ var cw=104, ch=Math.max(1,Math.round(104*(ob.height/ob.width))); var t2=document.createElement('canvas'); t2.width=cw; t2.height=ch; t2.getContext('2d').drawImage(ob.bitmap,0,0,cw,ch); pp.foto=t2.toDataURL('image/jpeg',0.6); }catch(e){} } }
+      if(nm){ var ob=await getImg(page,nm); if(ob && ob.bitmap && ob.width){ try{ var cw=ob.width, ch=ob.height; if(cw<260){ var k=260/cw; cw=Math.round(cw*k); ch=Math.round(ch*k); } var t2=document.createElement('canvas'); t2.width=cw; t2.height=ch; var cx=t2.getContext('2d'); cx.imageSmoothingQuality='high'; cx.drawImage(ob.bitmap,0,0,cw,ch); pp.foto=t2.toDataURL('image/jpeg',0.86); }catch(e){} } }
       delete pp.col; delete pp.row; }
     products.sort(function(a,b){return a.rank-b.rank;});
     sections.push({title:title, products:products});
@@ -1449,25 +1495,37 @@ function cardHTML(p){ var top3=p.rank<=3; var hi=(hiCode && p.code===hiCode)?' h
   return '<div class="tv-card'+hi+'" data-code="'+esc(p.code)+'"><span class="tv-rk'+(top3?' top3':'')+'">#'+p.rank+'</span>'
     +'<div class="tv-ph">'+(p.foto?'<img src="'+p.foto+'" alt="" loading="lazy">':'<span class="noimg">sem foto</span>')+'</div>'
     +'<div class="tv-brand">'+esc(p.brand)+'</div><div class="tv-desc">'+esc(p.desc||'')+'</div>'
-    +'<div class="tv-foot"><span class="tv-price">'+esc(p.price)+'&euro;</span><span class="tv-code">'+esc(p.code)+'</span></div></div>'; }
+    +'<div class="tv-foot"><span class="tv-price">'+esc(p.price)+'&euro;</span><span class="tv-code">'+esc(p.code)+'</span></div>'
+    +'<div class="tv-bc" title="Toca para ampliar e ler">'+code39svg(p.code,40)+'</div></div>'; }
 function render(){
   var b=document.getElementById('tvBody'); if(!b) return;
   if(!DATA || !DATA.sections || !DATA.sections.length){ b.innerHTML=emptyHTML(); bindUp(b); return; }
   var q=(document.getElementById('tvSearch')?document.getElementById('tvSearch').value:'').trim().toLowerCase();
-  var opts=DATA.sections.map(function(s,i){ return '<option value="'+i+'"'+(i===curSec?' selected':'')+'>'+esc(s.title)+' ('+s.products.length+')</option>'; }).join('');
-  var head='<div class="tv-top"><span class="tv-week">'+esc(DATA.week||'Top Vendas')+'</span><span class="tv-when">Atualizado a '+fmtWhen(DATA.up)+' &middot; '+DATA.sections.length+' seccoes</span><button class="tv-btn ghost tv-upbtn"><span data-ic="upload"></span> Carregar novo PDF</button></div>'
+  var cats=[]; DATA.sections.forEach(function(s){ var c=catOf(s.title); if(cats.indexOf(c)<0) cats.push(c); });
+  var chips='<button class="tv-chip'+(curCat===''?' on':'')+'" data-cat="">Todas</button>'+cats.map(function(c){ return '<button class="tv-chip'+(curCat===c?' on':'')+'" data-cat="'+esc(c)+'">'+esc(c)+'</button>'; }).join('');
+  var secIdxs=sectionsOfCat(curCat); if(secIdxs.indexOf(curSec)<0) curSec=secIdxs.length?secIdxs[0]:0;
+  var opts=secIdxs.map(function(i){ return '<option value="'+i+'"'+(i===curSec?' selected':'')+'>'+esc(DATA.sections[i].title)+'</option>'; }).join('');
+  var head='<div class="tv-top"><span class="tv-week">'+esc(DATA.week||'Top Vendas')+'</span><span class="tv-when">Atualizado a '+fmtWhen(DATA.up)+' &middot; '+DATA.sections.length+' seccoes</span></div>'
+    +'<div class="tv-chips">'+chips+'</div>'
     +'<div class="tv-tools"><select class="tv-sel" id="tvSel">'+opts+'</select><input class="tv-search" id="tvSearch" placeholder="Procurar por codigo ou nome..." value="'+esc(q)+'"><button type="button" class="tv-scan" id="tvScanBtn"><span data-ic="camera"></span> Ler codigo</button></div>';
   var prods;
   if(q){ prods=[]; DATA.sections.forEach(function(s){ s.products.forEach(function(p){ if(String(p.code).toLowerCase().indexOf(q)>=0 || String(p.desc).toLowerCase().indexOf(q)>=0 || String(p.brand).toLowerCase().indexOf(q)>=0) prods.push(p); }); }); }
   else { prods=(DATA.sections[curSec]||{products:[]}).products; }
   var grid=prods.length?('<div class="tv-grid">'+prods.map(cardHTML).join('')+'</div>'):'<div class="tv-status">Nada encontrado.</div>';
-  b.innerHTML=head+grid; mountIcons(b);
-  bindUp(b);
+  b.innerHTML=head+grid; mountIcons(b); bindUp(b);
+  b.querySelectorAll('.tv-chip').forEach(function(x){ x.onclick=function(){ curCat=x.getAttribute('data-cat'); hiCode=''; var ss=sectionsOfCat(curCat); curSec=ss.length?ss[0]:0; render(); }; });
   var sel=document.getElementById('tvSel'); if(sel) sel.onchange=function(){ curSec=+sel.value; hiCode=''; render(); };
   var se=document.getElementById('tvSearch'); if(se){ se.oninput=function(){ hiCode=''; clearTimeout(se._t); se._t=setTimeout(render,220); }; }
   var sb=document.getElementById('tvScanBtn'); if(sb) sb.onclick=abrirScan;
+  b.querySelectorAll('.tv-card').forEach(function(cd){ cd.onclick=function(){ abrirBarcode(cd.getAttribute('data-code')); }; });
   if(hiCode){ var el=b.querySelector('.tv-card.hi'); if(el) el.scrollIntoView({block:'center'}); }
 }
+function abrirBarcode(code){ if(!code||!DATA) return; var found=null; DATA.sections.forEach(function(s){ s.products.forEach(function(p){ if(p.code===code) found=p; }); }); if(!found) return;
+  document.getElementById('tvBarNm').textContent=found.brand+' - '+(found.desc||'');
+  document.getElementById('tvBarBc').innerHTML=code39svg(found.code,90);
+  document.getElementById('tvBarCd').textContent='* '+found.code+' *';
+  document.getElementById('tvBar').classList.add('open'); }
+function fecharBarcode(){ var m=document.getElementById('tvBar'); if(m) m.classList.remove('open'); }
 function bindUp(root){ (root||document).querySelectorAll('.tv-upbtn').forEach(function(x){ x.onclick=function(){ document.getElementById('tvFile').click(); }; }); }
 /* ---- ler codigo de barras (camera) ---- */
 var scanStream=null, scanDet=null, scanRAF=null;
@@ -1497,6 +1555,9 @@ document.getElementById('tvFile').addEventListener('change', function(e){ var f=
 });
 var _up=document.getElementById('tvUp'); if(_up) _up.onclick=function(){ document.getElementById('tvFile').click(); };
 var _sx=document.getElementById('tvScanX'); if(_sx) _sx.onclick=fecharScan;
+var _bx=document.getElementById('tvBarX'); if(_bx) _bx.onclick=fecharBarcode;
+var _bov=document.getElementById('tvBar'); if(_bov) _bov.addEventListener('click', function(e){ if(e.target===_bov) fecharBarcode(); });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ fecharBarcode(); } });
 carregarLocal(); render();
 
 </script>
