@@ -295,8 +295,12 @@
   .sign-grid{display:flex;gap:12px;flex-wrap:wrap;}
   .sign-col{flex:1 1 240px;min-width:0;}
   .sign-col label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px;}
-  .sign-pad{position:relative;border:1.5px dashed var(--line);border-radius:12px;background:#fff;height:150px;touch-action:none;overflow:hidden;}
-  .sign-pad canvas{display:block;width:100%;height:100%;}
+  /* por defeito o pad deixa passar o scroll; so bloqueia depois de tocar em "Assinar" */
+  .sign-pad{position:relative;border:1.5px dashed var(--line);border-radius:12px;background:#fff;height:150px;touch-action:pan-y;overflow:hidden;}
+  .sign-pad.signing{touch-action:none;border-style:solid;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset;}
+  .sign-pad canvas{display:block;width:100%;height:100%;touch-action:inherit;}
+  .sign-on{background:var(--accent);color:#fff;border:none;border-radius:9px;padding:6px 11px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;}
+  .sign-on.on{background:var(--pos);}
   .sign-pad .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#c3bbb0;font-size:13px;font-weight:600;pointer-events:none;}
   .sign-pad.has .ph{display:none;}
   .sign-bar{display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
@@ -416,17 +420,17 @@
     <div class="part-label">4 &#xB7; Assinaturas digitais</div>
     <div class="card">
       <div class="sec-t"><i data-lu="pen-line"></i> Assinar no ecr&#xE3;</div>
-      <p class="intro" style="margin:0 0 12px;">Cada pessoa assina com o dedo ou o rato no respetivo quadro. As assinaturas ficam guardadas e aparecem na impress&#xE3;o.</p>
+      <p class="intro" style="margin:0 0 12px;">Toca em <b>Assinar</b> e assina com o dedo ou o rato no respetivo quadro. As assinaturas ficam guardadas e aparecem na impress&#xE3;o.</p>
       <div class="sign-grid">
         <div class="sign-col">
           <label>Assinatura do colaborador</label>
-          <div class="sign-pad" id="padCol"><canvas></canvas><div class="ph">Assina aqui</div></div>
-          <div class="sign-bar"><button class="sign-clear" type="button" data-clear="col">Limpar</button><span class="sign-state" id="stCol">Por assinar</span></div>
+          <div class="sign-pad" id="padCol"><canvas></canvas><div class="ph">Toca em "Assinar"</div></div>
+          <div class="sign-bar"><button class="sign-on" type="button" data-on="col"><i data-lu="pen-line" data-sz="13"></i> Assinar</button><button class="sign-clear" type="button" data-clear="col">Limpar</button><span class="sign-state" id="stCol">Por assinar</span></div>
         </div>
         <div class="sign-col">
           <label>Assinatura do supervisor</label>
-          <div class="sign-pad" id="padSup"><canvas></canvas><div class="ph">Assina aqui</div></div>
-          <div class="sign-bar"><button class="sign-clear" type="button" data-clear="sup">Limpar</button><span class="sign-state" id="stSup">Por assinar</span></div>
+          <div class="sign-pad" id="padSup"><canvas></canvas><div class="ph">Toca em "Assinar"</div></div>
+          <div class="sign-bar"><button class="sign-on" type="button" data-on="sup"><i data-lu="pen-line" data-sz="13"></i> Assinar</button><button class="sign-clear" type="button" data-clear="sup">Limpar</button><span class="sign-state" id="stSup">Por assinar</span></div>
         </div>
       </div>
       <button class="btn save" id="btnSaveSign" type="button" style="width:100%;margin-top:14px;"><i data-lu="save"></i> Guardar assinaturas</button>
@@ -952,7 +956,7 @@ var PADS={};   // { col:{cv,ctx,empty}, sup:{...} }
 function initPad(key, padId){
   var pad=document.getElementById(padId); var cv=pad.querySelector('canvas');
   var ctx=cv.getContext('2d');
-  var obj={pad:pad, cv:cv, ctx:ctx, empty:true, drawing:false};
+  var obj={pad:pad, cv:cv, ctx:ctx, empty:true, drawing:false, enabled:false};
   function resize(){
     // manter o tra\u00E7o atual ao redimensionar
     var prev=obj.empty?null:cv.toDataURL('image/png');
@@ -964,12 +968,23 @@ function initPad(key, padId){
   }
   obj.resize=resize; resize();
   function pos(e){ var r=cv.getBoundingClientRect(); var t=e.touches?e.touches[0]:e; return {x:t.clientX-r.left, y:t.clientY-r.top}; }
-  function start(e){ e.preventDefault(); obj.drawing=true; var p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); }
-  function move(e){ if(!obj.drawing)return; e.preventDefault(); var p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); if(obj.empty){ obj.empty=false; pad.classList.add('has'); setSignState(key,true); } }
+  /* so assina depois de tocar em "Assinar" \u2014 assim o scroll por cima do quadro nao desenha */
+  function start(e){ if(!obj.enabled) return; e.preventDefault(); obj.drawing=true; var p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); }
+  function move(e){ if(!obj.enabled || !obj.drawing)return; e.preventDefault(); var p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); if(obj.empty){ obj.empty=false; pad.classList.add('has'); setSignState(key,true); } }
   function end(){ if(obj.drawing){ obj.drawing=false; data['sig'+(key==='col'?'Col':'Sup')]=cv.toDataURL('image/png'); } }
   cv.addEventListener('mousedown',start); cv.addEventListener('mousemove',move); window.addEventListener('mouseup',end);
   cv.addEventListener('touchstart',start,{passive:false}); cv.addEventListener('touchmove',move,{passive:false}); cv.addEventListener('touchend',end);
   PADS[key]=obj; return obj;
+}
+/* liga/desliga o modo de assinatura (igual a contagem de dinheiro) */
+function setPadEnabled(key,on){
+  var o=PADS[key]; if(!o) return;
+  o.enabled=on; o.drawing=false;
+  o.pad.classList.toggle('signing',on);
+  var b=document.querySelector('.sign-on[data-on="'+key+'"]');
+  if(b){ b.innerHTML=on?'\u2713 Terminar':'<i data-lu="pen-line" data-sz="13"></i> Assinar'; b.classList.toggle('on',on); if(window.lucideRepl) window.lucideRepl(); }
+  var ph=o.pad.querySelector('.ph');
+  if(ph) ph.textContent=on?'Assina aqui':'Toca em "Assinar"';
 }
 function setSignState(key,ok){
   var el=document.getElementById(key==='col'?'stCol':'stSup');
@@ -995,9 +1010,15 @@ function pintaAssinaturas(){
     PADS.col.resize(); PADS.sup.resize();
     loadPadImage('col',data.sigCol||'');
     loadPadImage('sup',data.sigSup||'');
+    /* ao trocar de colaborador volta ao estado bloqueado (scroll livre) */
+    setPadEnabled('col',false); setPadEnabled('sup',false);
   });
 }
 document.querySelectorAll('.sign-clear').forEach(function(b){ b.addEventListener('click',function(){ clearPad(this.getAttribute('data-clear')); }); });
+document.querySelectorAll('.sign-on').forEach(function(b){ b.addEventListener('click',function(){
+  var k=this.getAttribute('data-on'); var o=PADS[k]; if(!o) return;
+  setPadEnabled(k,!o.enabled);
+}); });
 window.addEventListener('resize',function(){ if(PADS.col)PADS.col.resize(); if(PADS.sup)PADS.sup.resize(); });
 
 /* guardar tudo (1 registo por colaborador: adiciona novo, apaga antigos) */
