@@ -291,13 +291,20 @@
   .eq-cleg .d1{width:11px;height:8px;border-radius:2px;background:#dfe6fb;display:inline-block;}
   .eq-cleg .d2{width:11px;height:4px;border-radius:2px;background:#e0413e;display:inline-block;margin-left:8px;}
   .eq-cleg .d3{width:13px;height:0;border-top:1.5px dashed #0e7490;display:inline-block;vertical-align:middle;margin-left:8px;}
+  .eq-cleg .d4{width:13px;height:0;border-top:2px dashed #FF8100;display:inline-block;vertical-align:middle;margin-left:8px;}
+  .eq-regbtn{margin-left:10px;display:inline-flex;align-items:center;gap:5px;background:none;border:1px solid var(--line2);border-radius:999px;padding:4px 10px;font-size:10.5px;font-weight:800;color:var(--accent-dark);cursor:pointer;font-family:inherit;}
+  .eq-regbtn .ico{width:11px;height:11px;}
+  @media print{ .eq-regbtn{display:none !important;} }
   .eq-chart{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:14px 14px 10px;margin-bottom:14px;}
   .eq-chart h3{margin:0;font-size:14px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .eq-chart h3 .ico{width:16px;height:16px;color:var(--accent);}
   .eq-chart .sub{font-size:12px;color:var(--muted2);margin:2px 0 8px;}
   .eq-chart svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto;}
   .eq-bar-r{fill:#dfe6fb;} .eq-bar-r.peak{fill:var(--accent);}
+  .eq-bar-r.abaixo{fill:#f7bcbc;} .eq-bar-r.peak.abaixo{fill:#e0413e;}
   .eq-chart .xlbl{font-size:7px;fill:var(--muted2);} .eq-chart .vlbl{font-size:8px;font-weight:800;fill:var(--muted);}
+  .eq-chart .eq-alvo{fill:none;stroke:#FF8100;stroke-width:1.8;stroke-dasharray:4 2.5;stroke-linecap:round;stroke-linejoin:round;}
+  .eq-chart .alvolbl{font-size:7px;font-weight:800;fill:#c2410c;}
   .eq-add{width:100%;border:1.5px dashed #c9b79a;background:#fff;border-radius:14px;padding:12px;font-size:14px;font-weight:800;color:var(--accent-dark);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;}
   .eq-add .ico{width:17px;height:17px;}
   .eq-sec{margin-bottom:16px;}
@@ -319,6 +326,31 @@
   .eq-track{position:relative;height:24px;border-radius:8px;overflow:hidden;}
   .eq-shift{position:absolute;top:2px;bottom:2px;border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:4px;padding:0 7px;font-size:9.5px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.18);}
   .eq-shift .t2{opacity:.9;}
+  /* Editor das Regras de staff */
+  .reg-modal{position:fixed;inset:0;z-index:200;background:rgba(20,24,30,.5);display:none;align-items:center;justify-content:center;padding:14px;}
+  .reg-modal.open{display:flex;}
+  .reg-box{background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:100%;max-width:900px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;}
+  .reg-h{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);font-size:16px;}
+  .reg-x{margin-left:auto;background:none;border:none;font-size:24px;line-height:1;color:var(--muted);cursor:pointer;padding:0 4px;}
+  .reg-sub{padding:11px 16px;font-size:12.5px;color:var(--muted);line-height:1.55;border-bottom:1px solid var(--line);}
+  .reg-sub b{color:var(--ink);}
+  .reg-tools{padding:9px 16px;font-size:11.5px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);}
+  .reg-fill{background:var(--accent-soft);border:1px solid #f3c48f;border-radius:999px;padding:4px 10px;font-size:11.5px;font-weight:800;color:var(--accent-dark);cursor:pointer;font-family:inherit;}
+  .reg-scroll{overflow:auto;flex:1;padding:4px 8px;}
+  .reg-t{border-collapse:separate;border-spacing:3px;}
+  .reg-t th{font-size:10.5px;font-weight:800;color:var(--muted2);padding:3px 2px;white-space:nowrap;position:sticky;top:0;background:#fff;z-index:2;}
+  .reg-t th.rg-corner{left:0;z-index:3;text-align:left;padding-left:6px;}
+  .reg-t td.rg-sec{position:sticky;left:0;background:#fff;z-index:1;font-size:11.5px;font-weight:800;color:var(--ink);white-space:nowrap;padding-right:8px;}
+  .rg-dot{display:inline-block;width:8px;height:8px;border-radius:3px;margin-right:5px;vertical-align:middle;}
+  .rg-i{width:34px;display:block;border:1.5px solid var(--line2);border-radius:6px;padding:3px;font-size:11.5px;font-family:inherit;text-align:center;color:var(--ink);background:#fff;-moz-appearance:textfield;}
+  .rg-i::-webkit-outer-spin-button,.rg-i::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+  .rg-i:focus{outline:none;border-color:var(--accent);}
+  .rg-min{margin-bottom:2px;}
+  .rg-id{border-style:dashed;color:var(--accent-dark);}
+  .reg-foot{display:flex;align-items:center;gap:8px;padding:11px 16px;border-top:1px solid var(--line);}
+  .reg-clear,.reg-def{background:none;border:none;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;text-decoration:underline;padding:4px 2px;}
+  .reg-ok{margin-left:auto;background:var(--accent);color:#fff;border:none;border-radius:11px;padding:10px 20px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
+
   /* Insights AI do dia (fim do ecra) */
   .eq-inswrap{margin:20px 2px 6px;}
   .eq-inswrap .ei-t{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:var(--ink);margin-bottom:10px;}
@@ -1812,10 +1844,16 @@ function addPerson(nome,sec,s,e){ var key=fmtISO(selDate); EDITS.byDay=EDITS.byD
 
 /* ---- gr\u00E1fico staff ao longo do dia ---- */
 function staffChart(list){
-  var H0=7,H1=23,W=340,H=138,top=22,bot=18,plot=H-top-bot;
+  /* ate 24 porque a loja fecha as 24h15 \u2014 a ultima coluna e o fecho */
+  var H0=7,H1=24,W=340,H=138,top=22,bot=18,plot=H-top-bot;
   var hours=[]; for(var h=H0;h<=H1;h++) hours.push(h);
   /* pessoas presentes AO MESMO TEMPO (amostra a meio da hora): quem sai \u00E0s :15 e quem entra \u00E0s :15 nao se cruzam */
-  var counts=hours.map(function(h){ var mid=h*60+30,c=0; list.forEach(function(p){ if(p.s<=mid && p.e>mid) c++; }); return c; });
+  /* h=24 e o FECHO (24h15): quem fica ate ao fim. Usar mid=24h30 dava 0,
+     porque os turnos acabam exatamente as 24h15. */
+  var counts=hours.map(function(h){
+    if(h>=24) return list.filter(function(p){ return p.e>=FECHO_MIN; }).length;
+    var mid=h*60+30,c=0; list.forEach(function(p){ if(p.s<=mid && p.e>mid) c++; }); return c;
+  });
   var maxc=Math.max.apply(null,counts.concat([1]));
   var peak=counts.indexOf(maxc);
   var ffVals=hours.map(function(h){ return FF[h]||0; });
@@ -1824,22 +1862,46 @@ function staffChart(list){
   var ffThresh=sortedFF.length>=4?sortedFF[3]:(sortedFF[sortedFF.length-1]||1);
   function isFF(i){ return maxff>0 && ffVals[i]>0 && ffVals[i]>=ffThresh; }
   var n=hours.length, gap=3, bw=(W-gap*(n-1))/n;
+  /* alvo (ideal) que o Dario definiu em Regras de staff, por hora.
+     A escala do grafico tem de acomodar o alvo, mas o "pico de equipa"
+     continua a ser o maximo REAL de pessoas \u2014 por isso sao variaveis diferentes. */
+  var alvos=hours.map(function(h){ return regTotal(h); });
+  var temAlvo=alvos.some(function(a){ return a!=null; });
+  var escala=maxc;
+  if(temAlvo) escala=Math.max(maxc, Math.max.apply(null, alvos.filter(function(a){return a!=null;}).concat([1])));
   var svg='';
-  counts.forEach(function(c,i){ var bh=maxc?(c/maxc)*plot:0; var x=i*(bw+gap); var y=(top+plot)-bh; var ff=isFF(i);
-    svg+='<rect class="eq-bar-r'+(i===peak&&c>0?' peak':'')+'" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(0,bh).toFixed(1)+'" rx="1.5"/>';
+  counts.forEach(function(c,i){ var bh=escala?(c/escala)*plot:0; var x=i*(bw+gap); var y=(top+plot)-bh; var ff=isFF(i);
+    var falha=(alvos[i]!=null && c<alvos[i]);
+    svg+='<rect class="eq-bar-r'+(i===peak&&c>0?' peak':'')+(falha?' abaixo':'')+'" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(0,bh).toFixed(1)+'" rx="1.5"><title>'+hours[i]+'h: '+c+' pessoas'+(alvos[i]!=null?(' \u00B7 ideal '+alvos[i]):'')+'</title></rect>';
     if(ff){ svg+='<rect x="'+x.toFixed(1)+'" y="'+(top-8).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="4" rx="2" fill="#e0413e"/>'; }
     if(c>0) svg+='<text class="vlbl" x="'+(x+bw/2).toFixed(1)+'" y="'+(y-3).toFixed(1)+'" text-anchor="middle">'+c+'</text>';
-    if(i%2===0 || ff) svg+='<text class="xlbl'+(ff?' ffl':'')+'" x="'+(x+bw/2).toFixed(1)+'" y="'+(H-5)+'" text-anchor="middle">'+hours[i]+'h</text>';
+    if(i%2===0 || ff || hours[i]>=24) svg+='<text class="xlbl'+(ff?' ffl':'')+(hours[i]>=24?' fech':'')+'" x="'+(x+bw/2).toFixed(1)+'" y="'+(H-5)+'" text-anchor="middle">'+(hours[i]>=24?'Fecho':hours[i]+'h')+'</text>';
   });
   /* marca de ABERTURA de loja \u00E0s 10h (linha tracejada) */
   var i10=hours.indexOf(10);
   if(i10>=0){ var x10=Math.max(0, i10*(bw+gap)-gap/2);
     svg+='<line x1="'+x10.toFixed(1)+'" y1="'+(top-3)+'" x2="'+x10.toFixed(1)+'" y2="'+(top+plot)+'" stroke="#0e7490" stroke-width="1.3" stroke-dasharray="3 2.5"/>';
   }
+  /* LINHA DO IDEAL \u2014 so nas horas onde ha alvo definido, em degraus (o alvo
+     e um patamar para aquela hora, nao uma tendencia entre horas) */
+  if(temAlvo){
+    var Ya=function(v){ return (top+plot)-(escala?(v/escala)*plot:0); };
+    var grupos=[], atual=[];
+    alvos.forEach(function(a,i){ if(a!=null) atual.push(i); else { if(atual.length) grupos.push(atual); atual=[]; } });
+    if(atual.length) grupos.push(atual);
+    grupos.forEach(function(g){
+      var pts=[];
+      g.forEach(function(i){ var x=i*(bw+gap), y=Ya(alvos[i]); pts.push([x,y],[x+bw,y]); });
+      svg+='<polyline class="eq-alvo" points="'+pts.map(function(p){ return p[0].toFixed(1)+','+p[1].toFixed(1); }).join(' ')+'"/>';
+      g.forEach(function(i){ svg+='<text class="alvolbl" x="'+(i*(bw+gap)+bw/2).toFixed(1)+'" y="'+(Ya(alvos[i])-3).toFixed(1)+'" text-anchor="middle">'+alvos[i]+'</text>'; });
+    });
+  }
   var peakTxt=(maxc>0)?('Pico de equipa \u00E0s '+hours[peak]+'h ('+maxc+' pessoas)'):'';
   var ffHours=hours.filter(function(h,i){return isFF(i);});
   var ffTxt=ffHours.length?(' &middot; <b style="color:#e0413e">Maior fluxo de vendas: '+ffHours.map(function(h){return h+'h';}).join(', ')+'</b>'):'';
-  var legend='<div class="eq-cleg"><span class="d1"></span>equipa por hora'+(maxff>0?' <span class="d2"></span>maior fluxo de vendas':'')+' <span class="d3"></span>abertura (10h)</div>';
+  var legend='<div class="eq-cleg"><span class="d1"></span>equipa por hora'+(maxff>0?' <span class="d2"></span>maior fluxo de vendas':'')+' <span class="d3"></span>abertura (10h)'
+    +(temAlvo?' <span class="d4"></span>ideal que definiste':'')
+    +'<button type="button" class="eq-regbtn" id="fcEdit">'+svg2('square-pen')+' Regras de staff</button></div>';
   return '<div class="eq-chart"><h3>'+svg2('bar-chart-3')+' Staff ao longo do dia</h3><div class="sub">'+peakTxt+ffTxt+'</div><svg viewBox="0 0 '+W+' '+H+'">'+svg+'</svg>'+legend+'</div>';
 }
 function svg2(n){ return svg(n); }
@@ -1909,6 +1971,7 @@ function render(){
   body.innerHTML=html; wire(body, groups, order);
 }
 
+
 /* ================================================================
    Insights AI do dia \u2014 cruza a equipa escalada NESTE dia com o peso
    de vendas por hora (_vendas) e o mapa de competencias (_comp).
@@ -1925,11 +1988,52 @@ var EQTOP=['CAIXA','ENTRADA PROCEDIMENTOS','SNEAKERS BALC\u00C3O','ARMAZ\u00C9M 
 var FECHO_MIN=24*60+15;                 /* 24h15 */
 var MANHA_H=[7,8,9,10,11];              /* janela do camiao/reposicao */
 var TARDE_H=[17,18,19,20,21];           /* final da tarde */
-var FECHO_REGRAS=[
-  {sec:'T\u00EAxtil',  min:3, ideal:4},
-  {sec:'Cal\u00E7ado', min:3, ideal:4},
-  {sec:'Caixa',   min:2, ideal:2}
-];
+
+/* ================================================================
+   REGRAS DE STAFF \u2014 alvo por seccao e por hora, editavel pelo Dario.
+   Formato: REGRAS.alvo[seccao][hora] = {min:n, ideal:n}
+   CELULA VAZIA = SEM ALVO (nao alerta). E o que torna isto usavel:
+   podes preencher so o fecho e a manha e deixar o resto em silencio.
+   Guardado na nuvem (_regras) para valer em todos os dispositivos.
+   Os valores de arranque sao as regras que o Dario deu para o fecho.
+   ================================================================ */
+var REG_SECS=['T\u00EAxtil','Cal\u00E7ado','Caixa','Log\u00EDstica'];
+var REG_H0=7, REG_H1=24;                /* a loja fecha as 24h15 */
+var REGRAS={alvo:{}};
+function regDefault(){
+  var a={}; REG_SECS.forEach(function(s){ a[s]={}; });
+  /* regras de fecho dadas pelo Dario (hora 24 = o fecho das 24h15) */
+  a['T\u00EAxtil'][24]={min:3, ideal:4};
+  a['Cal\u00E7ado'][24]={min:3, ideal:4};
+  a['Caixa'][24]={min:2, ideal:2};
+  return {alvo:a};
+}
+function regGet(sec,h){ var r=REGRAS.alvo&&REGRAS.alvo[sec]&&REGRAS.alvo[sec][h]; return (r && (r.min>0||r.ideal>0))?r:null; }
+function regHoras(){ var out=[]; for(var h=REG_H0;h<=REG_H1;h++) out.push(h); return out; }
+/* alvo total (soma dos ideais definidos) a uma hora \u2014 para a linha do grafico */
+function regTotal(h){
+  var t=0, tem=false;
+  REG_SECS.forEach(function(s){ var r=regGet(s,h); if(r && r.ideal>0){ t+=r.ideal; tem=true; } });
+  return tem?t:null;
+}
+function regLoad(){
+  try{ var s=localStorage.getItem('sz_regras'); if(s){ var o=JSON.parse(s); if(o&&o.alvo){ REGRAS=o; return; } } }catch(e){}
+  REGRAS=regDefault();
+}
+function regSave(){
+  try{ localStorage.setItem('sz_regras', JSON.stringify(REGRAS)); }catch(e){}
+  if(!BACKEND) return;
+  fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action:'nota_add', seccao:'_regras', autor:(sessionStorage.getItem('sz_user')||'\u2014'), texto:JSON.stringify(REGRAS)})})
+    .catch(function(){});
+}
+/* quantas pessoas de uma seccao estao em loja a uma hora
+   (hora 24 = o fecho: conta quem fica ate as 24h15) */
+function pessoasSecA(list, sec, h){
+  if(h>=24) return list.filter(function(p){ return (p.sec||'Outros')===sec && p.e>=FECHO_MIN; }).length;
+  var mid=h*60+30;
+  return list.filter(function(p){ return (p.sec||'Outros')===sec && p.s<=mid && p.e>mid; }).length;
+}
 function eqNorm(s){ return String(s||'').toUpperCase().replace(/\s+/g,' ').trim(); }
 /* quantas pessoas da lista estao em loja a uma dada hora */
 function pessoasA(list, h){ var mid=h*60+30, n=0; list.forEach(function(p){ if(p.s<=mid && p.e>mid) n++; }); return n; }
@@ -2052,30 +2156,36 @@ function insightsDia(dt){
       tx:'Hoje n\u00E3o h\u00E1 cami\u00E3o, por isso a manh\u00E3 n\u00E3o tem carga de reposi\u00E7\u00E3o. Tens em m\u00E9dia '+fmtD1(manhaHoje)+' pessoas entre as 7h e as 11h \u2014 sem log\u00EDstica, estas horas devem seguir as vendas como as restantes.'});
   }
 
-  /* 5. fecho as 24h15 \u2014 regras minimas por seccao */
-  var fecha=list.filter(function(p){ return p.e>=FECHO_MIN; });
-  var porSec={}; fecha.forEach(function(p){ var s=p.sec||'Outros'; porSec[s]=(porSec[s]||0)+1; });
-  var falhas=[], oks=[];
-  FECHO_REGRAS.forEach(function(rg){
-    var n=porSec[rg.sec]||0;
-    if(n<rg.min) falhas.push({rg:rg, n:n, grave:true});
-    else if(n<rg.ideal) falhas.push({rg:rg, n:n, grave:false});
-    else oks.push(rg.sec+' '+n);
+  /* 5. cumprimento das REGRAS editaveis (alvo por seccao e por hora).
+     Celula vazia = sem alvo, por isso so avalio o que o Dario definiu. */
+  var abaixoMin=[], abaixoIdeal=[];
+  regHoras().forEach(function(h){
+    REG_SECS.forEach(function(sec){
+      var rg=regGet(sec,h); if(!rg) return;
+      var n=pessoasSecA(list, sec, h);
+      if(rg.min>0 && n<rg.min) abaixoMin.push({sec:sec, h:h, n:n, alvo:rg.min, tipo:'min'});
+      else if(rg.ideal>0 && n<rg.ideal) abaixoIdeal.push({sec:sec, h:h, n:n, alvo:rg.ideal, tipo:'ideal'});
+    });
   });
-  var detalhe=FECHO_REGRAS.map(function(rg){ return rg.sec+' '+(porSec[rg.sec]||0)+'/'+rg.min; }).join(' \u00B7 ');
-  if(falhas.length){
-    var graves=falhas.filter(function(f){return f.grave;});
-    var tx='Ao fecho (24h15) ficam <b>'+fecha.length+' pessoas</b> no total. ';
-    tx+=graves.length
-      ? '<b>Abaixo do m\u00EDnimo: '+graves.map(function(f){ return f.rg.sec+' com '+f.n+' (m\u00EDnimo '+f.rg.min+')'; }).join(', ')+'.</b> '
-      : '';
-    var soIdeal=falhas.filter(function(f){return !f.grave;});
-    if(soIdeal.length) tx+='No m\u00EDnimo mas abaixo do ideal: '+soIdeal.map(function(f){ return f.rg.sec+' com '+f.n+' (ideal '+f.rg.ideal+')'; }).join(', ')+'. ';
-    tx+='Regra da loja: T\u00EAxtil 3 (ideal 4) \u00B7 Cal\u00E7ado 3 (ideal 4) \u00B7 Caixa 2.';
-    ins.push({t:graves.length?'r':'i', h:'Fecho \u00E0s 24h15 \u2014 '+(graves.length?'abaixo do m\u00EDnimo':'no m\u00EDnimo, mas d\u00E1 para melhorar'), tx:tx});
-  } else {
-    ins.push({t:'g', h:'Fecho \u00E0s 24h15 \u2014 dentro das regras',
-      tx:'Ficam <b>'+fecha.length+' pessoas</b> ao fecho, e todas as sec\u00E7\u00F5es cumprem: '+esc(detalhe.replace(/\/\d+/g,''))+'. T\u00EAxtil e Cal\u00E7ado no ideal (4) e Caixa com 2.'});
+  /* "ao fecho" e nao "as fecho" \u2014 a preposicao muda conforme a hora */
+  function quando(h){ return h>=24 ? 'ao fecho (24h15)' : ('\u00E0s '+h+'h'); }
+  function lista(a){ return a.map(function(x){ return x.sec+' '+quando(x.h)+': '+x.n+' (alvo '+x.alvo+')'; }).join(' \u00B7 '); }
+  if(abaixoMin.length){
+    ins.push({t:'r', h:'Abaixo do m\u00EDnimo em '+abaixoMin.length+(abaixoMin.length===1?' momento':' momentos'),
+      tx:'<b>'+esc(lista(abaixoMin.slice(0,4)))+'</b>'+(abaixoMin.length>4?' e mais '+(abaixoMin.length-4)+'.':'.')
+        +' S\u00E3o as regras que definiste em <b>Regras de staff</b> \u2014 ajusta o hor\u00E1rio ou rev\u00EA a regra se j\u00E1 n\u00E3o fizer sentido para esta \u00E9poca.'});
+  }
+  if(abaixoIdeal.length){
+    ins.push({t:'i', h:'No m\u00EDnimo, mas abaixo do ideal',
+      tx:esc(lista(abaixoIdeal.slice(0,4)))+(abaixoIdeal.length>4?' e mais '+(abaixoIdeal.length-4)+'.':'.')
+        +' Cumpre o m\u00EDnimo, mas fica aqu\u00E9m do que definiste como ideal.'});
+  }
+  if(!abaixoMin.length && !abaixoIdeal.length){
+    var nDef=0; regHoras().forEach(function(h){ REG_SECS.forEach(function(s){ if(regGet(s,h)) nDef++; }); });
+    var fecha=list.filter(function(p){ return p.e>=FECHO_MIN; });
+    ins.push({t:'g', h:'Regras de staff cumpridas',
+      tx:nDef?('Todos os '+nDef+' alvos que definiste est\u00E3o cumpridos neste dia. Ao fecho (24h15) ficam <b>'+fecha.length+' pessoas</b>.')
+             :('Ainda n\u00E3o definiste alvos de staff. Abre <b>Regras de staff</b> para dizeres quantas pessoas queres por sec\u00E7\u00E3o em cada hora \u2014 depois aviso-te sempre que o hor\u00E1rio ficar aqu\u00E9m.')});
   }
 
   var cards=ins.map(function(x){
@@ -2085,11 +2195,85 @@ function insightsDia(dt){
   return '<div class="eq-inswrap"><div class="ei-t">'+svg('lightbulb')+' Insights AI do dia</div>'+cards+nota+'</div>';
 }
 function fmtD1(v){ var n=Math.round((+v||0)*10)/10; return String(n).replace('.',','); }
+
+/* ================================================================
+   Editor das Regras de staff \u2014 alvo (minimo/ideal) por seccao e por hora.
+   Deixar em branco = sem alvo (nao alerta). Assim podes preencher so o
+   fecho e a manha, e mudar os numeros quando chegarem os saldos.
+   ================================================================ */
+function abrirRegras(){
+  var m=document.getElementById('regModal');
+  if(!m){
+    m=document.createElement('div'); m.id='regModal'; m.className='reg-modal';
+    document.body.appendChild(m);
+  }
+  var hs=regHoras();
+  var head='<th class="rg-corner">Sec\u00E7\u00E3o</th>'+hs.map(function(h){ return '<th>'+(h>=24?'Fecho':h+'h')+'</th>'; }).join('');
+  var rows=REG_SECS.map(function(sec){
+    return '<tr><td class="rg-sec"><span class="rg-dot" style="background:'+secColor(sec)+'"></span>'+esc(sec)+'</td>'
+      +hs.map(function(h){
+        var r=regGet(sec,h);
+        return '<td><input class="rg-i rg-min" data-s="'+esc(sec)+'" data-h="'+h+'" type="number" min="0" max="20" placeholder="\u2014" value="'+(r&&r.min>0?r.min:'')+'">'
+          +'<input class="rg-i rg-id" data-s="'+esc(sec)+'" data-h="'+h+'" type="number" min="0" max="20" placeholder="\u2014" value="'+(r&&r.ideal>0?r.ideal:'')+'"></td>';
+      }).join('')+'</tr>';
+  }).join('');
+  m.innerHTML='<div class="reg-box">'
+    +'<div class="reg-h"><b>Regras de staff</b><button class="reg-x" id="regX">&times;</button></div>'
+    +'<div class="reg-sub">Quantas pessoas queres por sec\u00E7\u00E3o em cada hora. Em cada c\u00E9lula, o <b>m\u00EDnimo</b> (em cima) e o <b>ideal</b> (em baixo). '
+      +'<b>Deixa em branco onde n\u00E3o quiseres alvo</b> \u2014 s\u00F3 te aviso onde definires. Muda os n\u00FAmeros quando a \u00E9poca mudar (saldos, Natal).</div>'
+    +'<div class="reg-tools">Preencher a linha toda: '
+      +REG_SECS.map(function(s){ return '<button class="reg-fill" data-s="'+esc(s)+'">'+esc(s)+'</button>'; }).join('')
+      +'</div>'
+    +'<div class="reg-scroll"><table class="reg-t"><thead><tr>'+head+'</tr></thead><tbody>'+rows+'</tbody></table></div>'
+    +'<div class="reg-foot"><button class="reg-clear" id="regClear">Limpar tudo</button>'
+      +'<button class="reg-def" id="regDef">Repor regras de fecho</button>'
+      +'<button class="reg-ok" id="regOk">Guardar</button></div>'
+    +'</div>';
+  m.classList.add('open'); mountIcons(m);
+  m.onclick=function(e){ if(e.target===m) fecharRegras(); };
+  document.getElementById('regX').onclick=fecharRegras;
+  document.getElementById('regOk').onclick=function(){
+    var a={}; REG_SECS.forEach(function(s){ a[s]={}; });
+    m.querySelectorAll('.rg-min').forEach(function(inp){
+      var s=inp.getAttribute('data-s'), h=+inp.getAttribute('data-h');
+      var mn=parseInt(inp.value,10);
+      var idInp=m.querySelector('.rg-id[data-s="'+CSS.escape(s)+'"][data-h="'+h+'"]');
+      var id=parseInt(idInp?idInp.value:'',10);
+      if(!(mn>0) && !(id>0)) return;                 /* vazio = sem alvo */
+      if(!(mn>0)) mn=id;                             /* so ideal -> minimo = ideal */
+      if(!(id>0)) id=mn;                             /* so minimo -> ideal = minimo */
+      if(id<mn) id=mn;                               /* ideal nunca abaixo do minimo */
+      a[s][h]={min:mn, ideal:id};
+    });
+    REGRAS={alvo:a}; regSave(); fecharRegras(); render();
+    if(window.toast) toast('Regras guardadas \u2713');
+  };
+  document.getElementById('regClear').onclick=function(){
+    if(!confirm('Limpar todos os alvos? Deixo de te avisar sobre falta de staff.')) return;
+    m.querySelectorAll('.rg-i').forEach(function(i){ i.value=''; });
+  };
+  document.getElementById('regDef').onclick=function(){
+    if(!confirm('Repor as regras de fecho (T\u00EAxtil 3/4, Cal\u00E7ado 3/4, Caixa 2) e limpar o resto?')) return;
+    REGRAS=regDefault(); regSave(); fecharRegras(); abrirRegras();
+  };
+  m.querySelectorAll('.reg-fill').forEach(function(b){
+    b.onclick=function(){
+      var s=b.getAttribute('data-s');
+      var v=prompt('Preencher a linha de '+s+' com que valores?\n\nEscreve "m\u00EDnimo/ideal" (ex.: 3/4), ou deixa vazio para limpar a linha.');
+      if(v===null) return;
+      var mm=/^\s*(\d+)\s*(?:\/\s*(\d+)\s*)?$/.exec(v||'');
+      m.querySelectorAll('.rg-min[data-s="'+CSS.escape(s)+'"]').forEach(function(i){ i.value=mm?mm[1]:''; });
+      m.querySelectorAll('.rg-id[data-s="'+CSS.escape(s)+'"]').forEach(function(i){ i.value=mm?(mm[2]||mm[1]):''; });
+    };
+  });
+}
+function fecharRegras(){ var m=document.getElementById('regModal'); if(m){ m.classList.remove('open'); m.innerHTML=''; } }
 function wire(body, groups, order){
   mountIcons(body);
   body.querySelectorAll('.eq-chip').forEach(function(el){ el.onclick=function(){ var s=el.getAttribute('data-sec'); EQSOLO=(EQSOLO===s)?'':s; try{ sessionStorage.setItem('sz_eqsolo', EQSOLO); }catch(e){} render(); }; });
   var ec=document.getElementById('eqClear'); if(ec) ec.onclick=function(){ EQSOLO=''; try{ sessionStorage.removeItem('sz_eqsolo'); }catch(e){} render(); };
   var ab=document.getElementById('eqAddBtn'); if(ab) ab.onclick=openAdd;
+  var fe=document.getElementById('fcEdit'); if(fe) fe.onclick=abrirRegras;
   var imp=document.getElementById('eqImport2'); if(imp) imp.onclick=function(){ location.href='upload.html'; };
   body.querySelectorAll('.eq-av[data-nm]').forEach(function(el){ el.onclick=function(){ pickPhoto(el.getAttribute('data-nm')); }; });
   body.querySelectorAll('.eq-av img').forEach(function(im){ im.onerror=function(){ var av=im.parentNode; if(av){ im.style.display='none'; if(!av.querySelector('.eq-ini')){ var sp=document.createElement('span'); sp.className='eq-ini'; sp.textContent=av.getAttribute('data-ini')||''; av.insertBefore(sp, av.firstChild); } } }; });
@@ -2154,6 +2338,7 @@ function loadEscala(){
   try{ var lff=localStorage.getItem('sz_ff'); if(lff){ var ff=JSON.parse(lff); if(ff) FF=ff; } }catch(e){}
   try{ var leu=localStorage.getItem('sz_eur'); if(leu){ var eu=JSON.parse(leu); if(eu) EUR=eu; } }catch(e){}
   try{ VSEM=localStorage.getItem('sz_vsem')||''; }catch(e){}
+  regLoad();
   try{ EQSOLO=sessionStorage.getItem('sz_eqsolo')||''; }catch(e){}
   /* se ja houver copia local, mostra-a de imediato \u2014 nao ha nada a esperar */
   if(ESC) ESCLOAD=false;
@@ -2166,6 +2351,7 @@ function loadEscala(){
     var fo=latest('_fotos'); if(fo&&typeof fo==='object'){ FOTOS=fo; }
     loadFF(latest('_vendas'));
     var cp=latest('_comp'); if(cp&&typeof cp==='object') COMP=cp;
+    var rg=latest('_regras'); if(rg&&rg.alvo){ REGRAS=rg; try{ localStorage.setItem('sz_regras', JSON.stringify(rg)); }catch(e){} }
     ESCLOAD=false; pickToday(); render();
   }).catch(function(){ ESCLOAD=false; render(); });
 }
