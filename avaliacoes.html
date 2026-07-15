@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="SPZ Portal">
-<title>Avalia&#xe7;&#xf5;es Mensais &middot; Sport Zone Vasco da Gama</title>
+<title>Avalia&#xE7;&#xF5;es Mensais &middot; Sport Zone Vasco da Gama</title>
 <script src="config.js"></script>
 <script src="links.js"></script>
 <script src="roster.js"></script>
@@ -250,8 +250,20 @@
   .field{margin-bottom:12px;}
   .field:last-child{margin-bottom:0;}
   .field label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px;}
-  .field input,.field select{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);}
-  .field input:focus,.field select:focus{outline:none;border-color:var(--accent);}
+  .field input,.field select,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent);}
+  .field textarea{resize:vertical;line-height:1.5;min-height:110px;}
+  /* Assinatura digital */
+  .sig-label{font-size:13px;font-weight:700;color:var(--muted);margin:14px 0 6px;}
+  .sig-wrap{position:relative;border:1.5px dashed var(--line);border-radius:12px;height:170px;background:#fff;overflow:hidden;}
+  #sigCanvas{width:100%;height:100%;display:block;touch-action:pan-y;}
+  #sigCanvas.signing{box-shadow:0 0 0 2px var(--accent) inset;border-radius:12px;}
+  .sig-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted2);font-size:15px;pointer-events:none;}
+  .sig-actions{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+  #sigToggle{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer;font-family:inherit;font-size:14px;}
+  #sigToggle.on{background:var(--green);}
+  #sigClear{background:#fff;border:1.5px solid var(--line);color:var(--red);border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;}
+  .stamp{font-size:12px;color:var(--muted);}
 
   .intro{font-size:13px;color:var(--muted);margin:2px 2px 0;}
 
@@ -314,6 +326,10 @@
     #printArea .sign .sig{flex:1;text-align:center;}
     #printArea .sign .sigline{border-top:1px solid #000;margin-bottom:5px;height:46px;}
     #printArea .sign .siglbl{font-size:11.5px;color:#333;font-weight:700;}
+    #printArea .sign .sigline img{max-width:100%;max-height:44px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    #printArea .fb{margin-top:20px;page-break-inside:avoid;}
+    #printArea .fb h3{font-size:12.5px;margin:0 0 5px;color:#8a4500;text-transform:uppercase;letter-spacing:.04em;}
+    #printArea .fb .fbtxt{border:1px solid #ccc;border-radius:6px;padding:9px 11px;font-size:13px;line-height:1.55;white-space:pre-wrap;min-height:52px;}
     #printArea .foot{margin-top:16px;font-size:10px;color:#999;text-align:center;}
   }
   input[type=date],input[type=time]{-webkit-appearance:none;-moz-appearance:none;appearance:none;min-width:0;max-width:100%;box-sizing:border-box;}/*DATEFIX*/
@@ -344,8 +360,8 @@
 <div class="main">
   <header class="topbar">
     <button class="menu-btn" id="menuBtn"><span data-ic="menu"></span></button>
-    <div class="tb-hi"><h1>Avalia&#xe7;&#xf5;es Mensais</h1><p>Avalia&#xe7;&#xf5;es mensais da equipa.</p></div>
-    <div class="tb-right"><div class="tb-icon" id="btnHistView" title="Ver hist&#xf3;rico"><span data-ic="file-text"></span></div> <div class="tb-icon" id="btnPrintTop" title="Imprimir"><span data-ic="printer"></span></div></div>
+    <div class="tb-hi"><h1>Avalia&#xE7;&#xF5;es Mensais</h1><p>Avalia&#xE7;&#xF5;es mensais da equipa.</p></div>
+    <div class="tb-right"><div class="tb-icon" id="btnHistView" title="Ver hist&#xF3;rico"><span data-ic="file-text"></span></div> <div class="tb-icon" id="btnPrintTop" title="Imprimir"><span data-ic="printer"></span></div></div>
   </header>
   <div class="content">
 
@@ -353,7 +369,7 @@
 
 
 <main>
-  <p class="intro">Avalia&#xe7;&#xe3;o de desempenho do colaborador. Escolhe a pontua&#xe7;&#xe3;o em cada crit&#xe9;rio e a nota geral do supervisor.</p>
+  <p class="intro">Avalia&#xE7;&#xE3;o de desempenho do colaborador. Escolhe a pontua&#xE7;&#xE3;o em cada crit&#xE9;rio e a nota geral do supervisor.</p>
 
   <div class="card">
     <div class="field">
@@ -362,7 +378,7 @@
     </div>
     <div class="field">
       <label for="avaliador">Avaliado por (supervisor)</label>
-      <select id="avaliador" data-staff data-area="sup" data-ph="Seleciona quem avalia (dire&#xe7;&#xe3;o)"></select>
+      <select id="avaliador" data-staff data-area="sup" data-ph="Seleciona quem avalia (dire&#xE7;&#xE3;o)"></select>
     </div>
     <div class="field">
       <label for="data">Data</label>
@@ -373,20 +389,37 @@
   <div id="criterios"></div>
 
   <div class="card total-card">
-    <div class="trow"><span>Pontua&#xe7;&#xe3;o dos crit&#xe9;rios</span><b id="tCrit">0 / 26</b></div>
+    <div class="trow"><span>Pontua&#xE7;&#xE3;o dos crit&#xE9;rios</span><b id="tCrit">0 / 26</b></div>
     <div class="trow"><span>Nota geral do supervisor</span><b id="tGeral">&#x2014; / 10</b></div>
   </div>
 
+  <div class="card">
+    <div class="field">
+      <label for="feedback">Feedback do supervisor</label>
+      <textarea id="feedback" rows="5" placeholder="Pontos fortes, pontos a melhorar e objetivos para o pr&#xF3;ximo m&#xEA;s&#x2026;"></textarea>
+    </div>
+    <div class="sig-label"><i data-lu="pen-line"></i> Assinatura digital do supervisor</div>
+    <div class="sig-wrap">
+      <canvas id="sigCanvas"></canvas>
+      <span class="sig-ph" id="sigPh">Toca em "Assinar" e assina com o dedo</span>
+    </div>
+    <div class="sig-actions">
+      <button id="sigToggle" type="button"><i data-lu="pen-line"></i> Assinar</button>
+      <button id="sigClear" type="button">Limpar</button>
+      <span class="stamp" id="sigStampTxt"></span>
+    </div>
+  </div>
+
   <div class="actions">
-    <button class="btn save" id="btnSave" type="button"><i data-lu="save"></i> Guardar avalia&#xe7;&#xe3;o</button>
-    <button class="btn reset" id="btnReset" type="button"><i data-lu="trash-2"></i> Nova avalia&#xe7;&#xe3;o</button>
+    <button class="btn save" id="btnSave" type="button"><i data-lu="save"></i> Guardar avalia&#xE7;&#xE3;o</button>
+    <button class="btn reset" id="btnReset" type="button"><i data-lu="trash-2"></i> Nova avalia&#xE7;&#xE3;o</button>
   </div>
 
   <div id="histView">
     <button class="btn reset" id="histBack" type="button" style="width:auto;margin-bottom:12px;">&#x2190; Voltar</button>
     <div class="card" style="padding:16px;">
-      <div style="font-weight:800;font-size:16px;"><i data-lu="history"></i> Hist&#xf3;rico de avalia&#xe7;&#xf5;es</div>
-      <p style="margin:6px 0 10px;color:var(--muted);font-size:13px;">Avalia&#xe7;&#xf5;es guardadas. Toca em Imprimir para reimprimir.</p>
+      <div style="font-weight:800;font-size:16px;"><i data-lu="history"></i> Hist&#xF3;rico de avalia&#xE7;&#xF5;es</div>
+      <p style="margin:6px 0 10px;color:var(--muted);font-size:13px;">Avalia&#xE7;&#xF5;es guardadas. Toca em Imprimir para reimprimir.</p>
       <button class="av-print" id="btnExport" type="button" style="margin-bottom:6px;"><i data-lu="download" data-sz="14"></i> Exportar (Excel/Sheets)</button>
       <div id="av-list"></div>
     </div>
@@ -733,7 +766,7 @@ IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
 
-var SL_FOTOS={'Ant\u00f3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00fajo':'images/img_04.jpg','Ricardo Eus\u00e9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00e3o Paiva':'images/img_10.jpg','Jo\u00e3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00e2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00e9rgio Correia':'images/img_21.jpg','Andr\u00e9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00fajo':'images/img_25.jpg','Lu\u00eds Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00e2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00e3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00e7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00edrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00faria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00e1rio Santos':'images/img_51.jpg','Beatriz Jer\u00f3nimo':'images/img_52.jpg'};
+var SL_FOTOS={'Ant\u00F3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00FAjo':'images/img_04.jpg','Ricardo Eus\u00E9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00E3o Paiva':'images/img_10.jpg','Jo\u00E3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00E2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00E9rgio Correia':'images/img_21.jpg','Andr\u00E9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00FAjo':'images/img_25.jpg','Lu\u00EDs Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00E2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00E3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00E7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00EDrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00FAria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00E1rio Santos':'images/img_51.jpg','Beatriz Jer\u00F3nimo':'images/img_52.jpg'};
 var NAV=(window.PORTAL_NAV||[]);
 
 var BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
@@ -806,14 +839,14 @@ const BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BAC
 const SEC='_avaliacao';
 
 const CRITERIOS=[
-  {k:'assiduidade', n:'Assiduidade, Pontualidade e Disponibilidade', d:'Atrasos, aus\u00eancias, disponibilidade em trocar hor\u00e1rio, etc.', max:3},
-  {k:'polivalencia', n:'Polival\u00eancia e disponibilidade para colaborar noutras \u00e1reas', d:'Fora da sua compet\u00eancia/\u00e1rea: entrada, provador, caixa, etc.', max:3},
-  {k:'atendimento', n:'Atendimento e Proatividade no Foco ao Cliente', d:'Simpatia, entreajuda, vis\u00e3o global.', max:3},
-  {k:'liga', n:'Liga de Vendas', d:'Valores e n\u00famero de registos em considera\u00e7\u00e3o na liga.', max:5},
-  {k:'elearning', n:'Forma\u00e7\u00f5es E-learning (%)', d:'Nota m\u00e1xima a quem tiver 100%; nota m\u00ednima a quem estiver abaixo dos 90%.', max:3},
+  {k:'assiduidade', n:'Assiduidade, Pontualidade e Disponibilidade', d:'Atrasos, aus\u00EAncias, disponibilidade em trocar hor\u00E1rio, etc.', max:3},
+  {k:'polivalencia', n:'Polival\u00EAncia e disponibilidade para colaborar noutras \u00E1reas', d:'Fora da sua compet\u00EAncia/\u00E1rea: entrada, provador, caixa, etc.', max:3},
+  {k:'atendimento', n:'Atendimento e Proatividade no Foco ao Cliente', d:'Simpatia, entreajuda, vis\u00E3o global.', max:3},
+  {k:'liga', n:'Liga de Vendas', d:'Valores e n\u00FAmero de registos em considera\u00E7\u00E3o na liga.', max:5},
+  {k:'elearning', n:'Forma\u00E7\u00F5es E-learning (%)', d:'Nota m\u00E1xima a quem tiver 100%; nota m\u00EDnima a quem estiver abaixo dos 90%.', max:3},
   {k:'profit', n:'Profit / Procedimentos', d:'Preenchimento das folhas, cuidado no alarmado, etc.', max:3},
-  {k:'equipa', n:'Esp\u00edrito de Equipa', d:'Boa disposi\u00e7\u00e3o, ser bom colega, ambiente saud\u00e1vel na loja.', max:3},
-  {k:'produto', n:'Conhecimento do Produto', d:'Conhecimento t\u00e9cnico do produto ou de procedimentos.', max:3}
+  {k:'equipa', n:'Esp\u00EDrito de Equipa', d:'Boa disposi\u00E7\u00E3o, ser bom colega, ambiente saud\u00E1vel na loja.', max:3},
+  {k:'produto', n:'Conhecimento do Produto', d:'Conhecimento t\u00E9cnico do produto ou de procedimentos.', max:3}
 ];
 const GERAL_MAX=10;
 const CRIT_MAX=CRITERIOS.reduce(function(s,c){return s+c.max;},0);
@@ -822,7 +855,7 @@ function today(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth(
 function num(v){ var n=parseInt(v,10); return isNaN(n)?null:n; }
 function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 
-function defaults(){ return {colaborador:'', avaliador:'', data:today(), scores:{}, geral:null}; }
+function defaults(){ return {colaborador:'', avaliador:'', data:today(), scores:{}, geral:null, feedback:''}; }
 let st;
 try{ st=Object.assign(defaults(), JSON.parse(localStorage.getItem(KEY))||{}); if(!st.scores) st.scores={}; }catch(e){ st=defaults(); }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){} }
@@ -839,15 +872,15 @@ function construir(){
     h+='<div class="crit">'
       +'<div class="crit-t"><span class="num">'+(idx+1)+'.</span><span>'+esc(c.n)+'</span></div>'
       +'<div class="crit-d">'+esc(c.d)+'</div>'
-      +'<div class="scale">Pontua\u00e7\u00e3o 0 a '+c.max+'</div>'
+      +'<div class="scale">Pontua\u00E7\u00E3o 0 a '+c.max+'</div>'
       +'<div class="score">'+botoes(c.k,c.max,(c.k in st.scores)?st.scores[c.k]:null)+'</div>'
       +'</div>';
   });
   /* nota geral do supervisor */
   h+='<div class="crit geral">'
     +'<div class="crit-t"><span class="num">\u2605</span><span>Nota geral do supervisor</span></div>'
-    +'<div class="crit-d">Avalia\u00e7\u00e3o global do supervisor sobre o colaborador.</div>'
-    +'<div class="scale">Pontua\u00e7\u00e3o 0 a '+GERAL_MAX+'</div>'
+    +'<div class="crit-d">Avalia\u00E7\u00E3o global do supervisor sobre o colaborador.</div>'
+    +'<div class="scale">Pontua\u00E7\u00E3o 0 a '+GERAL_MAX+'</div>'
     +'<div class="score">'+botoes('__geral__',GERAL_MAX,st.geral)+'</div>'
     +'</div>';
   box.innerHTML=h;
@@ -873,10 +906,34 @@ function pinta(){
   document.getElementById('colaborador').value=st.colaborador||'';
   document.getElementById('avaliador').value=st.avaliador||'';
   document.getElementById('data').value=st.data||today();
+  document.getElementById('feedback').value=st.feedback||'';
 }
 document.getElementById('colaborador').addEventListener('change',function(){ st.colaborador=this.value; save(); });
 document.getElementById('avaliador').addEventListener('change',function(){ st.avaliador=this.value; save(); });
 document.getElementById('data').addEventListener('change',function(){ st.data=this.value; save(); });
+document.getElementById('feedback').addEventListener('input',function(){ st.feedback=this.value; save(); });
+
+/* ---------- assinatura digital do supervisor ---------- */
+var sigData='', sigStamp='';
+(function(){
+  var cv=document.getElementById('sigCanvas'), ctx=cv.getContext('2d');
+  var ph=document.getElementById('sigPh'), toggle=document.getElementById('sigToggle');
+  var drawing=false,last=null,hasInk=false,enabled=false;
+  function setup(){ var r=cv.getBoundingClientRect(); if(!r.width) return; var dpr=window.devicePixelRatio||1; cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.height*dpr); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#1b1f24'; }
+  function pos(e){ var r=cv.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+  function start(e){ if(!enabled) return; e.preventDefault(); drawing=true; last=pos(e); ph.style.display='none'; }
+  function move(e){ if(!drawing) return; e.preventDefault(); var p=pos(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; hasInk=true; }
+  function end(){ if(!drawing) return; drawing=false; if(hasInk){ sigData=cv.toDataURL('image/png'); sigStamp=new Date().toLocaleString('pt-PT'); document.getElementById('sigStampTxt').textContent='Assinado: '+sigStamp; } }
+  cv.onpointerdown=start; cv.onpointermove=move; cv.onpointerup=end; cv.onpointercancel=function(){ drawing=false; };
+  window.addEventListener('pointerup',end);
+  function setEnabled(on){ enabled=on; cv.style.touchAction=on?'none':'pan-y'; cv.classList.toggle('signing',on); toggle.textContent=on?'\u2713 Terminar':'\u270D\uFE0F Assinar'; toggle.classList.toggle('on',on); if(on) ph.style.display='none'; else if(!sigData) ph.style.display=''; }
+  toggle.onclick=function(){ setEnabled(!enabled); };
+  function limpar(){ ctx.clearRect(0,0,cv.width,cv.height); sigData=''; sigStamp=''; hasInk=false; ph.style.display=''; document.getElementById('sigStampTxt').textContent=''; }
+  document.getElementById('sigClear').onclick=limpar;
+  window.limparAssinatura=function(){ limpar(); setEnabled(false); };
+  setTimeout(setup,40); window.addEventListener('resize',setup);
+  setEnabled(false);
+})();
 
 /* ---------- imprimir ---------- */
 function montarPrint(d){
@@ -887,19 +944,23 @@ function montarPrint(d){
     rows+='<tr><td>'+(idx+1)+'. '+esc(c.n)+'<small>'+esc(c.d)+'</small></td><td class="n">'+(v==null?'\u2014':v)+' / '+c.max+'</td></tr>';
   });
   var soma=0; CRITERIOS.forEach(function(c){ if(d.scores&&(c.k in d.scores)) soma+=d.scores[c.k]; });
-  rows+='<tr class="tot"><td>Pontua\u00e7\u00e3o dos crit\u00e9rios</td><td class="n">'+soma+' / '+CRIT_MAX+'</td></tr>';
+  rows+='<tr class="tot"><td>Pontua\u00E7\u00E3o dos crit\u00E9rios</td><td class="n">'+soma+' / '+CRIT_MAX+'</td></tr>';
   rows+='<tr class="geral"><td>Nota geral do supervisor</td><td class="n">'+(d.geral==null?'\u2014':d.geral)+' / '+GERAL_MAX+'</td></tr>';
-  var html='<h1>Avalia\u00e7\u00e3o de Desempenho \u2014 Sport Zone Vasco da Gama</h1>'
+  var html='<h1>Avalia\u00E7\u00E3o de Desempenho \u2014 Sport Zone Vasco da Gama</h1>'
     +'<div class="psub">Loja Vasco da Gama</div>'
     +'<table class="who"><tbody>'
     +'<tr><td class="k">Colaborador</td><td class="v">'+esc(d.colaborador||'\u2014')+'</td></tr>'
     +'<tr><td class="k">Avaliado por</td><td class="v">'+esc(d.avaliador||'\u2014')+'</td></tr>'
     +'<tr><td class="k">Data</td><td class="v">'+esc(ds)+'</td></tr>'
     +'</tbody></table>'
-    +'<table class="res"><tbody>'+rows+'</tbody></table>'
-    +'<div class="sign">'
+    +'<table class="res"><tbody>'+rows+'</tbody></table>';
+  var fb = d.feedback || (d===st ? st.feedback : '');
+  html+='<div class="fb"><h3>Feedback do supervisor</h3><div class="fbtxt">'+(fb?esc(fb):'\u2014')+'</div></div>';
+  var ass = d.assinatura || (d===st ? sigData : '');
+  var stp = d.sigStamp || (d===st ? sigStamp : '');
+  html+='<div class="sign">'
     +'<div class="sig"><div class="sigline"></div><div class="siglbl">O Colaborador</div></div>'
-    +'<div class="sig"><div class="sigline"></div><div class="siglbl">O Supervisor'+(d.avaliador?(' &mdash; '+esc(d.avaliador)):'')+'</div></div>'
+    +'<div class="sig"><div class="sigline">'+(ass?'<img src="'+ass+'">':'')+'</div><div class="siglbl">O Supervisor'+(d.avaliador?(' &mdash; '+esc(d.avaliador)):'')+(stp?(' &middot; '+esc(stp)):'')+'</div></div>'
     +'</div>'
     +'<div class="foot">Documento gerado pela app Sport Zone Vasco da Gama &middot; '+esc(ds)+'</div>';
   document.getElementById('printArea').innerHTML=html;
@@ -910,9 +971,9 @@ document.getElementById('btnPrintTop').addEventListener('click',imprimir);
 /* ---------- guardar na nuvem ---------- */
 document.getElementById('btnSave').addEventListener('click',function(){
   if(!st.colaborador){ alert('Escolhe o colaborador avaliado.'); return; }
-  if(!BACKEND){ alert('Sem liga\u00e7\u00e3o \u00e0 nuvem.'); return; }
+  if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
   var soma=0; CRITERIOS.forEach(function(c){ if(c.k in st.scores) soma+=st.scores[c.k]; });
-  var payload={colaborador:st.colaborador, avaliador:st.avaliador, data:st.data, scores:st.scores, geral:st.geral, total:soma};
+  var payload={colaborador:st.colaborador, avaliador:st.avaliador, data:st.data, scores:st.scores, geral:st.geral, total:soma, feedback:st.feedback, assinatura:sigData, sigStamp:sigStamp};
   var btn=this, old=btn.textContent; btn.disabled=true; btn.textContent='A guardar\u2026';
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify({action:'nota_add', seccao:SEC, autor:st.colaborador+'|'+st.data, texto:JSON.stringify(payload)})})
@@ -920,13 +981,14 @@ document.getElementById('btnSave').addEventListener('click',function(){
       if(j&&j.ok){ btn.textContent='\u2713 Guardada'; setTimeout(function(){ btn.textContent=old; btn.disabled=false; },1600); }
       else throw 0;
     })
-    .catch(function(){ btn.disabled=false; btn.textContent=old; alert('N\u00e3o foi poss\u00edvel guardar. Tenta de novo.'); });
+    .catch(function(){ btn.disabled=false; btn.textContent=old; alert('N\u00E3o foi poss\u00EDvel guardar. Tenta de novo.'); });
 });
 
 /* ---------- nova avaliacao ---------- */
 document.getElementById('btnReset').addEventListener('click',function(){
-  if(!confirm('Come\u00e7ar uma nova avalia\u00e7\u00e3o? Os dados n\u00e3o guardados ser\u00e3o apagados.')) return;
+  if(!confirm('Come\u00E7ar uma nova avalia\u00E7\u00E3o? Os dados n\u00E3o guardados ser\u00E3o apagados.')) return;
   st=defaults(); save(); pinta(); construir(); totais();
+  if(window.limparAssinatura) window.limparAssinatura();
 });
 
 /* ---------- historico ---------- */
@@ -934,7 +996,7 @@ let AV=[];
 function abrirHist(){
   document.body.classList.add('av-hist');
   var l=document.getElementById('av-list');
-  if(!BACKEND){ l.innerHTML='<p style="color:var(--muted);font-size:13px;">Sem liga\u00e7\u00e3o \u00e0 nuvem.</p>'; return; }
+  if(!BACKEND){ l.innerHTML='<p style="color:var(--muted);font-size:13px;">Sem liga\u00E7\u00E3o \u00E0 nuvem.</p>'; return; }
   l.innerHTML='<p style="color:var(--muted);font-size:13px;">A carregar\u2026</p>';
   fetch(BACKEND+'?action=notas&t='+Date.now())
     .then(function(r){return r.json();}).then(function(j){
@@ -944,31 +1006,31 @@ function abrirHist(){
           .sort(function(a,b){ return new Date(b.ts)-new Date(a.ts); });
         renderHist();
       } else { l.innerHTML='<p style="color:var(--muted);font-size:13px;">Sem dados.</p>'; }
-    }).catch(function(){ l.innerHTML='<p style="color:var(--muted);font-size:13px;">Sem liga\u00e7\u00e3o. Recarrega.</p>'; });
+    }).catch(function(){ l.innerHTML='<p style="color:var(--muted);font-size:13px;">Sem liga\u00E7\u00E3o. Recarrega.</p>'; });
 }
 function renderHist(){
   var l=document.getElementById('av-list'); l.innerHTML='';
-  if(!AV.length){ l.innerHTML='<p style="color:var(--muted);font-size:13px;">Ainda n\u00e3o h\u00e1 avalia\u00e7\u00f5es guardadas.</p>'; return; }
+  if(!AV.length){ l.innerHTML='<p style="color:var(--muted);font-size:13px;">Ainda n\u00E3o h\u00E1 avalia\u00E7\u00F5es guardadas.</p>'; return; }
   AV.forEach(function(h){
     var d=h.d||{};
     var dd=new Date((d.data||'')+'T00:00:00'); var ds=isNaN(dd)?(d.data||''):dd.toLocaleDateString('pt-PT');
     var row=document.createElement('div'); row.className='av-row';
     row.innerHTML='<div class="av-info"><b>'+esc(d.colaborador||'\u2014')+'</b>'
-      +'<div class="av-sub">'+esc(ds)+(d.avaliador?' \u00b7 por '+esc(d.avaliador):'')
-      +' \u00b7 '+(d.total==null?0:d.total)+'/'+CRIT_MAX+' \u00b7 geral '+(d.geral==null?'\u2014':d.geral)+'/'+GERAL_MAX+'</div></div>';
+      +'<div class="av-sub">'+esc(ds)+(d.avaliador?' \u00B7 por '+esc(d.avaliador):'')
+      +' \u00B7 '+(d.total==null?0:d.total)+'/'+CRIT_MAX+' \u00B7 geral '+(d.geral==null?'\u2014':d.geral)+'/'+GERAL_MAX+'</div></div>';
     var acts=document.createElement('div'); acts.className='av-acts';
-    var bp=document.createElement('button'); bp.className='av-print'; bp.textContent='\ud83d\udda8\ufe0f Imprimir'; bp.onclick=function(){ montarPrint(d); setTimeout(function(){ window.print(); },120); };
+    var bp=document.createElement('button'); bp.className='av-print'; bp.textContent='\uD83D\uDDA8\uFE0F Imprimir'; bp.onclick=function(){ montarPrint(d); setTimeout(function(){ window.print(); },120); };
     var bd=document.createElement('button'); bd.className='av-del'; bd.textContent='\u2715 Apagar'; bd.onclick=function(){ apagarHist(h.id); };
     acts.appendChild(bp); acts.appendChild(bd); row.appendChild(acts);
     l.appendChild(row);
   });
 }
 function apagarHist(id){
-  if(!confirm('Apagar esta avalia\u00e7\u00e3o?')) return;
+  if(!confirm('Apagar esta avalia\u00E7\u00E3o?')) return;
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify({action:'nota_del', id:id})})
     .then(function(r){return r.json();}).then(function(){ AV=AV.filter(function(x){return String(x.id)!==String(id);}); renderHist(); })
-    .catch(function(){ alert('N\u00e3o foi poss\u00edvel apagar.'); });
+    .catch(function(){ alert('N\u00E3o foi poss\u00EDvel apagar.'); });
 }
 document.getElementById('btnHistView').addEventListener('click',abrirHist);
 document.getElementById('histBack').addEventListener('click',function(){ document.body.classList.remove('av-hist'); });
@@ -976,7 +1038,7 @@ document.getElementById('histBack').addEventListener('click',function(){ documen
 /* ---------- exportar para Excel/Google Sheets (CSV) ---------- */
 function csvCel(v){ v=(v==null?'':String(v)); if(/[";\n]/.test(v)){ v='"'+v.replace(/"/g,'""')+'"'; } return v; }
 function exportarCsv(){
-  if(!AV.length){ alert('Ainda n\u00e3o h\u00e1 avalia\u00e7\u00f5es para exportar.'); return; }
+  if(!AV.length){ alert('Ainda n\u00E3o h\u00E1 avalia\u00E7\u00F5es para exportar.'); return; }
   var cab=['Data','Colaborador','Avaliado por'];
   CRITERIOS.forEach(function(c){ cab.push(c.n); });
   cab.push('Total criterios','Nota geral');
