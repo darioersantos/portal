@@ -80,12 +80,30 @@ window.PORTAL_NAV = [
 (function(){
   var SZ_LOGO_VG='data:image/png;base64,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';
   window.SZ_LOGO=SZ_LOGO_VG;
+  function garantirLink(rel, href){
+    var l=document.querySelector('link[rel="'+rel+'"]');
+    if(!l){ l=document.createElement('link'); l.setAttribute('rel',rel); (document.head||document.documentElement).appendChild(l); }
+    if(l.getAttribute('href')!==href) l.setAttribute('href',href);
+  }
   function aplicar(){
     try{
+      /* trocar os icones que ja existem */
       var ls=document.querySelectorAll('link[rel="icon"],link[rel="shortcut icon"],link[rel="apple-touch-icon"],link[rel="apple-touch-icon-precomposed"]');
-      for(var i=0;i<ls.length;i++){ if(ls[i].href!==SZ_LOGO_VG) ls[i].href=SZ_LOGO_VG; }
+      for(var i=0;i<ls.length;i++){ if(ls[i].getAttribute('href')!==SZ_LOGO_VG) ls[i].setAttribute('href',SZ_LOGO_VG); }
+      /* CRIAR os que faltam: sem isto o iPhone nao encontra icone e desenha a inicial do nome */
+      garantirLink('icon', SZ_LOGO_VG);
+      garantirLink('apple-touch-icon', SZ_LOGO_VG);
+      garantirLink('manifest', 'manifest.json');
+      /* nome da app ao gravar no telemovel */
+      var t=document.querySelector('meta[name="apple-mobile-web-app-title"]');
+      if(!t){ t=document.createElement('meta'); t.setAttribute('name','apple-mobile-web-app-title'); (document.head||document.documentElement).appendChild(t); }
+      if(t.getAttribute('content')!=='VG Portal') t.setAttribute('content','VG Portal');
+      /* logotipos na pagina */
       var im=document.querySelectorAll('.sb-brand img, #login img.lg, img[alt="Sport Zone"]');
       for(var j=0;j<im.length;j++){ if(im[j].src!==SZ_LOGO_VG){ im[j].src=SZ_LOGO_VG; im[j].alt='VG'; } }
+      /* titulo do menu: "Sport Zone" -> "Portal" */
+      var b=document.querySelector('.sb-brand .bt b');
+      if(b && /Sport Zone/.test(b.textContent)) b.textContent='Portal';
     }catch(e){}
   }
   aplicar();
