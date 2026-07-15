@@ -267,6 +267,7 @@
 
 
 
+
   /* ===== Top Vendas ===== */
   .tv-wrap{max-width:1100px;}
   .tv-empty{text-align:center;padding:34px 12px;}
@@ -373,7 +374,7 @@
   <header class="topbar">
     <button class="menu-btn" id="menuBtn"><span data-ic="menu"></span></button>
     <div class="tb-hi"><h1>Top Vendas</h1><p>Top 20 produtos por sec&#xE7;&#xE3;o &middot; carrega o PDF semanal.</p></div>
-    <div class="tb-right"> <div class="tb-icon add" id="tvUp" title="Carregar PDF do Top Vendas"><span data-ic="upload"></span></div></div>
+    <div class="tb-right"></div>
   </header>
   <div class="content"><div class="tv-wrap">
   <input type="file" id="tvFile" accept="application/pdf,.pdf" style="display:none">
@@ -438,6 +439,26 @@ IC.image='<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9"
 IC.plus='<path d="M5 12h14"/><path d="M12 5v14"/>';
 IC['trash-2']='<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>';
 IC.check='<path d="M20 6 9 17l-5-5"/>';
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
 IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
@@ -1634,6 +1655,7 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 
 
 
+
 /* ===== Modulo ===== */
 
 var DATA=null, curSec=0, curCat='', PDFLIB=null, hiCode='';
@@ -1860,7 +1882,7 @@ async function parsePDF(buf){
 function guardarLocal(){ try{ localStorage.setItem('sz_topvendas', JSON.stringify(DATA)); }catch(e){} }
 function carregarLocal(){ try{ var s=localStorage.getItem('sz_topvendas'); if(s){ DATA=JSON.parse(s); return true; } }catch(e){} return false; }
 function fmtWhen(iso){ try{ var d=new Date(iso); return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(); }catch(e){ return ''; } }
-function emptyHTML(){ return '<div class="tv-empty"><div class="tv-drop"><div class="tv-ic">'+svg('award')+'</div><h2>Top Vendas</h2><p>Carrega o <b>PDF</b> do Top 20 Produtos. A app le automaticamente e organiza por seccao, com foto, vendas e codigo. Precisa de internet para ler o PDF.</p><button class="tv-btn tv-upbtn"><span data-ic="upload"></span> Carregar PDF</button></div></div>'; }
+function emptyHTML(){ return '<div class="tv-empty"><div class="tv-drop"><div class="tv-ic">'+svg('award')+'</div><h2>Top Vendas</h2><p>Carrega o <b>PDF</b> do Top 20 Produtos. A app le automaticamente e organiza por seccao, com foto, vendas e codigo. Precisa de internet para ler o PDF.</p><button class="tv-btn tv-upbtn"><span data-ic="upload"></span> Ir a Upload de Arquivos</button></div></div>'; }
 function cardHTML(p, secTitle){ var top3=p.rank<=3; var hi=(hiCode && p.code===hiCode)?' hi':'';
   var mv=(DATA&&DATA._maxval)||1; var ratio=pval(p)/mv; var hival=ratio>=0.30; var low=ratio<0.06;
   return '<div class="tv-card'+hi+(hival?' hival':'')+(low?' low':'')+'" data-code="'+esc(p.code)+'">'
@@ -1907,7 +1929,7 @@ function abrirBarcode(code){ if(!code||!DATA) return; var found=null; DATA.secti
   document.getElementById('tvBarCd').textContent='* '+found.code+' *';
   document.getElementById('tvBar').classList.add('open'); }
 function fecharBarcode(){ var m=document.getElementById('tvBar'); if(m) m.classList.remove('open'); }
-function bindUp(root){ (root||document).querySelectorAll('.tv-upbtn').forEach(function(x){ x.onclick=function(){ document.getElementById('tvFile').click(); }; }); }
+function bindUp(root){ (root||document).querySelectorAll('.tv-upbtn').forEach(function(x){ x.onclick=function(){ location.href='upload.html'; }; }); }
 /* ---- ler codigo de barras (camera) ---- */
 var scanStream=null, scanDet=null, scanRAF=null;
 function abrirScan(){
