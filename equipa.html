@@ -343,11 +343,10 @@
   .reg-t th.rg-corner{left:0;z-index:3;text-align:left;padding-left:6px;}
   .reg-t td.rg-sec{position:sticky;left:0;background:#fff;z-index:1;font-size:11.5px;font-weight:800;color:var(--ink);white-space:nowrap;padding-right:8px;}
   .rg-dot{display:inline-block;width:8px;height:8px;border-radius:3px;margin-right:5px;vertical-align:middle;}
-  .rg-i{width:34px;display:block;border:1.5px solid var(--line2);border-radius:6px;padding:3px;font-size:11.5px;font-family:inherit;text-align:center;color:var(--ink);background:#fff;-moz-appearance:textfield;}
+  .rg-i{width:38px;display:block;border:1.5px solid var(--line2);border-radius:7px;padding:6px 3px;font-size:13px;font-weight:700;font-family:inherit;text-align:center;color:var(--accent-dark);background:#fff;-moz-appearance:textfield;}
   .rg-i::-webkit-outer-spin-button,.rg-i::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
-  .rg-i:focus{outline:none;border-color:var(--accent);}
-  .rg-min{margin-bottom:2px;}
-  .rg-id{border-style:dashed;color:var(--accent-dark);}
+  .rg-i:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft);}
+  .rg-i::placeholder{color:var(--muted2);font-weight:400;}
   .reg-foot{display:flex;align-items:center;gap:8px;padding:11px 16px;border-top:1px solid var(--line);}
   .reg-clear,.reg-def{background:none;border:none;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;text-decoration:underline;padding:4px 2px;}
   .reg-ok{margin-left:auto;background:var(--accent);color:#fff;border:none;border-radius:11px;padding:10px 20px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
@@ -1869,11 +1868,7 @@ function staffChart(list){
      Sem filtro (a ver todas) nao ha linha: e a chip da seccao que a revela.
      A escala tem de acomodar o alvo, mas o "pico de equipa" continua a ser o
      maximo REAL de pessoas \u2014 por isso sao variaveis diferentes. */
-  var alvos=hours.map(function(h){
-    if(!EQSOLO) return null;
-    var rg=regGet(EQSOLO,h);
-    return (rg && rg.ideal>0) ? rg.ideal : null;
-  });
+  var alvos=hours.map(function(h){ return EQSOLO ? regGet(EQSOLO,h) : null; });
   var temAlvo=alvos.some(function(a){ return a!=null; });
   var escala=maxc;
   if(temAlvo) escala=Math.max(maxc, Math.max.apply(null, alvos.filter(function(a){return a!=null;}).concat([1])));
@@ -1998,25 +1993,32 @@ var MANHA_H=[7,8,9,10,11];              /* janela do camiao/reposicao */
 var TARDE_H=[17,18,19,20,21];           /* final da tarde */
 
 /* ================================================================
-   REGRAS DE STAFF \u2014 alvo por seccao e por hora, editavel pelo Dario.
-   Formato: REGRAS.alvo[seccao][hora] = {min:n, ideal:n}
+   REGRAS DE STAFF \u2014 alvo (ideal) por seccao e por hora, editavel pelo Dario.
+   Formato: REGRAS.alvo[seccao][hora] = numero  (so o ideal; ter tambem um
+   minimo era complexidade a mais para o que acrescentava).
    CELULA VAZIA = SEM ALVO (nao alerta). E o que torna isto usavel:
    podes preencher so o fecho e a manha e deixar o resto em silencio.
    Guardado na nuvem (_regras) para valer em todos os dispositivos.
-   Os valores de arranque sao as regras que o Dario deu para o fecho.
    ================================================================ */
 var REG_SECS=['T\u00EAxtil','Cal\u00E7ado','Caixa','Log\u00EDstica'];
 var REG_H0=7, REG_H1=24;                /* a loja fecha as 24h15 */
 var REGRAS={alvo:{}};
 function regDefault(){
   var a={}; REG_SECS.forEach(function(s){ a[s]={}; });
-  /* regras de fecho dadas pelo Dario (hora 24 = o fecho das 24h15) */
-  a['T\u00EAxtil'][24]={min:3, ideal:4};
-  a['Cal\u00E7ado'][24]={min:3, ideal:4};
-  a['Caixa'][24]={min:2, ideal:2};
+  /* ideais de fecho dados pelo Dario (hora 24 = o fecho das 24h15) */
+  a['T\u00EAxtil'][24]=4;
+  a['Cal\u00E7ado'][24]=4;
+  a['Caixa'][24]=2;
   return {alvo:a};
 }
-function regGet(sec,h){ var r=REGRAS.alvo&&REGRAS.alvo[sec]&&REGRAS.alvo[sec][h]; return (r && (r.min>0||r.ideal>0))?r:null; }
+/* devolve o ideal (numero) ou null. Aceita o formato antigo {min,ideal}
+   para nao perder as regras de quem ja tinha gravado. */
+function regGet(sec,h){
+  var r=REGRAS.alvo&&REGRAS.alvo[sec]&&REGRAS.alvo[sec][h];
+  if(r==null) return null;
+  var v=(typeof r==='object') ? (r.ideal||r.min||0) : +r;
+  return v>0 ? v : null;
+}
 function regHoras(){ var out=[]; for(var h=REG_H0;h<=REG_H1;h++) out.push(h); return out; }
 function regLoad(){
   try{ var s=localStorage.getItem('sz_regras'); if(s){ var o=JSON.parse(s); if(o&&o.alvo){ REGRAS=o; return; } } }catch(e){}
@@ -2160,32 +2162,26 @@ function insightsDia(dt){
 
   /* 5. cumprimento das REGRAS editaveis (alvo por seccao e por hora).
      Celula vazia = sem alvo, por isso so avalio o que o Dario definiu. */
-  var abaixoMin=[], abaixoIdeal=[];
+  var abaixo=[];
   regHoras().forEach(function(h){
     REG_SECS.forEach(function(sec){
-      var rg=regGet(sec,h); if(!rg) return;
+      var alvo=regGet(sec,h); if(!alvo) return;
       var n=pessoasSecA(list, sec, h);
-      if(rg.min>0 && n<rg.min) abaixoMin.push({sec:sec, h:h, n:n, alvo:rg.min, tipo:'min'});
-      else if(rg.ideal>0 && n<rg.ideal) abaixoIdeal.push({sec:sec, h:h, n:n, alvo:rg.ideal, tipo:'ideal'});
+      if(n<alvo) abaixo.push({sec:sec, h:h, n:n, alvo:alvo, falta:alvo-n});
     });
   });
   /* "ao fecho" e nao "as fecho" \u2014 a preposicao muda conforme a hora */
   function quando(h){ return h>=24 ? 'ao fecho (24h15)' : ('\u00E0s '+h+'h'); }
-  function lista(a){ return a.map(function(x){ return x.sec+' '+quando(x.h)+': '+x.n+' (alvo '+x.alvo+')'; }).join(' \u00B7 '); }
-  if(abaixoMin.length){
-    ins.push({t:'r', h:'Abaixo do m\u00EDnimo em '+abaixoMin.length+(abaixoMin.length===1?' momento':' momentos'),
-      tx:'<b>'+esc(lista(abaixoMin.slice(0,4)))+'</b>'+(abaixoMin.length>4?' e mais '+(abaixoMin.length-4)+'.':'.')
-        +' S\u00E3o as regras que definiste em <b>Regras de staff</b> \u2014 ajusta o hor\u00E1rio ou rev\u00EA a regra se j\u00E1 n\u00E3o fizer sentido para esta \u00E9poca.'});
-  }
-  if(abaixoIdeal.length){
-    ins.push({t:'i', h:'No m\u00EDnimo, mas abaixo do ideal',
-      tx:esc(lista(abaixoIdeal.slice(0,4)))+(abaixoIdeal.length>4?' e mais '+(abaixoIdeal.length-4)+'.':'.')
-        +' Cumpre o m\u00EDnimo, mas fica aqu\u00E9m do que definiste como ideal.'});
-  }
-  if(!abaixoMin.length && !abaixoIdeal.length){
+  function lista(a){ return a.map(function(x){ return x.sec+' '+quando(x.h)+': '+x.n+' de '+x.alvo; }).join(' \u00B7 '); }
+  if(abaixo.length){
+    abaixo.sort(function(a,b){ return b.falta-a.falta; });
+    ins.push({t:'r', h:'Abaixo do ideal em '+abaixo.length+(abaixo.length===1?' momento':' momentos'),
+      tx:'<b>'+esc(lista(abaixo.slice(0,4)))+'</b>'+(abaixo.length>4?' e mais '+(abaixo.length-4)+'.':'.')
+        +' S\u00E3o os alvos que definiste em <b>Regras de staff</b> \u2014 ajusta o hor\u00E1rio ou rev\u00EA o alvo se j\u00E1 n\u00E3o fizer sentido para esta \u00E9poca.'});
+  } else {
     var nDef=0; regHoras().forEach(function(h){ REG_SECS.forEach(function(s){ if(regGet(s,h)) nDef++; }); });
     var fecha=list.filter(function(p){ return p.e>=FECHO_MIN; });
-    ins.push({t:'g', h:'Regras de staff cumpridas',
+    ins.push({t:'g', h:'Alvos de staff cumpridos',
       tx:nDef?('Todos os '+nDef+' alvos que definiste est\u00E3o cumpridos neste dia. Ao fecho (24h15) ficam <b>'+fecha.length+' pessoas</b>.')
              :('Ainda n\u00E3o definiste alvos de staff. Abre <b>Regras de staff</b> para dizeres quantas pessoas queres por sec\u00E7\u00E3o em cada hora \u2014 depois aviso-te sempre que o hor\u00E1rio ficar aqu\u00E9m.')});
   }
@@ -2214,21 +2210,20 @@ function abrirRegras(){
   var rows=REG_SECS.map(function(sec){
     return '<tr><td class="rg-sec"><span class="rg-dot" style="background:'+secColor(sec)+'"></span>'+esc(sec)+'</td>'
       +hs.map(function(h){
-        var r=regGet(sec,h);
-        return '<td><input class="rg-i rg-min" data-s="'+esc(sec)+'" data-h="'+h+'" type="number" min="0" max="20" placeholder="\u2014" value="'+(r&&r.min>0?r.min:'')+'">'
-          +'<input class="rg-i rg-id" data-s="'+esc(sec)+'" data-h="'+h+'" type="number" min="0" max="20" placeholder="\u2014" value="'+(r&&r.ideal>0?r.ideal:'')+'"></td>';
+        var v=regGet(sec,h);
+        return '<td><input class="rg-i rg-id" data-s="'+esc(sec)+'" data-h="'+h+'" type="number" min="0" max="20" placeholder="\u2014" value="'+(v||'')+'"></td>';
       }).join('')+'</tr>';
   }).join('');
   m.innerHTML='<div class="reg-box">'
     +'<div class="reg-h"><b>Regras de staff</b><button class="reg-x" id="regX">&times;</button></div>'
-    +'<div class="reg-sub">Quantas pessoas queres por sec\u00E7\u00E3o em cada hora. Em cada c\u00E9lula, o <b>m\u00EDnimo</b> (em cima) e o <b>ideal</b> (em baixo). '
+    +'<div class="reg-sub">Quantas pessoas queres por sec\u00E7\u00E3o em cada hora \u2014 o teu <b>ideal</b>. '
       +'<b>Deixa em branco onde n\u00E3o quiseres alvo</b> \u2014 s\u00F3 te aviso onde definires. Muda os n\u00FAmeros quando a \u00E9poca mudar (saldos, Natal).</div>'
     +'<div class="reg-tools">Preencher a linha toda: '
       +REG_SECS.map(function(s){ return '<button class="reg-fill" data-s="'+esc(s)+'">'+esc(s)+'</button>'; }).join('')
       +'</div>'
     +'<div class="reg-scroll"><table class="reg-t"><thead><tr>'+head+'</tr></thead><tbody>'+rows+'</tbody></table></div>'
     +'<div class="reg-foot"><button class="reg-clear" id="regClear">Limpar tudo</button>'
-      +'<button class="reg-def" id="regDef">Repor regras de fecho</button>'
+      +'<button class="reg-def" id="regDef">Repor ideais de fecho</button>'
       +'<button class="reg-ok" id="regOk">Guardar</button></div>'
     +'</div>';
   m.classList.add('open'); mountIcons(m);
@@ -2236,16 +2231,11 @@ function abrirRegras(){
   document.getElementById('regX').onclick=fecharRegras;
   document.getElementById('regOk').onclick=function(){
     var a={}; REG_SECS.forEach(function(s){ a[s]={}; });
-    m.querySelectorAll('.rg-min').forEach(function(inp){
+    m.querySelectorAll('.rg-id').forEach(function(inp){
       var s=inp.getAttribute('data-s'), h=+inp.getAttribute('data-h');
-      var mn=parseInt(inp.value,10);
-      var idInp=m.querySelector('.rg-id[data-s="'+CSS.escape(s)+'"][data-h="'+h+'"]');
-      var id=parseInt(idInp?idInp.value:'',10);
-      if(!(mn>0) && !(id>0)) return;                 /* vazio = sem alvo */
-      if(!(mn>0)) mn=id;                             /* so ideal -> minimo = ideal */
-      if(!(id>0)) id=mn;                             /* so minimo -> ideal = minimo */
-      if(id<mn) id=mn;                               /* ideal nunca abaixo do minimo */
-      a[s][h]={min:mn, ideal:id};
+      var v=parseInt(inp.value,10);
+      if(!(v>0)) return;                             /* vazio = sem alvo */
+      a[s][h]=v;
     });
     REGRAS={alvo:a}; regSave(); fecharRegras(); render();
     if(window.toast) toast('Regras guardadas \u2713');
@@ -2255,17 +2245,16 @@ function abrirRegras(){
     m.querySelectorAll('.rg-i').forEach(function(i){ i.value=''; });
   };
   document.getElementById('regDef').onclick=function(){
-    if(!confirm('Repor as regras de fecho (T\u00EAxtil 3/4, Cal\u00E7ado 3/4, Caixa 2) e limpar o resto?')) return;
+    if(!confirm('Repor os ideais de fecho (T\u00EAxtil 4, Cal\u00E7ado 4, Caixa 2) e limpar o resto?')) return;
     REGRAS=regDefault(); regSave(); fecharRegras(); abrirRegras();
   };
   m.querySelectorAll('.reg-fill').forEach(function(b){
     b.onclick=function(){
       var s=b.getAttribute('data-s');
-      var v=prompt('Preencher a linha de '+s+' com que valores?\n\nEscreve "m\u00EDnimo/ideal" (ex.: 3/4), ou deixa vazio para limpar a linha.');
+      var v=prompt('Quantas pessoas queres de '+s+' em todas as horas?\n\nEscreve um n\u00FAmero (ex.: 4), ou deixa vazio para limpar a linha.');
       if(v===null) return;
-      var mm=/^\s*(\d+)\s*(?:\/\s*(\d+)\s*)?$/.exec(v||'');
-      m.querySelectorAll('.rg-min[data-s="'+CSS.escape(s)+'"]').forEach(function(i){ i.value=mm?mm[1]:''; });
-      m.querySelectorAll('.rg-id[data-s="'+CSS.escape(s)+'"]').forEach(function(i){ i.value=mm?(mm[2]||mm[1]):''; });
+      var mm=/^\s*(\d+)\s*$/.exec(v||'');
+      m.querySelectorAll('.rg-id[data-s="'+CSS.escape(s)+'"]').forEach(function(i){ i.value=mm?mm[1]:''; });
     };
   });
 }
