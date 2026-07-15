@@ -358,27 +358,30 @@
   .vd-rec .rc-go{display:inline-block;margin-top:8px;font-size:12px;font-weight:800;color:var(--accent-dark);text-decoration:none;text-transform:capitalize;}
   /* ===== MOBILE: as abas passam para um menu fixo em baixo (so ate 820px) ===== */
   @media(max-width:820px){
-    .vd-tabs{
+    /* "body .vd-tabs" (0-1-1) e nao ".vd-tabs" (0-1-0): mais abaixo no ficheiro ha
+       um ".vd-tabs{margin-bottom:18px}" que, com a mesma especificidade, ganhava por
+       vir depois &#x2014; e deixava uma tira de 18px por baixo da barra no PWA. */
+    body .vd-tabs{
       position:fixed; left:0; right:0; bottom:0; z-index:90;
-      margin:0; padding:6px 4px calc(6px + env(safe-area-inset-bottom)) 4px;
+      margin:0 !important; padding:6px 4px calc(6px + env(safe-area-inset-bottom)) 4px;
       gap:0; overflow-x:visible;
       background:rgba(255,255,255,.96); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
       border-top:1px solid var(--line2);
       box-shadow:0 -2px 18px rgba(16,24,40,.07);
       justify-content:space-around;
     }
-    .vd-tab{
+    body .vd-tab{
       flex:1 1 0; min-width:0; padding:7px 2px; gap:3px;
       background:none; border:none; border-radius:10px;
       font-size:10.5px; letter-spacing:-.01em; line-height:1.15; text-align:center;
     }
-    .vd-tab span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;}
-    .vd-tab .ico{width:21px;height:21px;}
-    .vd-tab.active{background:none;border:none;color:var(--accent-dark);}
-    .vd-tab.active .ico{color:var(--accent-dark);}
+    body .vd-tab span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;}
+    body .vd-tab .ico{width:21px;height:21px;}
+    body .vd-tab.active{background:none;border:none;color:var(--accent-dark);}
+    body .vd-tab.active .ico{color:var(--accent-dark);}
     /* espaco para o conteudo nao ficar escondido debaixo do menu */
-    .content{padding-bottom:calc(74px + env(safe-area-inset-bottom)) !important;}
-    #toast{bottom:calc(86px + env(safe-area-inset-bottom));}
+    body .content{padding-bottom:calc(74px + env(safe-area-inset-bottom)) !important;}
+    body #toast{bottom:calc(86px + env(safe-area-inset-bottom)) !important;}
   }
   .vd-note{font-size:12px;color:var(--muted2);margin-top:8px;padding:2px;}
   #toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:#1a1d21;color:#fff;padding:11px 18px;border-radius:12px;font-size:13.5px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:.2s;z-index:120;max-width:86vw;text-align:center;}
@@ -410,7 +413,11 @@
   .vd-legend{flex:1;min-width:190px;}
   .vd-lg{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
   .vd-lg:last-child{border-bottom:none;}
-  .vd-lg .dot{width:12px;height:12px;border-radius:4px;flex:none;} .vd-lg .lg-nm{flex:1;font-size:13.5px;font-weight:700;} .vd-lg .lg-sp{font-size:13px;font-weight:800;color:var(--accent-dark);}
+  .vd-lg .dot{width:12px;height:12px;border-radius:4px;flex:none;} .vd-lg .lg-nm{flex:1;font-size:13.5px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;} .vd-lg .lg-sp{font-size:13px;font-weight:800;color:var(--accent-dark);flex:none;}
+  /* valor das vendas a frente de cada area/genero */
+  .vd-lg .lg-eur{font-size:12.5px;font-weight:700;color:var(--muted);flex:none;font-variant-numeric:tabular-nums;margin-left:auto;}
+  .vd-lg .lg-sp{min-width:46px;text-align:right;font-variant-numeric:tabular-nums;}
+  @media(max-width:400px){ .vd-lg{gap:7px;} .vd-lg .lg-eur{font-size:11.5px;} .vd-lg .lg-nm{font-size:12.5px;} }
   .vd-acards{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;}
   @media(max-width:640px){.vd-acards{grid-template-columns:minmax(0,1fr);}}
   .vd-acard{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:14px 15px;box-shadow:var(--shadow-sm);}
@@ -1894,13 +1901,14 @@ function fmtDec1(v){ var n=Math.round((+v||0)*10)/10; return String(n).replace('
    Cada painel do Resumo tem data-w="chave". A configuracao fica no
    localStorage e e aplicada reordenando/escondendo os proprios paineis.
    ================================================================ */
+/* a ordem aqui e a predefinicao do Resumo (o utilizador pode reordenar em Editar) */
 var WIDGETS=[
   {k:'kpis',     nm:'KPIs',              ic:'banknote'},
-  {k:'serie',    nm:'Evolu\u00E7\u00E3o semanal',  ic:'trending-up'},
   {k:'peso',     nm:'Peso por \u00E1rea e g\u00E9nero', ic:'package'},
   {k:'hora',     nm:'Vendas por hora',   ic:'clock'},
   {k:'top',      nm:'Top e Em queda',    ic:'list-checks'},
   {k:'marcas',   nm:'Marcas e \u00E1reas',    ic:'tag'},
+  {k:'serie',    nm:'Evolu\u00E7\u00E3o semanal',  ic:'trending-up'},
   {k:'insights', nm:'Insights da semana',ic:'lightbulb'}
 ];
 var WCFG={order:null, off:{}};
@@ -1963,12 +1971,17 @@ function toggleWedit(){
 
 /* ---------------- Donuts coloridos: peso por area e por genero ---------------- */
 var PCOL=['#FF8100','#2563eb','#10b981','#a855f7','#ec4899','#f59e0b','#6b7280','#14b8a6'];
+/* cores fixas por nome (pedido do Dario): homem azul, mulher rosa, crianca azul bebe, unissexo verde */
+var GCOL={'Homem':'#2563eb','Mulher':'#ec4899','Crian\u00E7a':'#7dd3fc','Unissexo':'#10b981'};
+/* categorias residuais que nao interessam ver no grafico */
+var PESO_FORA={'Other':1,'Outro':1,'NOT AVAILABLE':1,'':1};
+function corDe(nm,i){ return GCOL[nm] || PCOL[i%PCOL.length]; }
 function donutHTML(data, unidade){
   var tot=0; data.forEach(function(d){ tot+=d.val; }); tot=tot||1;
   var cx=90,cy=90,r=64,sw=27,C=2*Math.PI*r,off=0;
   var segs=data.map(function(d,i){
-    var len=d.val/tot*C;
-    var s='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+PCOL[i%PCOL.length]+'" stroke-width="'+sw+'" '
+    var len=d.val/tot*C, cor=corDe(d.nm,i);
+    var s='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+cor+'" stroke-width="'+sw+'" '
       +'stroke-dasharray="'+len.toFixed(1)+' '+(C-len).toFixed(1)+'" stroke-dashoffset="'+(-off).toFixed(1)+'" '
       +'transform="rotate(-90 '+cx+' '+cy+')"><title>'+esc(d.nm)+': '+fmtEur(d.val)+'</title></circle>';
     off+=len; return s;
@@ -1977,8 +1990,9 @@ function donutHTML(data, unidade){
     +'<text x="90" y="86" text-anchor="middle" class="vd-dn-big">'+fmtEur(tot)+'</text>'
     +'<text x="90" y="104" text-anchor="middle" class="vd-dn-sm">'+esc(unidade||'total')+'</text></svg>';
   var lg=data.map(function(d,i){
-    return '<div class="vd-lg"><span class="dot" style="background:'+PCOL[i%PCOL.length]+'"></span>'
+    return '<div class="vd-lg"><span class="dot" style="background:'+corDe(d.nm,i)+'"></span>'
       +'<span class="lg-nm">'+esc(d.nm)+'</span>'
+      +'<span class="lg-eur">'+fmtEur(d.val)+'</span>'
       +'<span class="lg-sp">'+fmtDelta(d.val/tot*100)+'%</span></div>';
   }).join('');
   return '<div class="vd-donwrap"><div class="vd-donut-box">'+svgD+'</div><div class="vd-legend">'+lg+'</div></div>';
@@ -2006,7 +2020,8 @@ function renderPeso(){
   var fa=(exp.area||exp.gen||exp.act||exp.cat)?'<div class="vd-note">Com os filtros do Explorar aplicados.</div>':'';
   function build(by){
     var a=aggBy(rows,by);
-    return a.arr.filter(function(x){ return x.ns>0; }).slice(0,8).map(function(x){ return {nm:x.raw, val:x.ns}; });
+    return a.arr.filter(function(x){ return x.ns>0 && !PESO_FORA[x.raw]; })
+                .slice(0,8).map(function(x){ return {nm:x.raw, val:x.ns}; });
   }
   hA.innerHTML=donutHTML(build('area'),'total')+fa;
   hG.innerHTML=donutHTML(build('gen'),'total')+fa;
