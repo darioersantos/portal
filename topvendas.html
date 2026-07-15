@@ -1772,7 +1772,22 @@ function catChip(c){ var ic=TVCATIC[c]; var on=(curCat===c)?' on':''; var nm=cat
 /* --- valor de vendas por artigo (destaque aos que valem mais) --- */
 function pval(p){ var s=String(p.price||'').replace(/\s/g,'').replace(/\.(?=\d{3}\b)/g,'').replace(',','.'); var n=parseFloat(s); return isNaN(n)?0:n; }
 function tvMaxVal(){ var m=0; if(DATA&&DATA.sections) DATA.sections.forEach(function(s){ s.products.forEach(function(p){ var v=pval(p); if(v>m) m=v; }); }); return m; }
-function tvSortSecs(){ if(!DATA||!DATA.sections) return; DATA.sections.forEach(function(s){ var t=0; s.products.forEach(function(p){ t+=pval(p); }); s._tot=t; }); DATA.sections.sort(function(a,b){ return (b._tot||0)-(a._tot||0); }); }
+/* ordem logica das seccoes: Textil -> Calcado -> Acessorios; dentro de cada: Homem -> Mulher -> Junior -> Unisex */
+function areaRank(t){ if(/^Apparel/i.test(t)) return 0; if(/^Footwear/i.test(t)) return 1; if(/^Accessories/i.test(t)) return 2; return 3; }
+function genRank(t){ var s=' '+String(t||'').toUpperCase()+' ';
+  if(/\sWOMEN\s/.test(s)) return 1;              /* WOMEN primeiro no teste: "WOMEN" contem "MEN" */
+  if(/\sMEN\s/.test(s)) return 0;
+  if(/\s(JCI|JUNIOR|JNR|KID|KIDS|INFANTS)\s/.test(s)) return 2;
+  if(/\sUNISEX\s/.test(s)) return 3;
+  return 4; }
+function tvSortSecs(){ if(!DATA||!DATA.sections) return;
+  DATA.sections.forEach(function(s){ var t=0; s.products.forEach(function(p){ t+=pval(p); }); s._tot=t; });
+  DATA.sections.sort(function(a,b){
+    var x=areaRank(a.title)-areaRank(b.title); if(x) return x;
+    var g=genRank(a.title)-genRank(b.title); if(g) return g;
+    return (b._tot||0)-(a._tot||0);              /* dentro do mesmo grupo, o que vende mais fica primeiro */
+  });
+}
 function topValueProds(cat){ var arr=[]; if(!DATA) return arr; DATA.sections.forEach(function(s){ if(cat && catOf(s.title)!==cat) return; s.products.forEach(function(p){ arr.push({p:p, sec:s.title}); }); }); arr.sort(function(a,b){ return pval(b.p)-pval(a.p); });
   /* remover repetidos: o mesmo artigo pode ser top em varias seccoes; fica so o de maior valor */
   var seen={}, out=[]; for(var i=0;i<arr.length && out.length<24;i++){ var p=arr[i].p; var key=String(p.code||'')||((p.brand||'')+'|'+(p.desc||'')+'|'+(p.price||'')); if(seen[key]) continue; seen[key]=1; out.push(arr[i]); } return out; }
