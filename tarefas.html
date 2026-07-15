@@ -246,6 +246,28 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   /* ===== Tarefas ===== */
   .tk-newbtn{background:linear-gradient(135deg,#FF8100,#E06E00);color:#fff;border:none;border-radius:12px;padding:11px 18px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px;box-shadow:0 6px 16px rgba(230,98,0,.28);}
   .tk-newbtn .ico{width:18px;height:18px;stroke-width:2.4;}
@@ -256,6 +278,19 @@
   .tk-sec .sh .si{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);color:var(--accent-dark);display:flex;align-items:center;justify-content:center;flex:none;}
   .tk-sec .sh .si .ico{width:18px;height:18px;}
   .tk-sec .sh h3{font-size:15px;font-weight:800;margin:0;flex:1;}
+  /* Acordeao das tarefas agendadas (para outros dias) */
+  .tk-acc{grid-column:1/-1;background:#faf7ff;border-color:#e9d5ff;}
+  .tk-acc .sh{cursor:pointer;user-select:none;-webkit-user-select:none;margin-bottom:0;}
+  .tk-acc .sh .si{background:#f3e8ff;color:#7e22ce;}
+  .tk-acc .sh h3{color:#7e22ce;}
+  .tk-acc .sh .cnt{background:#f3e8ff;color:#7e22ce;}
+  .tk-acc-chev{width:0;height:0;flex:none;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid #7e22ce;border-right:0;margin-left:4px;transition:.15s;}
+  .tk-acc.open .sh{margin-bottom:6px;}
+  .tk-acc.open .tk-acc-chev{border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid #7e22ce;border-bottom:0;}
+  .tk-acc-b{display:none;}
+  .tk-acc.open .tk-acc-b{display:block;}
+  .tk-acc-hint{font-size:12px;color:#8b5cf6;font-weight:600;margin:2px 0 0 44px;}
+  .tk-schtag{display:inline-block;font-size:10.5px;font-weight:800;background:#f3e8ff;color:#7e22ce;border-radius:999px;padding:1px 8px;margin-right:6px;vertical-align:1px;}
   .tk-sec .sh .cnt{background:#f4f6f8;color:#6b7280;font-size:11px;font-weight:800;padding:1px 9px;border-radius:999px;}
   .tk-task{display:flex;align-items:flex-start;gap:11px;padding:10px 2px;border-bottom:1px solid var(--line);}
   .tk-task:last-child{border-bottom:none;}
@@ -1948,6 +1983,908 @@
     #printArea i{color:#555;font-style:italic;}
   }
 
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
+
+  /* ===== Tarefas: modal completo ===== */
+  #tkModal{align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom));}
+  #tkModal .bx{max-width:480px;}
+  #tkModal h3{margin:0 0 4px;}
+  #tkModal label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:13px 0 6px;}
+  #tkModal textarea,#tkModal select,#tkModal input[type=date],#tkModal input[type=time]{width:100%;max-width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  #tkModal textarea{min-height:80px;resize:vertical;}
+  #tkModal textarea:focus,#tkModal select:focus,#tkModal input:focus{outline:none;border-color:var(--accent);}
+  .tk-mediabar{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .lb-iconbtn{border:1.5px solid var(--line2);background:#fafbfc;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+  .lb-iconbtn.rec{background:#fdecec;border-color:#f5b5b5;color:var(--red);}
+  .lb-iconbtn .ico{width:16px;height:16px;}
+  .tk-fotoprev{margin-top:9px;} .tk-fotoprev img{max-width:150px;max-height:120px;border-radius:10px;border:1px solid var(--line);display:block;}
+  .tk-fotoprev button{margin-top:6px;background:#f0eeeb;border:none;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;}
+  .tk-sch{display:flex;flex-wrap:wrap;gap:6px;}
+  .sch-chip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#4a515b;cursor:pointer;font-family:inherit;}
+  .sch-chip.on{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
+  #tkModal label.lb-calchk{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#4a515b;margin-top:12px;cursor:pointer;}
+  #tkModal label.lb-calchk .ico{width:16px;height:16px;flex:none;}
+  .lb-calchk input{width:22px !important;height:22px;flex:none;accent-color:#FF8100;cursor:pointer;}
+  .lb-calfields{display:none;gap:10px;margin-top:9px;}
+  .lb-calfields input{max-width:48%;}
+  .tk-task .tk-foto{margin-top:7px;} .tk-task .tk-foto img{max-width:140px;max-height:110px;border-radius:9px;border:1px solid var(--line);cursor:pointer;display:block;}
+  #lightbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  #printArea{display:none;}
+  @media print{
+    .sidebar,.sb-backdrop,.main{display:none !important;}
+    #printArea{display:block !important;color:#000;padding:6mm;}
+    #printArea h1{font-size:20px;margin:0 0 2px;}
+    #printArea .psub{font-size:12px;color:#555;margin:0 0 12px;border-bottom:2px solid #FF8100;padding-bottom:8px;}
+    #printArea h2{font-size:19px;margin:16px 0 6px;color:#8a4500;}
+    #printArea ul{list-style:none;margin:0;padding:0;}
+    #printArea li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #eee;page-break-inside:avoid;font-size:14px;}
+    #printArea .box{flex:none;width:14px;height:14px;border:1.5px solid #333;border-radius:3px;margin-top:2px;}
+    #printArea li img.pthumb{flex:none;width:150px;height:auto;border-radius:5px;border:1px solid #bbb;margin-left:6px;}
+    #printArea i{color:#555;font-style:italic;}
+  }
+
 </style>
 </head>
 <body>
@@ -2068,6 +3005,377 @@ IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 
 IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
 IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
 IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+IC['link']=IC['link']||'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+IC['contact']=IC['contact']||'<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/><rect width="18" height="18" x="3" y="4" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="8" x2="8" y1="2" y2="4"/><line x1="16" x2="16" y1="2" y2="4"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+IC['graduation-cap']=IC['graduation-cap']||'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>';
 
 IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
@@ -2704,6 +4012,50 @@ IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16
 IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
 IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
 IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
+
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+IC.upload=IC.upload||'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>';
+IC['chevron-down']=IC['chevron-down']||'<path d="m6 9 6 6 6-6"/>';
+IC['refresh-cw']=IC['refresh-cw']||'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>';
+IC['trending-up']=IC['trending-up']||'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+IC['trending-down']=IC['trending-down']||'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+IC['badge-check']=IC['badge-check']||'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['arrow-up-right']=IC['arrow-up-right']||'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>';
+IC['arrow-down-right']=IC['arrow-down-right']||'<path d="M7 7v10h10"/><path d="M17 17 7 7"/>';
 
 IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
@@ -2729,6 +4081,9 @@ IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
 IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+IC.copy=IC.copy||'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+IC['rotate-ccw']=IC['rotate-ccw']||'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+IC.x=IC.x||'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
 
 IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
@@ -2738,7 +4093,11 @@ IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
 
-var SL_FOTOS={'Ant\u00f3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00fajo':'images/img_04.jpg','Ricardo Eus\u00e9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00e3o Paiva':'images/img_10.jpg','Jo\u00e3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00e2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00e9rgio Correia':'images/img_21.jpg','Andr\u00e9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00fajo':'images/img_25.jpg','Lu\u00eds Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00e2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00e3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00e7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00edrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00faria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00e1rio Santos':'images/img_51.jpg','Beatriz Jer\u00f3nimo':'images/img_52.jpg'};
+IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
+IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+
+var SL_FOTOS={'Ant\u00F3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00FAjo':'images/img_04.jpg','Ricardo Eus\u00E9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00E3o Paiva':'images/img_10.jpg','Jo\u00E3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00E2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00E9rgio Correia':'images/img_21.jpg','Andr\u00E9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00FAjo':'images/img_25.jpg','Lu\u00EDs Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00E2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00E3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00E7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00EDrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00FAria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00E1rio Santos':'images/img_51.jpg','Beatriz Jer\u00F3nimo':'images/img_52.jpg'};
 var NAV=(window.PORTAL_NAV||[]);
 
 var BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
@@ -2825,9 +4184,31 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* ===== Modulo ===== */
 
-var SECS=[{k:'geral',nm:'Geral',ic:'clipboard-list'},{k:'calcado',nm:'Cal\u00e7ado',ic:'footprints'},{k:'textil',nm:'T\u00eaxtil',ic:'shirt'},{k:'visual',nm:'Visual',ic:'image'},{k:'caixa',nm:'Caixa',ic:'receipt'},{k:'logistica',nm:'Log\u00edstica',ic:'package'}];
+var SECS=[{k:'geral',nm:'Geral',ic:'clipboard-list'},{k:'calcado',nm:'Cal\u00E7ado',ic:'footprints'},{k:'textil',nm:'T\u00EAxtil',ic:'shirt'},{k:'visual',nm:'Visual',ic:'image'},{k:'caixa',nm:'Caixa',ic:'receipt'},{k:'logistica',nm:'Log\u00EDstica',ic:'package'}];
 var WDIAS=['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
 var TASKS=[], pendingFoto='';
 var IMGSEP='||IMG||', PRIOMARK='[[PRIO]]', IMPMARK='[[IMP]]';
@@ -2836,6 +4217,11 @@ function isDone(n){ return n.done===true||String(n.done).toLowerCase()==='true';
 function semBy(raw){ return String(raw||'').replace(/^\[\[BY:[^\]]*\]\]/,''); }
 function parteBy(raw){ var m=String(raw||'').match(/^\[\[BY:([^\]]*)\]\]/); return m?m[1]:''; }
 function semSch(raw){ return semBy(raw).replace(/^\[\[SCH:[0-9,]*\]\]/,''); }
+/* --- tarefas agendadas (dias da semana) --- */
+function parteSch(raw){ var m=semBy(raw).match(/^\[\[SCH:([0-9,]*)\]\]/); return m?m[1].split(',').filter(function(x){return x!=='';}).map(Number):[]; }
+function schLabel(raw){ var d=parteSch(raw); return d.length?d.map(function(x){return WDIAS[x];}).join(', '):''; }
+function dueToday(raw){ var d=parteSch(raw); if(!d.length) return true; return d.indexOf(new Date().getDay())>=0; }
+if(typeof IC!=='undefined' && !IC['calendar-clock']) IC['calendar-clock']='<path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="18" cy="18" r="4"/><path d="M18 16.5V18l1 1"/>';
 function temPrio(raw){ return semSch(raw).indexOf(PRIOMARK)===0; }
 function temImp(raw){ var s=semSch(raw); if(s.indexOf(PRIOMARK)===0) s=s.slice(PRIOMARK.length); return s.indexOf(IMPMARK)===0; }
 function parteTexto(raw){ raw=semSch(raw); if(raw.indexOf(PRIOMARK)===0) raw=raw.slice(PRIOMARK.length); if(raw.indexOf(IMPMARK)===0) raw=raw.slice(IMPMARK.length); var i=raw.indexOf(IMGSEP); return i>=0?raw.slice(0,i):raw; }
@@ -2844,30 +4230,47 @@ function bust(){ try{sessionStorage.removeItem('sz_notas_cache');}catch(e){} }
 function hojeISO(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
 function abrirFoto(src){ document.getElementById('tkLbImg').src=src; document.getElementById('lightbox').style.display='flex'; }
 function loadTasks(){ if(!BACKEND){ renderTasks(); return; } bust(); fetch(BACKEND+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){ var notas=(j&&j.ok&&Array.isArray(j.notas))?j.notas:(Array.isArray(j)?j:[]); TASKS=notas.filter(function(n){ return String(n.seccao||'').charAt(0)!=='_' && !isDone(n); }); renderTasks(); }).catch(function(){ renderTasks(); }); }
+function taskHTML(n){
+  var prio=temPrio(n.texto), imp=temImp(n.texto), txt=parteTexto(n.texto), by=parteBy(n.texto), para=n.autor||'', foto=parteFoto(n.texto), sch=schLabel(n.texto);
+  return '<div class="tk-task'+(prio?' prio':(imp?' imp':''))+'">'
+    +'<span class="chk" data-done="'+esc(n.id)+'" title="Concluir">'+svg('check')+'</span>'
+    +'<div class="tt"><div class="txt">'+(prio?'<span class="bdg prio">Prioritaria</span>':'')+(imp?'<span class="bdg imp">Importante</span>':'')+(sch?'<span class="tk-schtag">'+esc(sch)+'</span>':'')+esc(txt||'(foto)')+'</div>'
+    +(foto?'<div class="tk-foto"><img alt="foto" data-foto="'+esc(n.id)+'"></div>':'')
+    +((by||para)?'<div class="meta">'+(by?'por '+esc(by):'')+(para?((by?' &middot; ':'')+'para '+esc(para)):'')+'</div>':'')
+    +'</div>'
+    +'<button class="del" data-del="'+esc(n.id)+'" title="Apagar">'+svg('trash-2')+'</button></div>';
+}
+var accOpen=false;
 function renderTasks(){
   var host=document.getElementById('tkSections'); var html='<div class="tk-secs">'; var any=false;
+  /* agendadas p/ OUTROS dias vao para o acordeao; as de hoje (e as sem agenda) ficam na seccao */
+  var deHoje=TASKS.filter(function(n){ return dueToday(n.texto); });
+  var agend=TASKS.filter(function(n){ return !dueToday(n.texto); });
   SECS.forEach(function(s){
-    var itens=TASKS.filter(function(n){return n.seccao===s.k;});
+    var itens=deHoje.filter(function(n){return n.seccao===s.k;});
     if(!itens.length) return;   /* esconde seccoes sem tarefas */
     any=true;
     html+='<div class="tk-sec"><div class="sh"><div class="si">'+svg(s.ic)+'</div><h3>'+esc(s.nm)+'</h3><span class="cnt">'+itens.length+'</span></div>';
-    itens.forEach(function(n){
-      var prio=temPrio(n.texto), imp=temImp(n.texto), txt=parteTexto(n.texto), by=parteBy(n.texto), para=n.autor||'', foto=parteFoto(n.texto);
-      html+='<div class="tk-task'+(prio?' prio':(imp?' imp':''))+'">'
-        +'<span class="chk" data-done="'+esc(n.id)+'" title="Concluir">'+svg('check')+'</span>'
-        +'<div class="tt"><div class="txt">'+(prio?'<span class="bdg prio">Prioritaria</span>':'')+(imp?'<span class="bdg imp">Importante</span>':'')+esc(txt||'(foto)')+'</div>'
-        +(foto?'<div class="tk-foto"><img alt="foto" data-foto="'+esc(n.id)+'"></div>':'')
-        +((by||para)?'<div class="meta">'+(by?'por '+esc(by):'')+(para?((by?' &middot; ':'')+'para '+esc(para)):'')+'</div>':'')
-        +'</div>'
-        +'<button class="del" data-del="'+esc(n.id)+'" title="Apagar">'+svg('trash-2')+'</button></div>';
-    });
+    itens.forEach(function(n){ html+=taskHTML(n); });
     html+='</div>';
   });
+  if(agend.length){
+    any=true;
+    agend.sort(function(a,b){ var pa=temPrio(a.texto),pb=temPrio(b.texto); if(pa!==pb) return pa?-1:1; var ia=temImp(a.texto),ib=temImp(b.texto); if(ia!==ib) return ia?-1:1; return 0; });
+    html+='<div class="tk-sec tk-acc'+(accOpen?' open':'')+'" id="tkAcc">'
+      +'<div class="sh" id="tkAccH"><div class="si">'+svg('calendar-clock')+'</div><h3>Agendadas</h3><span class="cnt">'+agend.length+'</span><span class="tk-acc-chev"></span></div>'
+      +'<div class="tk-acc-hint">Para outros dias da semana &middot; toca para '+(accOpen?'fechar':'abrir')+'</div>'
+      +'<div class="tk-acc-b">';
+    agend.forEach(function(n){ html+=taskHTML(n); });
+    html+='</div></div>';
+  }
   html+='</div>';
   host.innerHTML = any ? html : '<div class="tk-empty" style="text-align:center;padding:26px 6px;">Sem tarefas pendentes.</div>';
   host.querySelectorAll('img[data-foto]').forEach(function(im){ var id=im.getAttribute('data-foto'); var t=TASKS.filter(function(x){return String(x.id)===String(id);})[0]; if(t){ var f=parteFoto(t.texto); if(f){ im.src=f; im.onclick=function(){ abrirFoto(f); }; } } });
   host.querySelectorAll('[data-done]').forEach(function(el){ el.onclick=function(){ markDone(el.getAttribute('data-done')); }; });
   host.querySelectorAll('[data-del]').forEach(function(el){ el.onclick=function(){ delTask(el.getAttribute('data-del')); }; });
+  var ah=document.getElementById('tkAccH');
+  if(ah) ah.onclick=function(){ accOpen=!accOpen; var el=document.getElementById('tkAcc'); if(el){ el.classList.toggle('open',accOpen); var h=el.querySelector('.tk-acc-hint'); if(h) h.innerHTML='Para outros dias da semana &middot; toca para '+(accOpen?'fechar':'abrir'); } };
   mountIcons(host);
 }
 function markDone(id){ TASKS=TASKS.filter(function(x){return String(x.id)!==String(id);}); renderTasks(); if(!BACKEND) return; fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_done',id:id,done:true})}).then(function(){bust();}).catch(function(){}); }
