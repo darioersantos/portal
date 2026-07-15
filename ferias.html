@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="SPZ Portal">
-<title>Pedido de F&#xe9;rias &middot; Sport Zone Vasco da Gama</title>
+<title>Pedido de F&#xE9;rias &middot; Sport Zone Vasco da Gama</title>
 <script src="config.js"></script>
 <script src="links.js"></script>
 <script src="roster.js"></script>
@@ -317,7 +317,7 @@
 <div class="main">
   <header class="topbar">
     <button class="menu-btn" id="menuBtn"><span data-ic="menu"></span></button>
-    <div class="tb-hi"><h1>Pedido de F&#xe9;rias</h1><p>Formul&#xe1;rio de pedido de f&#xe9;rias.</p></div>
+    <div class="tb-hi"><h1>Pedido de F&#xE9;rias</h1><p>Formul&#xE1;rio de pedido de f&#xE9;rias.</p></div>
     <div class="tb-right"></div>
   </header>
   <div class="content">
@@ -327,8 +327,8 @@
 
 <main>
   <div class="card" id="shareBox" style="display:none;background:linear-gradient(135deg,#ffffff,#fff7ed);border:1.5px solid var(--accent-soft);">
-    <div style="font-weight:800;font-size:15px;margin-bottom:4px;"><i data-lu="link" data-sz="16"></i> Link para o staff pedir f&#xe9;rias</div>
-    <p style="color:var(--muted);font-size:13px;margin:0 0 10px;">Envia este link &#xe0; equipa para pedirem f&#xe9;rias. S&#xf3; abre esta p&#xe1;gina &#x2014; n&#xe3;o d&#xe1; acesso ao resto da app.</p>
+    <div style="font-weight:800;font-size:15px;margin-bottom:4px;"><i data-lu="link" data-sz="16"></i> Link para o staff pedir f&#xE9;rias</div>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 10px;">Envia este link &#xE0; equipa para pedirem f&#xE9;rias. S&#xF3; abre esta p&#xE1;gina &#x2014; n&#xE3;o d&#xE1; acesso ao resto da app.</p>
     <input id="shareUrl" readonly style="display:none">
     <button class="save" id="btnCopy" style="width:100%;padding:13px;display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1;"><i data-lu="link" data-sz="16"></i> Link de partilha</button>
   </div>
@@ -342,7 +342,7 @@
     </div>
     <input type="hidden" id="ini"><input type="hidden" id="fim">
     <div class="field"><label for="obs">Observa&#xE7;&#xF5;es (opcional)</label><textarea id="obs" placeholder="Algo a acrescentar?"></textarea></div>
-    <div class="warn"><i data-lu="lock" data-sz="16"></i> A empresa bloqueia per&#xED;odo de f&#xE9;rias entre 15 de dezembro a 7 de janeiro.</div>
+    <div class="warn"><i data-lu="lock" data-sz="16"></i> A empresa bloqueia f&#xE9;rias <b>de 15 de dezembro a 7 de janeiro</b> e na <b>&#xFA;ltima semana de novembro</b> (a semana que antecede a Black Friday). Estes dias aparecem riscados no calend&#xE1;rio.</div>
     <button class="save" id="btnSave">Enviar pedido</button>
   </div>
   <div class="card" id="cardThanks" style="display:none;text-align:center;">
@@ -695,7 +695,7 @@ IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
 
-var SL_FOTOS={'Ant\u00f3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00fajo':'images/img_04.jpg','Ricardo Eus\u00e9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00e3o Paiva':'images/img_10.jpg','Jo\u00e3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00e2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00e9rgio Correia':'images/img_21.jpg','Andr\u00e9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00fajo':'images/img_25.jpg','Lu\u00eds Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00e2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00e3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00e7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00edrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00faria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00e1rio Santos':'images/img_51.jpg','Beatriz Jer\u00f3nimo':'images/img_52.jpg'};
+var SL_FOTOS={'Ant\u00F3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00FAjo':'images/img_04.jpg','Ricardo Eus\u00E9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00E3o Paiva':'images/img_10.jpg','Jo\u00E3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00E2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00E9rgio Correia':'images/img_21.jpg','Andr\u00E9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00FAjo':'images/img_25.jpg','Lu\u00EDs Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00E2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00E3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00E7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00EDrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00FAria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00E1rio Santos':'images/img_51.jpg','Beatriz Jer\u00F3nimo':'images/img_52.jpg'};
 var NAV=(window.PORTAL_NAV||[]);
 
 var BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
@@ -769,7 +769,12 @@ const MANAGER=(sessionStorage.getItem('portalOK')==='1' && location.search.index
 let DADOS=[];
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function pd(s){ var d=new Date((s||'')+'T00:00:00'); return isNaN(d)?(s||''):d.toLocaleDateString('pt-PT'); }
-function bloqueado(d){ var m=d.getMonth()+1, day=d.getDate(); return (m===12&&day>=15)||(m===1&&day<=7); }
+/* Periodos bloqueados pela empresa:
+   - 15 de dezembro a 7 de janeiro (epoca de Natal)
+   - ultima semana de novembro (24 a 30): a Black Friday e sempre a ultima sexta de novembro,
+     ou seja cai sempre entre 24 e 30 \u2014 este intervalo cobre a semana que a antecede e a propria. */
+function bloqueado(d){ var m=d.getMonth()+1, day=d.getDate();
+  return (m===12&&day>=15) || (m===1&&day<=7) || (m===11&&day>=24); }
 function rangeBloqueado(ini,fim){ var a=new Date(ini+'T00:00:00'), b=new Date(fim+'T00:00:00'); if(isNaN(a)||isNaN(b)) return false; var c=new Date(a); var n=0; while(c<=b && n<400){ if(bloqueado(c)) return true; c.setDate(c.getDate()+1); n++; } return false; }
 function render(){
   const l=document.getElementById('lista'); l.innerHTML='';
@@ -796,7 +801,7 @@ document.getElementById('btnSave').addEventListener('click',function(){
   if(!nome){ alert('Seleciona o teu nome.'); return; }
   if(!ini||!fim){ alert('Indica a data de in\u00edcio e de fim.'); return; }
   if(fim<ini){ alert('A data de fim n\u00e3o pode ser anterior \u00e0 de in\u00edcio.'); return; }
-  if(rangeBloqueado(ini,fim)){ alert('N\u00e3o \u00e9 poss\u00edvel pedir f\u00e9rias entre 15 de dezembro e 7 de janeiro. Ajusta as datas.'); return; }
+  if(rangeBloqueado(ini,fim)){ alert('Essas datas incluem um per\u00edodo bloqueado pela empresa: 15 de dezembro a 7 de janeiro, ou a \u00faltima semana de novembro (a semana que antecede a Black Friday). Ajusta as datas.'); return; }
   if(!BACKEND){ alert('Sem liga\u00e7\u00e3o \u00e0 nuvem.'); return; }
   const btn=this; btn.disabled=true; btn.textContent='A enviar\u2026';
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
@@ -816,7 +821,7 @@ function apagar(id){
     .then(r=>r.json()).then(function(){ DADOS=DADOS.filter(x=>String(x.id)!==String(id)); render(); })
     .catch(function(){ alert('N\u00e3o foi poss\u00edvel apagar.'); });
 }
-/* ---------- calend\u00e1rio de sele\u00e7\u00e3o (arrastar / tocar) ---------- */
+/* ---------- calend\u00E1rio de sele\u00E7\u00E3o (arrastar / tocar) ---------- */
 var calRef=new Date(); calRef.setDate(1);
 var selStart=null, selEnd=null, awaitingEnd=false;
 var dragging=false, moved=false, dragAnchor=null, lastOver=null, startX=0, startY=0;
@@ -831,7 +836,7 @@ function atualizaSum(){
   var el=document.getElementById('calSum'); if(!el) return;
   if(selStart&&selEnd&&selStart!==selEnd){ var n=diffDays(selStart,selEnd)+1; el.innerHTML='<b>'+pd(selStart)+'</b> &rarr; <b>'+pd(selEnd)+'</b> &middot; '+n+' dias'; }
   else if(selStart){ el.innerHTML='<b>'+pd(selStart)+'</b> &middot; toca outra vez para apagar'; }
-  else { el.textContent='Toca no dia. Arrasta para escolher v\u00e1rios dias.'; }
+  else { el.textContent='Toca no dia. Arrasta para escolher v\u00E1rios dias.'; }
 }
 function paintSelection(){
   var grid=document.getElementById('calGrid'); if(!grid) return;
@@ -845,8 +850,8 @@ function paintSelection(){
 function applyRange(a,b){ var o=orderSel(a,b); selStart=o[0]; selEnd=o[1]; awaitingEnd=false; setInputs(); paintSelection(); }
 function tapDay(s){
   if(isBlockedYmd(s)) return;
-  if(selStart===s && selEnd===s){ selStart=null; selEnd=null; }   /* tocar no dia j\u00e1 escolhido -> apaga */
-  else { selStart=s; selEnd=s; }                                  /* toque = 1 dia (arrastar = v\u00e1rios) */
+  if(selStart===s && selEnd===s){ selStart=null; selEnd=null; }   /* tocar no dia j\u00E1 escolhido -> apaga */
+  else { selStart=s; selEnd=s; }                                  /* toque = 1 dia (arrastar = v\u00E1rios) */
   awaitingEnd=false; setInputs(); paintSelection();
 }
 function wireGrid(){
@@ -874,12 +879,12 @@ function wireGrid(){
 function renderCal(){
   var box=document.getElementById('cal'); if(!box) return;
   var y=calRef.getFullYear(), m=calRef.getMonth();
-  var meses=['Janeiro','Fevereiro','Mar\u00e7o','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  var wds=['Seg','Ter','Qua','Qui','Sex','S\u00e1b','Dom'];
+  var meses=['Janeiro','Fevereiro','Mar\u00E7o','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  var wds=['Seg','Ter','Qua','Qui','Sex','S\u00E1b','Dom'];
   var startWd=(new Date(y,m,1).getDay()+6)%7;
   var dim=new Date(y,m+1,0).getDate();
   var todayS=ymd(new Date());
-  var h='<div class="cal-top"><button type="button" id="calPrev" aria-label="M\u00eas anterior">&#8249;</button><span class="mlabel">'+meses[m]+' '+y+'</span><button type="button" id="calNext" aria-label="M\u00eas seguinte">&#8250;</button></div>';
+  var h='<div class="cal-top"><button type="button" id="calPrev" aria-label="M\u00EAs anterior">&#8249;</button><span class="mlabel">'+meses[m]+' '+y+'</span><button type="button" id="calNext" aria-label="M\u00EAs seguinte">&#8250;</button></div>';
   h+='<div class="cal-wd">'+wds.map(function(w){return '<span>'+w+'</span>';}).join('')+'</div><div class="cal-grid" id="calGrid">';
   for(var i=0;i<startWd;i++){ h+='<div class="d mut"></div>'; }
   for(var day=1;day<=dim;day++){
