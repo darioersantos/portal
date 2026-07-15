@@ -642,7 +642,8 @@ function maybeBirthdayPopup(asorted){
   try{ if(sessionStorage.getItem('sz_bd_seen')==='1') return; }catch(e){}
   var hoje=asorted.filter(function(n){ return bdDiasAte(n.texto)===0; });
   if(!hoje.length) return;   /* so aparece no proprio dia do aniversario */
-  var title='Feliz Anivers\u00E1rio!';
+  /* app so para a direcao: informa quem faz anos, sem dar os parabens */
+  var title='Anivers\u00E1rios';
   var subt=(hoje.length+' colaborador'+(hoje.length>1?'es fazem':' faz')+' anos hoje');
   document.getElementById('bdTitle').textContent=title;
   document.getElementById('bdSubt').textContent=subt;
