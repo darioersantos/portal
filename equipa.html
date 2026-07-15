@@ -294,6 +294,7 @@
   .eq-cleg .d4{width:13px;height:0;border-top:2px dashed #FF8100;display:inline-block;vertical-align:middle;margin-left:8px;}
   .eq-regbtn{margin-left:10px;display:inline-flex;align-items:center;gap:5px;background:none;border:1px solid var(--line2);border-radius:999px;padding:4px 10px;font-size:10.5px;font-weight:800;color:var(--accent-dark);cursor:pointer;font-family:inherit;}
   .eq-regbtn .ico{width:11px;height:11px;}
+  .eq-cleg .eq-semalvo{margin-left:8px;font-style:italic;color:var(--muted2);font-weight:600;}
   @media print{ .eq-regbtn{display:none !important;} }
   .eq-chart{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:14px 14px 10px;margin-bottom:14px;}
   .eq-chart h3{margin:0;font-size:14px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px;}
@@ -1862,10 +1863,17 @@ function staffChart(list){
   var ffThresh=sortedFF.length>=4?sortedFF[3]:(sortedFF[sortedFF.length-1]||1);
   function isFF(i){ return maxff>0 && ffVals[i]>0 && ffVals[i]>=ffThresh; }
   var n=hours.length, gap=3, bw=(W-gap*(n-1))/n;
-  /* alvo (ideal) que o Dario definiu em Regras de staff, por hora.
-     A escala do grafico tem de acomodar o alvo, mas o "pico de equipa"
-     continua a ser o maximo REAL de pessoas \u2014 por isso sao variaveis diferentes. */
-  var alvos=hours.map(function(h){ return regTotal(h); });
+  /* Alvo (ideal) por hora \u2014 SO quando ha uma seccao filtrada.
+     Cada seccao tem o seu proprio alvo; somar tudo numa "linha geral da loja"
+     nao dizia nada, porque o alvo do Textil nao se soma ao da Caixa.
+     Sem filtro (a ver todas) nao ha linha: e a chip da seccao que a revela.
+     A escala tem de acomodar o alvo, mas o "pico de equipa" continua a ser o
+     maximo REAL de pessoas \u2014 por isso sao variaveis diferentes. */
+  var alvos=hours.map(function(h){
+    if(!EQSOLO) return null;
+    var rg=regGet(EQSOLO,h);
+    return (rg && rg.ideal>0) ? rg.ideal : null;
+  });
   var temAlvo=alvos.some(function(a){ return a!=null; });
   var escala=maxc;
   if(temAlvo) escala=Math.max(maxc, Math.max.apply(null, alvos.filter(function(a){return a!=null;}).concat([1])));
@@ -1899,8 +1907,8 @@ function staffChart(list){
   var peakTxt=(maxc>0)?('Pico de equipa \u00E0s '+hours[peak]+'h ('+maxc+' pessoas)'):'';
   var ffHours=hours.filter(function(h,i){return isFF(i);});
   var ffTxt=ffHours.length?(' &middot; <b style="color:#e0413e">Maior fluxo de vendas: '+ffHours.map(function(h){return h+'h';}).join(', ')+'</b>'):'';
-  var legend='<div class="eq-cleg"><span class="d1"></span>equipa por hora'+(maxff>0?' <span class="d2"></span>maior fluxo de vendas':'')+' <span class="d3"></span>abertura (10h)'
-    +(temAlvo?' <span class="d4"></span>ideal que definiste':'')
+  var legend='<div class="eq-cleg"><span class="d1"></span>'+(EQSOLO?('equipa de '+esc(EQSOLO)):'equipa por hora')+(maxff>0?' <span class="d2"></span>maior fluxo de vendas':'')+' <span class="d3"></span>abertura (10h)'
+    +(temAlvo?(' <span class="d4"></span>ideal de '+esc(EQSOLO)):(EQSOLO?' <span class="eq-semalvo">sem alvo definido para '+esc(EQSOLO)+'</span>':' <span class="eq-semalvo">escolhe uma sec\u00E7\u00E3o para veres o ideal</span>'))
     +'<button type="button" class="eq-regbtn" id="fcEdit">'+svg2('square-pen')+' Regras de staff</button></div>';
   return '<div class="eq-chart"><h3>'+svg2('bar-chart-3')+' Staff ao longo do dia</h3><div class="sub">'+peakTxt+ffTxt+'</div><svg viewBox="0 0 '+W+' '+H+'">'+svg+'</svg>'+legend+'</div>';
 }
@@ -2010,12 +2018,6 @@ function regDefault(){
 }
 function regGet(sec,h){ var r=REGRAS.alvo&&REGRAS.alvo[sec]&&REGRAS.alvo[sec][h]; return (r && (r.min>0||r.ideal>0))?r:null; }
 function regHoras(){ var out=[]; for(var h=REG_H0;h<=REG_H1;h++) out.push(h); return out; }
-/* alvo total (soma dos ideais definidos) a uma hora \u2014 para a linha do grafico */
-function regTotal(h){
-  var t=0, tem=false;
-  REG_SECS.forEach(function(s){ var r=regGet(s,h); if(r && r.ideal>0){ t+=r.ideal; tem=true; } });
-  return tem?t:null;
-}
 function regLoad(){
   try{ var s=localStorage.getItem('sz_regras'); if(s){ var o=JSON.parse(s); if(o&&o.alvo){ REGRAS=o; return; } } }catch(e){}
   REGRAS=regDefault();
