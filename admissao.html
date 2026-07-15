@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="SPZ Portal">
-<title>Pedido de Admiss&#xe3;o &middot; Sport Zone Vasco da Gama</title>
+<title>Pedido de Admiss&#xE3;o &middot; Sport Zone Vasco da Gama</title>
 <script src="config.js"></script>
 <script src="links.js"></script>
 <script src="roster.js"></script>
@@ -300,6 +300,11 @@
   .btn-ghost{background:#fff;color:var(--accent-dark);border:2px solid var(--accent-soft);border-radius:14px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;flex:1;}
   .prog{font-size:12px;font-weight:800;color:var(--muted);text-align:center;margin:2px 0 12px;text-transform:uppercase;letter-spacing:.04em;}
   .adm-row{display:flex;align-items:flex-start;gap:10px;padding:12px 13px;border:1px solid var(--line);border-radius:12px;margin-top:10px;background:#fff;}
+  /* avatar: as iniciais aparecem SEMPRE; a foto do Drive sobrepoe-se so quando carrega
+     (se o utilizador nao tiver acesso ao Drive, o pedido fica pendente e ficam as iniciais) */
+  .adm-row .adm-av{position:relative;width:40px;height:40px;border-radius:50%;flex:none;overflow:hidden;background:var(--accent-soft);color:var(--accent-dark);display:flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:800;letter-spacing:.02em;}
+  .adm-row .adm-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .25s;}
+  .adm-row .adm-av img.ok{opacity:1;}
   .adm-row .info{flex:1;min-width:0;}
   .adm-row .nome{font-weight:800;color:var(--accent-dark);}
   .adm-row .det{font-size:13px;color:var(--muted);margin-top:3px;line-height:1.45;word-break:break-word;}
@@ -356,7 +361,7 @@
 <div class="main">
   <header class="topbar">
     <button class="menu-btn" id="menuBtn"><span data-ic="menu"></span></button>
-    <div class="tb-hi"><h1>Pedido de Admiss&#xe3;o</h1><p>Formul&#xe1;rio de pedido de admiss&#xe3;o.</p></div>
+    <div class="tb-hi"><h1>Pedido de Admiss&#xE3;o</h1><p>Formul&#xE1;rio de pedido de admiss&#xE3;o.</p></div>
     <div class="tb-right"></div>
   </header>
   <div class="content">
@@ -418,10 +423,10 @@
     <div class="grp-title" style="margin-top:16px;">Situa&#xE7;&#xE3;o pessoal</div>
     <div class="field"><label>N&#xBA; de dependentes (filhos) <span class="req">*</span></label><div class="chips" id="depChips"></div></div>
     <div class="field"><label>Estado civil <span class="req">*</span></label><div class="chips" id="civilChips"></div></div>
-    <div class="field"><label>Habilita&#xe7;&#xf5;es liter&#xe1;rias <span class="req">*</span></label>
+    <div class="field"><label>Habilita&#xE7;&#xF5;es liter&#xE1;rias <span class="req">*</span></label>
       <select id="f_habilitacoes">
         <option value="">Seleciona&#x2026;</option>
-        <option>Ensino secund&#xe1;rio</option>
+        <option>Ensino secund&#xE1;rio</option>
         <option>Licenciatura</option>
         <option>Mestrado</option>
         <option>Doutoramento</option>
@@ -468,7 +473,7 @@
     <div style="font-size:48px;line-height:1;color:var(--pos);"><i data-lu="check" data-sz="46"></i></div>
     <h2 style="margin:12px 0 4px;">Candidatura enviada!</h2>
     <p style="color:var(--muted);margin:0 0 8px;">Recebemos os teus dados. Obrigado!</p>
-    <p style="color:var(--ink);margin:0;font-weight:600;">Iremos voltar a entrar em contacto contigo para ultimar os &#xfa;ltimos detalhes da admiss&#xe3;o.</p>
+    <p style="color:var(--ink);margin:0;font-weight:600;">Iremos voltar a entrar em contacto contigo para ultimar os &#xFA;ltimos detalhes da admiss&#xE3;o.</p>
   </div>
 
   <!-- Hist&#xF3;rico (dire&#xE7;&#xE3;o) -->
@@ -825,7 +830,7 @@ IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
 
-var SL_FOTOS={'Ant\u00f3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00fajo':'images/img_04.jpg','Ricardo Eus\u00e9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00e3o Paiva':'images/img_10.jpg','Jo\u00e3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00e2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00e9rgio Correia':'images/img_21.jpg','Andr\u00e9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00fajo':'images/img_25.jpg','Lu\u00eds Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00e2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00e3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00e7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00edrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00faria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00e1rio Santos':'images/img_51.jpg','Beatriz Jer\u00f3nimo':'images/img_52.jpg'};
+var SL_FOTOS={'Ant\u00F3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00FAjo':'images/img_04.jpg','Ricardo Eus\u00E9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00E3o Paiva':'images/img_10.jpg','Jo\u00E3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00E2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00E9rgio Correia':'images/img_21.jpg','Andr\u00E9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00FAjo':'images/img_25.jpg','Lu\u00EDs Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00E2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00E3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00E7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00EDrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00FAria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00E1rio Santos':'images/img_51.jpg','Beatriz Jer\u00F3nimo':'images/img_52.jpg'};
 var NAV=(window.PORTAL_NAV||[]);
 
 var BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
@@ -954,9 +959,16 @@ byId('btnBack').onclick=function(){ byId('step2').style.display='none'; byId('st
 
 /* ---- recolha + valida\u00e7\u00e3o ---- */
 var CAMPOS=[['f_nome','Nome completo'],['f_telemovel','N\u00ba telem\u00f3vel'],['f_email','Email'],['f_morada','Morada completa + cidade'],['f_codPostal','C\u00f3digo postal'],['f_nacionalidade','Nacionalidade'],['f_dataNasc','Data de nascimento'],['f_cc','N\u00ba Cart\u00e3o de Cidad\u00e3o'],['f_ccValidade','Validade do CC'],['f_contribuinte','N\u00ba Contribuinte'],['f_segSocial','N\u00ba Seguran\u00e7a Social'],['f_iban','IBAN'],['f_habilitacoes','Habilita\u00e7\u00f5es liter\u00e1rias'],['f_emergNome','Nome do contacto de emerg\u00eancia'],['f_emergTel','Telefone do contacto de emerg\u00eancia']];
+/* O Google Sheets avalia como FORMULA tudo o que comece por = + - @ (ex.: "+351 96..." dava #ERROR!
+   e o numero perdia-se). Aqui limpamos os telefones para so digitos e protegemos os outros campos. */
+function limparTel(v){ v=String(v||'').replace(/[^\d]/g,''); return v; }
+function semFormula(v){ v=String(v||'').trim(); return /^[=+\-@]/.test(v) ? ("'"+v) : v; }
 function recolher(){
   var d={};
   CAMPOS.forEach(function(c){ d[c[0].slice(2)]=byId(c[0]).value.trim(); });
+  d.telemovel=limparTel(d.telemovel);
+  d.emergTel=limparTel(d.emergTel);
+  ['nome','email','morada','codPostal','nacionalidade','cc','contribuinte','segSocial','iban','habilitacoes','emergNome'].forEach(function(k){ d[k]=semFormula(d[k]); });
   d.dependentes=choice.dependentes; d.estadoCivil=choice.estadoCivil; d.tshirt=choice.tshirt; d.calca=choice.calca;
   return d;
 }
@@ -969,7 +981,7 @@ byId('btnSend').onclick=function(){
   if(!BACKEND){ alert('Sem liga\u00e7\u00e3o \u00e0 nuvem.'); return; }
   var d=recolher(); var falta=validar(d);
   if(falta){ alert('Falta preencher: '+falta); return; }
-  if(!fotoFiles.length){ alert('Anexa a fotografia do rosto \u2014 \u00e9 obrigat\u00f3ria.'); return; }
+  if(!fotoFiles.length){ alert('Anexa a fotografia do rosto \u2014 \u00E9 obrigat\u00F3ria.'); return; }
   var files=[];
   fotoFiles.forEach(function(f){ files.push({tipo:'foto',nome:f.nome,mime:f.mime,b64:f.b64}); });
   docFiles.forEach(function(f){ files.push({tipo:'doc',nome:f.nome,mime:f.mime,b64:f.b64}); });
@@ -980,11 +992,21 @@ byId('btnSend').onclick=function(){
       if(j&&j.ok){ byId('step1').style.display='none'; byId('step2').style.display='none'; byId('cardThanks').style.display='block'; window.scrollTo(0,0); if(MANAGER){ setTimeout(carregar,800); } }
       else throw new Error(j&&j.error||'erro');
     }).catch(function(err){ alert('N\u00e3o foi poss\u00edvel enviar. '+(String(err).indexOf('admissao')>-1?'O servidor ainda n\u00e3o foi atualizado.':'Tenta de novo.')); })
-    .then(function(){ btn.disabled=false; byId('btnBack').disabled=false; btn.textContent='Enviar formul\u00e1rio'; });
+    .then(function(){ btn.disabled=false; byId('btnBack').disabled=false; btn.textContent='Enviar formul\u00E1rio'; });
 };
 
 /* ---- hist\u00f3rico (dire\u00e7\u00e3o) ---- */
 function linkFich(url,label){ return url?'<a href="'+esc(url)+'" target="_blank" rel="noopener">'+label+'</a>':''; }
+/* --- avatar do candidato (foto do rosto que ele anexou) --- */
+function driveId(u){ var m=String(u||'').match(/\/d\/([-\w]{20,})/) || String(u||'').match(/[?&]id=([-\w]{20,})/); return m?m[1]:''; }
+function iniciais(nome){ var p=String(nome||'').trim().split(/\s+/).filter(Boolean); if(!p.length) return '?';
+  return ((p[0].charAt(0)||'')+(p.length>1?p[p.length-1].charAt(0):'')).toUpperCase(); }
+function avatarHTML(a){
+  var ini=esc(iniciais(a.nome)), id=driveId(a.foto);
+  /* as iniciais ficam por baixo; a foto so aparece se conseguir carregar */
+  if(!id) return '<div class="adm-av">'+ini+'</div>';
+  return '<div class="adm-av">'+ini+'<img src="https://drive.google.com/thumbnail?id='+esc(id)+'&sz=w96" alt="'+ini+'" loading="lazy"></div>';
+}
 function render(){
   var l=byId('lista'); l.innerHTML='';
   if(!ADMS.length){ l.innerHTML='<div class="status">Ainda n\u00e3o h\u00e1 candidaturas.</div>'; return; }
@@ -993,7 +1015,10 @@ function render(){
     var fich=[]; if(a.foto) fich.push(linkFich(a.foto,'foto')); docs.forEach(function(u,i){ fich.push(linkFich(u,'doc'+(docs.length>1?(' '+(i+1)):''))); });
     var det=[a.telemovel,a.email,a.tshirt?('T-shirt '+a.tshirt):'',a.calca?('Cal\u00e7a '+a.calca):''].filter(Boolean).join(' \u00b7 ');
     var row=document.createElement('div'); row.className='adm-row';
-    row.innerHTML='<div class="info"><div class="nome">'+esc(a.nome||'\u2014')+'</div><div class="det">'+esc(det)+(fich.length?('<br>Ficheiros: '+fich.join(' &middot; ')):'')+'</div></div><span class="chev"></span>';
+    row.innerHTML=avatarHTML(a)+'<div class="info"><div class="nome">'+esc(a.nome||'\u2014')+'</div><div class="det">'+esc(det)+(fich.length?('<br>Ficheiros: '+fich.join(' &middot; ')):'')+'</div></div><span class="chev"></span>';
+    /* a foto so se revela quando carrega; caso contrario ficam as iniciais por baixo */
+    var _im=row.querySelector('.adm-av img');
+    if(_im){ _im.onload=function(){ if(_im.naturalWidth>0) _im.classList.add('ok'); }; _im.onerror=function(){ _im.remove(); }; }
     row.onclick=function(){ abrirDetalhe(a); };
     l.appendChild(row);
   });
@@ -1008,10 +1033,10 @@ function carregar(){
 }
 /* ---- detalhe de uma candidatura (modal) ---- */
 var DET_GRUPOS=[
-  ['Contacto', [['nome','Nome completo'],['telemovel','Telem\u00f3vel'],['email','Email'],['morada','Morada + cidade'],['codPostal','C\u00f3digo postal'],['nacionalidade','Nacionalidade']]],
-  ['Dados pessoais', [['dataNasc','Data de nascimento'],['cc','N\u00ba Cart\u00e3o de Cidad\u00e3o'],['ccValidade','Validade do CC'],['contribuinte','N\u00ba Contribuinte (NIF)'],['segSocial','N\u00ba Seguran\u00e7a Social'],['iban','IBAN'],['dependentes','N\u00ba de dependentes'],['estadoCivil','Estado civil'],['habilitacoes','Habilita\u00e7\u00f5es liter\u00e1rias']]],
-  ['Contacto de emerg\u00eancia', [['emergNome','Nome'],['emergTel','Telefone']]],
-  ['Uniforme', [['tshirt','Tamanho t-shirt'],['calca','Tamanho cal\u00e7a']]]
+  ['Contacto', [['nome','Nome completo'],['telemovel','Telem\u00F3vel'],['email','Email'],['morada','Morada + cidade'],['codPostal','C\u00F3digo postal'],['nacionalidade','Nacionalidade']]],
+  ['Dados pessoais', [['dataNasc','Data de nascimento'],['cc','N\u00BA Cart\u00E3o de Cidad\u00E3o'],['ccValidade','Validade do CC'],['contribuinte','N\u00BA Contribuinte (NIF)'],['segSocial','N\u00BA Seguran\u00E7a Social'],['iban','IBAN'],['dependentes','N\u00BA de dependentes'],['estadoCivil','Estado civil'],['habilitacoes','Habilita\u00E7\u00F5es liter\u00E1rias']]],
+  ['Contacto de emerg\u00EAncia', [['emergNome','Nome'],['emergTel','Telefone']]],
+  ['Uniforme', [['tshirt','Tamanho t-shirt'],['calca','Tamanho cal\u00E7a']]]
 ];
 var detAtual=null;
 function fmtTs(v){ if(!v) return ''; var d=new Date(v); return isNaN(d)?String(v):d.toLocaleString('pt-PT'); }
@@ -1038,13 +1063,13 @@ byId('detClose').onclick=fecharDetalhe;
 byId('detOv').onclick=function(e){ if(e.target===byId('detOv')) fecharDetalhe(); };
 byId('detDel').onclick=function(){
   if(!detAtual) return;
-  if(!confirm('Apagar a candidatura de '+(detAtual.nome||'')+'? Esta a\u00e7\u00e3o n\u00e3o pode ser anulada.')) return;
+  if(!confirm('Apagar a candidatura de '+(detAtual.nome||'')+'? Esta a\u00E7\u00E3o n\u00E3o pode ser anulada.')) return;
   var id=detAtual.id; var btn=this; btn.disabled=true; btn.textContent='A apagar\u2026';
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'admissao_del', id:id})})
     .then(r=>r.json()).then(function(j){
       if(j&&j.ok){ ADMS=ADMS.filter(function(x){return String(x.id)!==String(id);}); render(); fecharDetalhe(); }
       else throw new Error('erro');
-    }).catch(function(){ alert('N\u00e3o foi poss\u00edvel apagar. Tenta de novo.'); })
+    }).catch(function(){ alert('N\u00E3o foi poss\u00EDvel apagar. Tenta de novo.'); })
     .then(function(){ btn.disabled=false; btn.innerHTML='<i data-lu="trash-2" data-sz="16"></i> Apagar candidatura'; if(window.SZlucide)window.SZlucide(); });
 };
 
