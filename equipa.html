@@ -1864,10 +1864,18 @@ function staffChart(list){
      Regra: horas com pelo menos 75% das visitas da melhor hora. Recalcula-se
      sozinha a cada BTR novo, sem horas fixas no codigo. */
   var FF_PC=0.75;
+  var FF_MAX=5;   /* teto de horas marcadas: numa semana plana, 75% do pico
+                     podia marcar 10-11 horas e a marca deixava de dizer nada.
+                     Com o teto, ficam sempre as horas de MAIS clientes. */
   var ffVals=hours.map(function(h){ return FF[h]||0; });
   var maxff=Math.max.apply(null, ffVals.concat([0]));
   var ffThresh=maxff*FF_PC;
-  function isFF(i){ return maxff>0 && ffVals[i]>0 && ffVals[i]>=ffThresh; }
+  var ffSel=hours.map(function(h,i){ return {i:i, v:ffVals[i]}; })
+    .filter(function(o){ return maxff>0 && o.v>0 && o.v>=ffThresh; })
+    .sort(function(a,b){ return b.v-a.v; })
+    .slice(0, FF_MAX);
+  var ffOn={}; ffSel.forEach(function(o){ ffOn[o.i]=1; });
+  function isFF(i){ return !!ffOn[i]; }
   var n=hours.length, gap=3, bw=(W-gap*(n-1))/n;
   /* Alvo (ideal) por hora \u2014 SO quando ha uma seccao filtrada.
      Cada seccao tem o seu proprio alvo; somar tudo numa "linha geral da loja"
