@@ -419,7 +419,7 @@
   <header class="topbar">
     <button class="menu-btn" id="menuBtn"><span data-ic="menu"></span></button>
     <div class="tb-hi"><h1>An&#xE1;lise de Vendas</h1><p>Importa o Excel e v&#xEA; as vendas em gr&#xE1;ficos.</p></div>
-    <div class="tb-right"><button class="tk-newbtn vd-import" id="vdImport"><span data-ic="upload"></span> Importar Excel</button></div>
+    <div class="tb-right"></div>
   </header>
   <div class="content"><div class="vd-wrap">
   <div class="vd-toolbar">
@@ -1981,7 +1981,7 @@ function importFiles(files){
     rd.readAsArrayBuffer(f);
   });
 }
-document.getElementById('vdImport').addEventListener('click',function(){ document.getElementById('vdFile').click(); });
+
 document.getElementById('vdFile').addEventListener('change',function(e){ var fs=e.target.files; if(fs&&fs.length) importFiles(fs); e.target.value=''; });
 document.getElementById('vdWeek').addEventListener('click',function(){ toast('Seletor de semanas: pr\u00F3xima fase.'); });
 
