@@ -1817,7 +1817,10 @@ function renderObs(){
   var R=resumoPeriodos(staff), byId={}; R.forEach(function(x){ byId[x.p.id]=x; });
   var totPH=R.reduce(function(a,x){return a+x.pessoasH;},0)||1;
   var obs=[];
-  if(sub) sub.innerHTML='An\u00E1lise autom\u00E1tica do hor\u00E1rio '+lbl+', per\u00EDodo a per\u00EDodo. A manh\u00E3 \u00E9 avaliada pela <b>carga de reposi\u00E7\u00E3o</b> (cami\u00E3o), a tarde pelas <b>vendas</b> e a noite pelo <b>trabalho de arruma\u00E7\u00E3o</b> \u2014 porque cada uma serve para uma coisa diferente. '
+  if(sub) sub.innerHTML='An\u00E1lise autom\u00E1tica do hor\u00E1rio '+lbl+', per\u00EDodo a per\u00EDodo. '
+    +(planMode==='we'
+      ? 'Ao fim de semana <b>n\u00E3o h\u00E1 cami\u00E3o</b>, por isso a manh\u00E3 n\u00E3o tem carga log\u00EDstica e \u00E9 avaliada pelas <b>vendas</b>, tal como a tarde. A noite continua a ser avaliada pelo <b>trabalho de arruma\u00E7\u00E3o</b>. '
+      : 'A manh\u00E3 \u00E9 avaliada pela <b>carga de reposi\u00E7\u00E3o</b> (cami\u00E3o), a tarde pelas <b>vendas</b> e a noite pelo <b>trabalho de arruma\u00E7\u00E3o</b> \u2014 porque cada uma serve para uma coisa diferente. ')
     +'Comparo o <b>peso de cada hora</b>, n\u00E3o euros por pessoa: as vendas importadas s\u00E3o o total de uma semana e a equipa \u00E9 a m\u00E9dia de um dia, por isso s\u00F3 as propor\u00E7\u00F5es entre horas s\u00E3o compar\u00E1veis.';
 
   /* ---- 1. como esta repartido o esforco ---- */
@@ -1849,8 +1852,12 @@ function renderObs(){
     }
   }
 
-  /* ---- 2. horas de venda: carga por pessoa vs hora normal ---- */
-  var venH=byId.ven.hrs.filter(function(h){ return salesAt(h)>0 && staff[h-H0]>0; });
+  /* ---- 2. horas de venda: carga por pessoa vs hora normal ----
+     Ao fim de semana nao ha camiao, por isso as horas da manha tambem sao horas
+     de venda e entram nesta avaliacao (podendo ceder ou receber gente).
+     Nos dias uteis a manha fica de fora: o que la se faz e reposicao. */
+  var janelaVenda=(planMode==='we') ? byId.log.hrs.concat(byId.ven.hrs) : byId.ven.hrs;
+  var venH=janelaVenda.filter(function(h){ return salesAt(h)>0 && staff[h-H0]>0; });
   var ratio={}; venH.forEach(function(h){ ratio[h]=salesAt(h)/staff[h-H0]; });
   var base=mediana(venH.map(function(h){ return ratio[h]; }));
   var apertadas=venH.filter(function(h){ return ratio[h] > base*1.35; }).sort(function(a,b){ return ratio[b]-ratio[a]; });
@@ -1875,10 +1882,17 @@ function renderObs(){
       tx:'\u00C0s '+f+'h cada pessoa leva '+Math.abs(pct(f))+'% menos carga do que numa hora de venda normal, com '+fmtDec1(staff[f-H0])+' pessoas. \u00C9 dentro do hor\u00E1rio de venda, por isso aqui h\u00E1 mesmo margem para libertar algu\u00E9m \u2014 ao contr\u00E1rio da noite, que precisa de gente para arrumar.'});
   }
 
-  /* ---- 3. manha: julgada pela reposicao, nao pelas vendas ---- */
+  /* ---- 3. manha ----
+     Dias uteis: chega o camiao, por isso a manha e julgada pela carga de reposicao.
+     Fim de semana: NAO ha camiao, logo nao ha carga logistica \u2014 a manha passa a ser
+     julgada como as outras horas e uma manha leve deixa de ser um problema. */
   var mediaDia=staff.reduce(function(x,y){return x+y;},0)/(staff.length||1);
   var m=byId.log.media;
-  if(m < mediaDia*0.6){
+  var haCamiao=(planMode!=='we');
+  if(!haCamiao){
+    obs.push({t:'i', ic:'truck', h:'Fim de semana: sem cami\u00E3o, sem carga log\u00EDstica',
+      tx:'Ao fim de semana n\u00E3o h\u00E1 cami\u00E3o, por isso a manh\u00E3 n\u00E3o tem trabalho de reposi\u00E7\u00E3o a justificar equipa. Tens '+fmtDec1(m)+' pessoas de manh\u00E3 ('+Math.round(100*byId.log.pessoasH/totPH)+'% das horas-pessoa do dia) e, sem log\u00EDstica, estas horas devem seguir as vendas como as restantes \u2014 uma manh\u00E3 leve aqui n\u00E3o \u00E9 problema, \u00E9 o correto.'});
+  } else if(m < mediaDia*0.6){
     obs.push({t:'r', ic:'truck', h:'Manh\u00E3 curta para o cami\u00E3o',
       tx:'De manh\u00E3 tens s\u00F3 '+fmtDec1(m)+' pessoas, contra '+fmtDec1(mediaDia)+' de m\u00E9dia do dia. \u00C9 nesta janela que chega o cami\u00E3o e se faz a reposi\u00E7\u00E3o \u2014 com esta equipa, o risco \u00E9 a loja abrir com mercadoria por repor.'});
   } else {
@@ -1908,18 +1922,25 @@ function renderObs(){
   else if(!picoOK) destino=pico;
   if(folgadas.length) origem=folgadas[0];
   else if(nt > byId.ven.media && byId.fec.hrs.length) origem=byId.fec.hrs.slice().sort(function(a,b){ return (salesAt(a)/(staff[a-H0]||1))-(salesAt(b)/(staff[b-H0]||1)); })[0];
+  /* ao fim de semana nao ha camiao: so a noite (arrumacao) fica protegida */
+  var guarda=(planMode==='we')
+    ? 'Ao fim de semana n\u00E3o h\u00E1 cami\u00E3o, por isso a manh\u00E3 n\u00E3o precisa de ser protegida \u2014 s\u00F3 a noite, que \u00E9 a arruma\u00E7\u00E3o.'
+    : 'Mant\u00E9m a manh\u00E3 como est\u00E1 \u2014 \u00E9 o cami\u00E3o \u2014 e a noite tamb\u00E9m, que \u00E9 a arruma\u00E7\u00E3o.';
+  var guarda2=(planMode==='we')
+    ? 'Ao fim de semana n\u00E3o h\u00E1 cami\u00E3o, por isso a manh\u00E3 j\u00E1 entra nesta conta. S\u00F3 a noite (arruma\u00E7\u00E3o) n\u00E3o deve ser mexida.'
+    : 'A manh\u00E3 (cami\u00E3o) e a noite (arruma\u00E7\u00E3o) n\u00E3o devem ser mexidas.';
   if(origem!=null && destino!=null && origem!==destino){
     obs.push({t:'g', ic:'lightbulb', h:'Ajuste sugerido: 1 pessoa das '+origem+'h para as '+destino+'h',
-      tx:'\u00C0s '+destino+'h a equipa est\u00E1 sobrecarregada ('+pct(destino)+'% acima do normal) e \u00E0s '+origem+'h est\u00E1 folgada. Passar uma pessoa de '+origem+'h para '+destino+'h n\u00E3o muda o custo do hor\u00E1rio nem o n\u00FAmero de FTE, e p\u00F5e a equipa onde o cliente est\u00E1. Mant\u00E9m a manh\u00E3 como est\u00E1 \u2014 \u00E9 o cami\u00E3o \u2014 e a noite tamb\u00E9m, que \u00E9 a arruma\u00E7\u00E3o.'});
+      tx:'\u00C0s '+destino+'h a equipa est\u00E1 sobrecarregada ('+pct(destino)+'% acima do normal) e \u00E0s '+origem+'h est\u00E1 folgada. Passar uma pessoa de '+origem+'h para '+destino+'h n\u00E3o muda o custo do hor\u00E1rio nem o n\u00FAmero de FTE, e p\u00F5e a equipa onde o cliente est\u00E1. '+guarda});
   } else if(destino!=null){
     obs.push({t:'r', ic:'lightbulb', h:'Falta gente \u00E0s '+destino+'h, mas n\u00E3o h\u00E1 folga de onde tirar',
-      tx:'\u00C0s '+destino+'h a carga por pessoa \u00E9 '+pct(destino)+'% acima do normal, mas nas restantes horas de venda ningu\u00E9m est\u00E1 folgado \u2014 n\u00E3o h\u00E1 de onde tirar sem descobrir outra hora. Se queres cobrir esta hora, \u00E9 caso para refor\u00E7ar mesmo o hor\u00E1rio, e n\u00E3o para trocar turnos. A manh\u00E3 (cami\u00E3o) e a noite (arruma\u00E7\u00E3o) n\u00E3o devem ser mexidas.'});
+      tx:'\u00C0s '+destino+'h a carga por pessoa \u00E9 '+pct(destino)+'% acima do normal, mas nas restantes horas de venda ningu\u00E9m est\u00E1 folgado \u2014 n\u00E3o h\u00E1 de onde tirar sem descobrir outra hora. Se queres cobrir esta hora, \u00E9 caso para refor\u00E7ar mesmo o hor\u00E1rio, e n\u00E3o para trocar turnos. '+guarda2});
   } else if(origem!=null){
     obs.push({t:'i', ic:'lightbulb', h:'H\u00E1 folga \u00E0s '+origem+'h',
       tx:'\u00C0s '+origem+'h sobra equipa face ao que se vende, mas nenhuma hora de venda est\u00E1 sobrecarregada. Podes libertar algu\u00E9m dessa hora sem prejudicar o atendimento \u2014 ou aproveit\u00E1-la para tarefas de loja.'});
   } else {
     obs.push({t:'g', ic:'lightbulb', h:'Sem ajustes \u00F3bvios a fazer',
-      tx:'Nas horas de venda, a carga por pessoa n\u00E3o se afasta muito da hora de refer\u00EAncia. Tendo em conta o cami\u00E3o de manh\u00E3 e a arruma\u00E7\u00E3o \u00E0 noite, o hor\u00E1rio '+lbl+' est\u00E1 equilibrado.'});
+      tx:'Nas horas de venda, a carga por pessoa n\u00E3o se afasta muito da hora de refer\u00EAncia. '+(planMode==='we'?'Sem cami\u00E3o ao fim de semana, e tendo em conta a arruma\u00E7\u00E3o \u00E0 noite,':'Tendo em conta o cami\u00E3o de manh\u00E3 e a arruma\u00E7\u00E3o \u00E0 noite,')+' o hor\u00E1rio '+lbl+' est\u00E1 equilibrado.'});
   }
 
   host.innerHTML=obs.map(obHTML).join('');
