@@ -311,6 +311,10 @@
   .area.editing .task .tdel{display:inline-flex;}
   .task .tmv{display:none;background:none;border:1.5px solid var(--line);border-radius:8px;color:var(--muted);font-weight:800;cursor:pointer;font-family:inherit;padding:3px 8px;flex:none;font-size:13px;line-height:1;}
   .area.editing .task .tmv{display:inline-flex;}
+  /* modo edicao: o proprio texto da tarefa passa a ser editavel */
+  .area.editing .task .tt{border:1.5px dashed var(--line);border-radius:8px;padding:5px 8px;margin:-3px 0;cursor:text;min-width:40px;}
+  .area.editing .task .tt:focus{outline:none;border-style:solid;border-color:var(--accent);background:#fff;}
+  .area.editing .task input[type=checkbox],.area.editing .task .box{pointer-events:none;opacity:.45;}
   .addrow{display:none;gap:8px;margin:2px 15px 14px;}
   .area.editing .addrow{display:flex;}
   .addrow input{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:10px;padding:11px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);}
@@ -343,8 +347,8 @@
 <div class="main">
   <header class="topbar">
     <button class="menu-btn" id="menuBtn"><span data-ic="menu"></span></button>
-    <div class="tb-hi"><h1>Checklist de Loja</h1><p>Rotinas de limpeza e organiza&#xe7;&#xe3;o da loja.</p></div>
-    <div class="tb-right"><div class="tb-icon" id="btnPrintTop" title="Imprimir" onclick="var b=document.getElementById('btnPrint');if(b)b.click();"><span data-ic="printer"></span></div></div>
+    <div class="tb-hi"><h1>Checklist de Loja</h1><p>Rotinas de limpeza e organiza&#xE7;&#xE3;o da loja.</p></div>
+    <div class="tb-right"><div class="tb-icon" id="btnPrintTop" title="Imprimir 1 folha por sec&#xE7;&#xE3;o"><span data-ic="printer"></span></div></div>
   </header>
   <div class="content">
 
@@ -353,7 +357,7 @@
 
 <main>
   <div id="form">
-    <p class="intro">Marca as tarefas feitas em cada &#xe1;rea. No fim, escreve o teu nome e confirma &#x2014; o manager &#xe9; avisado automaticamente.</p>
+    <p class="intro">Marca as tarefas feitas em cada &#xE1;rea. No fim, escreve o teu nome e confirma &#x2014; o manager &#xE9; avisado automaticamente.</p>
     <div id="areas"></div>
 
     <div class="field">
@@ -361,13 +365,12 @@
       <select id="nome" data-staff data-ph="Seleciona o teu nome"></select>
     </div>
     <div class="field">
-      <label for="obs">Observa&#xe7;&#xf5;es (opcional)</label>
+      <label for="obs">Observa&#xE7;&#xF5;es (opcional)</label>
       <textarea id="obs" placeholder="Algo a registar? (ex.: faltou material, avaria...)"></textarea>
     </div>
 
     <div class="summary" id="summary">0 tarefas marcadas</div>
     <button class="submit" id="btnSubmit"><i data-lu="check"></i> Confirmar checklist</button>
-    <button class="printbtn" id="btnPrint" type="button"><i data-lu="printer"></i> Imprimir 1 folha por sec&#xe7;&#xe3;o</button>
   </div>
 
   <div id="ok">
@@ -721,7 +724,7 @@ IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
 
-var SL_FOTOS={'Ant\u00f3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00fajo':'images/img_04.jpg','Ricardo Eus\u00e9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00e3o Paiva':'images/img_10.jpg','Jo\u00e3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00e2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00e9rgio Correia':'images/img_21.jpg','Andr\u00e9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00fajo':'images/img_25.jpg','Lu\u00eds Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00e2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00e3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00e7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00edrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00faria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00e1rio Santos':'images/img_51.jpg','Beatriz Jer\u00f3nimo':'images/img_52.jpg'};
+var SL_FOTOS={'Ant\u00F3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00FAjo':'images/img_04.jpg','Ricardo Eus\u00E9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00E3o Paiva':'images/img_10.jpg','Jo\u00E3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00E2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00E9rgio Correia':'images/img_21.jpg','Andr\u00E9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00FAjo':'images/img_25.jpg','Lu\u00EDs Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00E2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00E3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00E7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00EDrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00FAria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00E1rio Santos':'images/img_51.jpg','Beatriz Jer\u00F3nimo':'images/img_52.jpg'};
 var NAV=(window.PORTAL_NAV||[]);
 
 var BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
@@ -792,10 +795,10 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 const BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
 
 const AREAS=[
-  {key:'calcado', nome:'Cal\u00e7ado', lu:'footprints', tarefas:[
-    'Arrumar balc\u00e3o Sneaker',
-    'Aspirar e limpar o balc\u00e3o',
-    'Limpeza do p\u00f3 (light boxes, tri-fisher, prateleiras)',
+  {key:'calcado', nome:'Cal\u00E7ado', lu:'footprints', tarefas:[
+    'Arrumar balc\u00E3o Sneaker',
+    'Aspirar e limpar o balc\u00E3o',
+    'Limpeza do p\u00F3 (light boxes, tri-fisher, prateleiras)',
     'Esvaziar caixotes do lixo',
     'Aspirar debaixo da cinta (abrir grade)',
     'Levantar os bancos para limpar',
@@ -803,38 +806,38 @@ const AREAS=[
     'Imprimir senhas',
     'Repor Sprays'
   ]},
-  {key:'textil', nome:'T\u00eaxtil', lu:'shirt', tarefas:[
+  {key:'textil', nome:'T\u00EAxtil', lu:'shirt', tarefas:[
     'Aspirar laterais por baixo da roupa',
-    'Limpar o p\u00f3 de prateleiras e expositores',
+    'Limpar o p\u00F3 de prateleiras e expositores',
     'Aspirar e limpar os 6 provadores',
-    'Organizar e limpar arm\u00e1rio dos provadores',
-    'Organizar sinal\u00e9tica das gavetas',
-    'Arrumar cabides (incluindo os de nata\u00e7\u00e3o)',
+    'Organizar e limpar arm\u00E1rio dos provadores',
+    'Organizar sinal\u00E9tica das gavetas',
+    'Arrumar cabides (incluindo os de nata\u00E7\u00E3o)',
     'Esvaziar caixotes do lixo'
   ]},
   {key:'caixa', nome:'Caixa', lu:'receipt', tarefas:[
-    'Limpar o balc\u00e3o de caixa',
-    'Limpar terminais, teclados e ecr\u00e3s',
-    'Aspirar / varrer atr\u00e1s do balc\u00e3o',
+    'Limpar o balc\u00E3o de caixa',
+    'Limpar terminais, teclados e ecr\u00E3s',
+    'Aspirar / varrer atr\u00E1s do balc\u00E3o',
     'Arrumar zona de embalamento (sacos)',
     'Arrumar gavetas',
     'Verificar reservas',
-    'Repor consum\u00edveis (sacos reutiliz\u00e1veis, rolos)'
+    'Repor consum\u00EDveis (sacos reutiliz\u00E1veis, rolos)'
   ]},
-  {key:'logistica', nome:'Log\u00edstica', lu:'package', tarefas:[
-    'Preencher folha de reposi\u00e7\u00e3o',
+  {key:'logistica', nome:'Log\u00EDstica', lu:'package', tarefas:[
+    'Preencher folha de reposi\u00E7\u00E3o',
     'Identificar caixas do template da empresa',
     'Organizar e limpar o buraco',
-    'Limpeza do p\u00f3 e do ch\u00e3o do armaz\u00e9m',
-    'Arrumar estante/m\u00f3vel e gavetas',
-    'Perfilar/arrumar caixas e cart\u00e3o',
+    'Limpeza do p\u00F3 e do ch\u00E3o do armaz\u00E9m',
+    'Arrumar estante/m\u00F3vel e gavetas',
+    'Perfilar/arrumar caixas e cart\u00E3o',
     'Esvaziar caixotes do lixo'
   ]}
 ];
 
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
-/* ---- lista de tarefas edit\u00e1vel (guardada na nuvem, igual em todos os dispositivos) ---- */
+/* ---- lista de tarefas edit\u00E1vel (guardada na nuvem, igual em todos os dispositivos) ---- */
 const ITEMS_SEC='_lpitems';
 let itemsNoteId='';
 const EDITMODE={};
@@ -851,7 +854,7 @@ function carregarItens(){
   }).catch(function(){});
 }
 function guardarItens(){
-  if(!BACKEND){ alert('Sem liga\u00e7\u00e3o \u00e0 nuvem \u2014 a altera\u00e7\u00e3o n\u00e3o ficou guardada.'); return; }
+  if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem \u2014 a altera\u00E7\u00E3o n\u00E3o ficou guardada.'); return; }
   var payload={}; AREAS.forEach(function(a){ payload[a.key]=a.tarefas; });
   var old=itemsNoteId; itemsNoteId='';
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
@@ -859,7 +862,7 @@ function guardarItens(){
     .then(function(r){return r.json();}).then(function(j){
       if(j&&j.ok&&old){ fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_del', id:old})}).catch(function(){}); }
     })
-    .catch(function(){ alert('N\u00e3o foi poss\u00edvel guardar a lista na nuvem. Tenta de novo.'); });
+    .catch(function(){ alert('N\u00E3o foi poss\u00EDvel guardar a lista na nuvem. Tenta de novo.'); });
 }
 function snapshotChecks(){
   var m={};
@@ -882,13 +885,14 @@ function render(){
     const card=document.createElement('div'); card.className='area'+(EDITMODE[a.key]?' editing':''); card.dataset.key=a.key;
     let tasks='';
     a.tarefas.forEach(function(t,i){
-      tasks+='<label class="task"><input type="checkbox" data-area="'+a.key+'" data-i="'+i+'"><span class="box"></span><span class="tt">'+esc(t)+'</span><button type="button" class="tmv tup" data-area="'+a.key+'" data-i="'+i+'" title="Subir">\u25b2</button><button type="button" class="tmv tdown" data-area="'+a.key+'" data-i="'+i+'" title="Descer">\u25bc</button><button type="button" class="tdel" data-area="'+a.key+'" data-i="'+i+'" title="Remover da lista">\u2715</button></label>';
+      var ed=EDITMODE[a.key]?' contenteditable="true" spellcheck="false"':'';
+      tasks+='<label class="task"><input type="checkbox" data-area="'+a.key+'" data-i="'+i+'"><span class="box"></span><span class="tt" data-area="'+a.key+'" data-i="'+i+'"'+ed+'>'+esc(t)+'</span><button type="button" class="tmv tup" data-area="'+a.key+'" data-i="'+i+'" title="Subir">\u25B2</button><button type="button" class="tmv tdown" data-area="'+a.key+'" data-i="'+i+'" title="Descer">\u25BC</button><button type="button" class="tdel" data-area="'+a.key+'" data-i="'+i+'" title="Remover da lista">\u2715</button></label>';
     });
     card.innerHTML=
       '<div class="area-head"><span class="area-ic"><i data-lu="'+a.lu+'" data-sz="22"></i></span><h2>'+esc(a.nome)+'</h2><span class="area-prog" id="prog-'+a.key+'">0/'+a.tarefas.length+'</span><button type="button" class="area-edit'+(EDITMODE[a.key]?' on':'')+'" data-area="'+a.key+'"><i data-lu="pen-line" data-sz="13"></i> '+(EDITMODE[a.key]?'Concluir':'Editar')+'</button></div>'+
       '<button class="area-all" data-area="'+a.key+'">Marcar todas</button>'+
       '<div class="tasks">'+tasks+'</div>'+
-      '<div class="addrow"><input type="text" placeholder="Nova tarefa\u2026" data-add="'+a.key+'"><button type="button" data-add="'+a.key+'">\uff0b Adicionar</button></div>';
+      '<div class="addrow"><input type="text" placeholder="Nova tarefa\u2026" data-add="'+a.key+'"><button type="button" data-add="'+a.key+'">\uFF0B Adicionar</button></div>';
     root.appendChild(card);
   });
   root.querySelectorAll('input[type=checkbox]').forEach(function(c){ c.addEventListener('change', update); });
@@ -912,6 +916,21 @@ function render(){
       if(!a || !a.tarefas[i]) return;
       if(!confirm('Remover "'+a.tarefas[i]+'" da lista?\n(Fica removida em todos os dispositivos.)')) return;
       a.tarefas.splice(i,1); guardarItens(); renderKeep();
+    });
+  });
+  /* editar o texto da tarefa: so em modo edicao, grava ao sair do campo ou com Enter */
+  root.querySelectorAll('.tt[contenteditable]').forEach(function(sp){
+    sp.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); });
+    sp.addEventListener('keydown', function(e){
+      if(e.key==='Enter'){ e.preventDefault(); sp.blur(); }
+      else if(e.key==='Escape'){ e.preventDefault(); sp.textContent=AREAS.find(function(x){return x.key===sp.dataset.area;}).tarefas[+sp.dataset.i]; sp.blur(); }
+    });
+    sp.addEventListener('blur', function(){
+      var a=AREAS.find(function(x){return x.key===sp.dataset.area;}); if(!a) return;
+      var i=+sp.dataset.i, novo=sp.textContent.replace(/\s+/g,' ').trim(), antigo=a.tarefas[i];
+      if(!novo){ sp.textContent=antigo; return; }
+      if(novo===antigo){ sp.textContent=antigo; return; }
+      a.tarefas[i]=novo; guardarItens(); renderKeep();
     });
   });
   root.querySelectorAll('.tmv').forEach(function(b){
@@ -957,7 +976,7 @@ function coletar(){
 document.getElementById('btnSubmit').addEventListener('click', function(){
   const nome=document.getElementById('nome').value.trim();
   if(!nome){ alert('Por favor escreve o teu nome.'); document.getElementById('nome').focus(); return; }
-  if(!BACKEND){ alert('Sem liga\u00e7\u00e3o \u00e0 nuvem (config em falta). Avisa o respons\u00e1vel.'); return; }
+  if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem (config em falta). Avisa o respons\u00E1vel.'); return; }
   const btn=this; btn.disabled=true; btn.textContent='A enviar\u2026';
   const payload={
     action:'limpeza',
@@ -971,16 +990,16 @@ document.getElementById('btnSubmit').addEventListener('click', function(){
     .then(function(j){
       if(j&&j.ok&&j.limpeza){
         document.getElementById('form').style.display='none';
-        document.getElementById('okMsg').textContent='Obrigado, '+nome+'! O respons\u00e1vel foi avisado por email.';
+        document.getElementById('okMsg').textContent='Obrigado, '+nome+'! O respons\u00E1vel foi avisado por email.';
         document.getElementById('ok').style.display='block';
         window.scrollTo(0,0);
       }else if(j&&j.ok){
-        alert('O envio da limpeza ainda n\u00e3o est\u00e1 ativo no servidor. Avisa o respons\u00e1vel para terminar a configura\u00e7\u00e3o.');
+        alert('O envio da limpeza ainda n\u00E3o est\u00E1 ativo no servidor. Avisa o respons\u00E1vel para terminar a configura\u00E7\u00E3o.');
         btn.disabled=false; btn.textContent='Confirmar limpeza';
       }else{ throw new Error((j&&j.error)||'erro'); }
     })
     .catch(function(){
-      alert('N\u00e3o foi poss\u00edvel enviar. Verifica a internet e tenta de novo.');
+      alert('N\u00E3o foi poss\u00EDvel enviar. Verifica a internet e tenta de novo.');
       btn.disabled=false; btn.textContent='Confirmar limpeza';
     });
 });
@@ -990,15 +1009,15 @@ function imprimirPorSeccao(){
   var data=('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear();
   var html='';
   AREAS.forEach(function(a){
-    html+='<div class="sheet"><div class="ph-head"><h1>Checklist de Loja \u2014 '+esc(a.nome)+'</h1><div class="ph-sub">Sport Zone Vasco da Gama \u00b7 Data: '+data+'</div></div>';
+    html+='<div class="sheet"><div class="ph-head"><h1>Checklist de Loja \u2014 '+esc(a.nome)+'</h1><div class="ph-sub">Sport Zone Vasco da Gama \u00B7 Data: '+data+'</div></div>';
     html+='<h2>Tarefas</h2><ul>';
     a.tarefas.forEach(function(t){ html+='<li><span class="bx"></span><span>'+esc(t)+'</span></li>'; });
-    html+='</ul><div class="ph-sign">Respons\u00e1vel: ________________________________<br>Assinatura: __________________________________</div></div>';
+    html+='</ul><div class="ph-sign">Respons\u00E1vel: ________________________________<br>Assinatura: __________________________________</div></div>';
   });
   document.getElementById('printArea').innerHTML=html;
   setTimeout(function(){ window.print(); },80);
 }
-document.getElementById('btnPrint').addEventListener('click', imprimirPorSeccao);
+document.getElementById('btnPrintTop').addEventListener('click', imprimirPorSeccao);
 
 render();
 carregarItens();
