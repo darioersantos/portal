@@ -70,6 +70,9 @@ window.PORTAL_NAV = [
     {k:'wp_loja', ic:'smartphone', nm:'Telemóvel Loja'},
     {k:'wp_direcao', ic:'smartphone', nm:'Telemóvel Direção'},
     {k:'wp_pc', ic:'monitor', nm:'Wallpaper PC'}
+  ]},
+  {group:'Base de Dados', items:[
+    {k:'upload', ic:'upload', nm:'Upload de Arquivos', accent7:true}
   ]}
 ];
 
@@ -161,26 +164,37 @@ window.PORTAL_NAV = [
   .sb-item.accent3{background:linear-gradient(135deg,#fde047,#f4c400);color:#6b4e00;margin:5px 0;box-shadow:0 4px 12px rgba(234,179,8,.32);font-weight:800;}
   .sb-item.accent3:hover{background:linear-gradient(135deg,#ffe86b,#ffd21f);color:#5a4200;}
   .sb-item.accent3 .ico{color:#8a6500;}
-  .sb-item.accent3.active{background:linear-gradient(135deg,#ffe86b,#ffd21f);}
+  .sb-item.accent3.active{background:linear-gradient(135deg,#ffe86b,#ffd21f);color:#5a4200;}
+  .sb-item.accent3.active .ico{color:#8a6500;}
   .sb-item.accent3.active::before{display:none;}
   /* Produtividade: laranja com tom azulado (laranja -> azul) */
   .sb-item.accent4{background:linear-gradient(135deg,#ff7a1a,#3d6ef5);color:#fff;margin:5px 0;box-shadow:0 4px 12px rgba(61,110,245,.30);font-weight:800;}
   .sb-item.accent4:hover{background:linear-gradient(135deg,#ff8a33,#4f7cff);filter:brightness(1.03);}
   .sb-item.accent4 .ico{color:#fff;}
-  .sb-item.accent4.active{background:linear-gradient(135deg,#ff8a33,#4f7cff);}
+  .sb-item.accent4.active{background:linear-gradient(135deg,#ff8a33,#4f7cff);color:#fff;}
+  .sb-item.accent4.active .ico{color:#fff;}
   .sb-item.accent4.active::before{display:none;}
   /* Horario do Staff: azul claro */
   .sb-item.accent5{background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#1e40af;margin:5px 0;box-shadow:0 3px 10px rgba(59,130,246,.20);font-weight:800;}
   .sb-item.accent5:hover{background:linear-gradient(135deg,#e4efff,#cbe0ff);}
   .sb-item.accent5 .ico{color:#2563eb;}
-  .sb-item.accent5.active{background:linear-gradient(135deg,#c7ddff,#a9c9ff);}
+  .sb-item.accent5.active{background:linear-gradient(135deg,#c7ddff,#a9c9ff);color:#1e40af;}
+  .sb-item.accent5.active .ico{color:#2563eb;}
   .sb-item.accent5.active::before{display:none;}
   /* Formacoes: roxo claro */
   .sb-item.accent6{background:linear-gradient(135deg,#ede9fe,#ddd6fe);color:#6d28d9;margin:5px 0;box-shadow:0 3px 10px rgba(139,92,246,.20);font-weight:800;}
   .sb-item.accent6:hover{background:linear-gradient(135deg,#f2edff,#e5ddff);}
   .sb-item.accent6 .ico{color:#7c3aed;}
-  .sb-item.accent6.active{background:linear-gradient(135deg,#e3dcff,#d0c4fb);}
+  .sb-item.accent6.active{background:linear-gradient(135deg,#e3dcff,#d0c4fb);color:#6d28d9;}
+  .sb-item.accent6.active .ico{color:#7c3aed;}
   .sb-item.accent6.active::before{display:none;}
+  /* Upload de Arquivos: rosa */
+  .sb-item.accent7{background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#9d174d;margin:5px 0;box-shadow:0 3px 10px rgba(236,72,153,.20);font-weight:800;}
+  .sb-item.accent7:hover{background:linear-gradient(135deg,#fdeef7,#fad7e8);}
+  .sb-item.accent7 .ico{color:#db2777;}
+  .sb-item.accent7.active{background:linear-gradient(135deg,#fad7e8,#f7bcd8);color:#9d174d;}
+  .sb-item.accent7.active .ico{color:#db2777;}
+  .sb-item.accent7.active::before{display:none;}
 
   /* --- feedback tatil ao tocar --- */
   button,.btn,.ghostbtn,.qtile,.kpi,.tb-icon,.more,.sb-item,.brief-it,[data-go],.tab,.jmbtn,.lb-iconbtn,.av-print,.jchk{transition:transform .14s cubic-bezier(.34,1.4,.64,1),box-shadow .22s ease,background-color .2s ease,border-color .2s ease,filter .2s ease;}
@@ -265,9 +279,10 @@ window.PORTAL_NAV = [
     'book-open':'<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
     'cake':'<path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3M12 8v3M17 8v3"/>',
     'umbrella':'<path d="M22 12a10.06 10.06 0 0 0-20 0Z"/><path d="M12 12v8a2 2 0 0 0 4 0"/><path d="M12 2v1"/>',
-    'calendar-clock':'<path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="18" cy="18" r="4"/><path d="M18 16.5V18l1 1"/>'
+    'calendar-clock':'<path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="18" cy="18" r="4"/><path d="M18 16.5V18l1 1"/>',
+    'upload':'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>'
   };
-  var ACC={topvendas:'accent3', planeamento:'accent4', equipa:'accent5', formacoes:'accent6'};
+  var ACC={topvendas:'accent3', planeamento:'accent4', equipa:'accent5', formacoes:'accent6', upload:'accent7'};
   function ensureIcons(){ if(typeof window.IC==='object' && window.IC){ var added=0; for(var k in MENUIC){ if(!window.IC[k]){ window.IC[k]=MENUIC[k]; added++; } } return added; } return 0; }
   function applyAccents(){ for(var k in ACC){ var el=document.querySelector('.sb-item[data-k="'+k+'"]'); if(el) el.classList.add(ACC[k]); } }
   document.addEventListener('DOMContentLoaded', function(){
