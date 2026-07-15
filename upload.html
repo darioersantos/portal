@@ -362,6 +362,12 @@
   .up-btn .ico{width:16px;height:16px;}
   .up-st{font-size:12.5px;font-weight:700;color:var(--muted2);}
   .up-st.go{color:var(--accent-dark);} .up-st.ok{color:var(--green);} .up-st.err{color:var(--red);}
+  .up-last{font-size:12px;color:var(--muted2);margin-top:8px;font-weight:600;}
+  .up-last b{color:#3a4048;font-weight:800;}
+  .up-ago{display:inline-block;margin-left:5px;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:800;background:#eafaf1;color:#137a45;}
+  .up-ago.old{background:#fff4e0;color:#a05a00;}
+  .up-ago.vold{background:#fdecec;color:#c22;}
+  .up-never{color:#c22;font-weight:800;}
   .up-bar{height:6px;background:#eef0f3;border-radius:4px;overflow:hidden;margin-top:9px;display:none;}
   .up-bar.on{display:block;}
   .up-bar i{display:block;height:100%;width:35%;background:var(--accent);border-radius:4px;animation:up-ind 1.1s ease-in-out infinite;}
@@ -1672,15 +1678,51 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 /* ===== Modulo ===== */
 
 var UPS=[
-  {k:'horario', nm:'Hor\u00E1rio do Staff', sub:'PDF do hor\u00E1rio mensal', ic:'users', page:'equipa.html', input:'eqFile', accept:'application/pdf,.pdf',
+  {k:'horario', nm:'Hor\u00E1rio do Staff', sub:'PDF do hor\u00E1rio mensal', ic:'users', page:'equipa.html', input:'eqFile', accept:'application/pdf,.pdf', sec:'_escala',
    sig:function(w){ try{ return 'L'+(localStorage.getItem('sz_escala')||'').length; }catch(e){ return 'x'; } }, wait:120000},
-  {k:'topvendas', nm:'Top Vendas', sub:'PDF do Top 20 Produtos', ic:'award', page:'topvendas.html', input:'tvFile', accept:'application/pdf,.pdf',
+  {k:'topvendas', nm:'Top Vendas', sub:'PDF do Top 20 Produtos', ic:'award', page:'topvendas.html', input:'tvFile', accept:'application/pdf,.pdf', sec:'_topvendas',
    sig:function(w){ try{ return 'L'+(localStorage.getItem('sz_topvendas')||'').length; }catch(e){ return 'x'; } }, wait:300000},
-  {k:'vendas', nm:'An\u00E1lise de Vendas (BTR)', sub:'Excel do BTR (.xlsx)', ic:'bar-chart-3', page:'vendas-web.html', input:'vdFile', accept:'.xlsx,.xls',
+  {k:'vendas', nm:'An\u00E1lise de Vendas (BTR)', sub:'Excel do BTR (.xlsx)', ic:'bar-chart-3', page:'vendas-web.html', input:'vdFile', accept:'.xlsx,.xls', sec:'_vendas',
    sig:function(w){ try{ return 'L'+(localStorage.getItem('sz_vendas')||'').length; }catch(e){ return 'x'; } }, wait:180000},
-  {k:'formacoes', nm:'Listagem de Forma\u00E7\u00F5es', sub:'CSV das forma\u00E7\u00F5es', ic:'graduation-cap', page:'formacoes.html', input:'fmFile', accept:'.csv,text/csv',
+  {k:'formacoes', nm:'Listagem de Forma\u00E7\u00F5es', sub:'CSV das forma\u00E7\u00F5es', ic:'graduation-cap', page:'formacoes.html', input:'fmFile', accept:'.csv,text/csv', sec:'_formacoes',
    sig:function(w){ try{ return 'D'+JSON.stringify(w.DATA||null).length; }catch(e){ return 'x'; } }, wait:120000}
 ];
+/* ---- data do ultimo upload de cada ficheiro (vem da nuvem: o registo mais recente de cada seccao) ---- */
+function fmtDia(iso){ try{ var d=new Date(iso); if(isNaN(d.getTime())) return ''; return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(); }catch(e){ return ''; } }
+function haQuanto(iso){
+  var d=new Date(iso); var h=new Date();
+  var a=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  var b=new Date(h.getFullYear(),h.getMonth(),h.getDate());
+  var n=Math.round((b-a)/86400000);
+  if(n<=0) return {txt:'hoje', cls:''};
+  if(n===1) return {txt:'ontem', cls:''};
+  if(n<=7) return {txt:'h\u00E1 '+n+' dias', cls:''};
+  if(n<=21) return {txt:'h\u00E1 '+n+' dias', cls:'old'};
+  return {txt:'h\u00E1 '+n+' dias', cls:'vold'};
+}
+function setLast(k, iso){
+  var e=document.getElementById('last-'+k); if(!e) return;
+  if(!iso){ e.innerHTML='<span class="up-never">Ainda nunca foi carregado</span>'; return; }
+  var h=haQuanto(iso);
+  e.innerHTML='\u00DAltimo upload: <b>'+fmtDia(iso)+'</b><span class="up-ago '+h.cls+'">'+esc(h.txt)+'</span>';
+}
+function carregarDatas(){
+  UPS.forEach(function(u){ var e=document.getElementById('last-'+u.k); if(e && !e.innerHTML) e.textContent='a verificar...'; });
+  if(typeof BACKEND==='undefined' || !BACKEND){ UPS.forEach(function(u){ setLast(u.k,null); }); return; }
+  try{
+    var x=new XMLHttpRequest(); x.open('GET', BACKEND+'?action=notas&t='+Date.now(), true);
+    x.onreadystatechange=function(){ if(x.readyState!==4) return;
+      var ns=[]; try{ var j=JSON.parse(x.responseText); ns=(j&&j.notas)?j.notas:[]; }catch(e){}
+      UPS.forEach(function(u){
+        var f=ns.filter(function(n){ return String(n.seccao)===u.sec; });
+        if(!f.length){ setLast(u.k,null); return; }
+        f.sort(function(a,b){ return new Date(b.data)-new Date(a.data); });
+        setLast(u.k, f[0].data);
+      });
+    };
+    x.send();
+  }catch(e){}
+}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function cardHTML(u){
   return '<div class="up-card" data-k="'+u.k+'">'
@@ -1688,6 +1730,7 @@ function cardHTML(u){
     +'<div class="up-body"><div class="up-nm">'+esc(u.nm)+'</div><div class="up-sub">'+esc(u.sub)+'</div>'
     +'<div class="up-act"><button type="button" class="up-btn" data-go="'+u.k+'"><span data-ic="upload"></span> Escolher ficheiro</button>'
     +'<span class="up-st" id="st-'+u.k+'"></span></div>'
+    +'<div class="up-last" id="last-'+u.k+'"></div>'
     +'<div class="up-bar" id="bar-'+u.k+'"><i></i></div>'
     +'<input type="file" id="fi-'+u.k+'" accept="'+u.accept+'" style="display:none">'
     +'</div></div>';
@@ -1720,7 +1763,10 @@ function enviar(u, file){
     var t0=Date.now();
     var iv=setInterval(function(){
       var agora; try{ agora=u.sig(w); }catch(e){ agora=antes; }
-      if(agora!==antes){ clearInterval(iv); terminar(true,'Carregado \u2713'); return; }
+      if(agora!==antes){ clearInterval(iv); terminar(true,'Carregado \u2713');
+        setLast(u.k, new Date().toISOString());          /* mostra logo */
+        setTimeout(carregarDatas, 5000);                  /* e confirma com a nuvem */
+        return; }
       if(Date.now()-t0>u.wait){ clearInterval(iv); terminar(false,'Demorou demasiado \u2014 confirma no menu.'); }
     }, 700);
   };
@@ -1739,6 +1785,7 @@ function render(){
   });
 }
 render();
+carregarDatas();
 
 </script>
 </body>
