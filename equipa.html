@@ -1918,6 +1918,18 @@ function render(){
 var EQTOP=['CAIXA','ENTRADA PROCEDIMENTOS','SNEAKERS BALC\u00C3O','ARMAZ\u00C9M CAL\u00C7ADO','USO DO GPC',
   'PREPARA\u00C7\u00C3O ONLINE LS','PROCEDIMENTO PROVADORES','VENDAS POR METRO','SALES FORCE (CRIAR E CONSULTAR)',
   'REC. MOBSHOP CAMI\u00C3O','TRANSFER\u00CANCIAS','DPD','GARLAND','TIBCO'];
+/* Regras da loja (dadas pelo Dario):
+   - a loja fecha as 24h15 (a maioria dos turnos acaba a essa hora)
+   - a logistica entra as 7h, por isso a manha comeca as 7h e nao as 8h
+   - minimos de fecho por seccao */
+var FECHO_MIN=24*60+15;                 /* 24h15 */
+var MANHA_H=[7,8,9,10,11];              /* janela do camiao/reposicao */
+var TARDE_H=[17,18,19,20,21];           /* final da tarde */
+var FECHO_REGRAS=[
+  {sec:'T\u00EAxtil',  min:3, ideal:4},
+  {sec:'Cal\u00E7ado', min:3, ideal:4},
+  {sec:'Caixa',   min:2, ideal:2}
+];
 function eqNorm(s){ return String(s||'').toUpperCase().replace(/\s+/g,' ').trim(); }
 /* quantas pessoas da lista estao em loja a uma dada hora */
 function pessoasA(list, h){ var mid=h*60+30, n=0; list.forEach(function(p){ if(p.s<=mid && p.e>mid) n++; }); return n; }
@@ -1947,29 +1959,68 @@ function insightsDia(dt){
   if(!horas.length){
     ins.push({t:'i', h:'Sem vendas por hora', tx:'Importa o Excel de vendas na An\u00E1lise de Vendas para eu poder cruzar a equipa deste dia com as horas que mais pesam.'});
   } else {
-    /* 1. pico de vendas vs equipa deste dia */
+    /* 1. pico de vendas vs equipa deste dia (o cartao e emitido mais abaixo,
+       para poder juntar-se ao alerta de desalinhamento se for a mesma hora) */
     var pico=horas.slice().sort(function(a,b){ return EUR[b]-EUR[a]; })[0];
     var nPico=pessoasA(list,pico), mPico=mediaMesA(pico);
     var pesoPico=Math.round(100*EUR[pico]/totEur);
-    var txt='As <b>'+pico+'h</b> s\u00E3o a hora que mais pesa nas vendas ('+pesoPico+'% do dia). Hoje tens <b>'+nPico+' pessoa'+(nPico===1?'':'s')+'</b> em loja a essa hora';
-    var tipo='g';
+    var vsMes='';
     if(mPico!=null){
       var dif=Math.round(100*(nPico/(mPico||1)-1));
-      txt+=', contra uma m\u00E9dia de '+fmtD1(mPico)+' nos '+(fds?'fins de semana':'dias \u00FAteis')+' deste m\u00EAs';
-      if(dif<=-20){ tipo='r'; txt+=' \u2014 <b>'+Math.abs(dif)+'% abaixo do normal</b>. \u00C9 a hora mais forte da loja: se puderes refor\u00E7ar, \u00E9 aqui.'; }
-      else if(dif>=20){ tipo='i'; txt+=' \u2014 '+dif+'% acima do normal. Boa cobertura do pico.'; }
-      else { txt+=' \u2014 em linha com o habitual.'; }
-    } else { txt+='.'; }
-    ins.push({t:tipo, h:'Pico de vendas vs equipa', tx:txt});
+      vsMes=' Face ao habitual, tens '+fmtD1(mPico)+' pessoas em m\u00E9dia a essa hora nos '+(fds?'fins de semana':'dias \u00FAteis')+' do m\u00EAs'
+        +(dif<=-20?(' \u2014 hoje est\u00E1s '+Math.abs(dif)+'% abaixo.'):(dif>=20?(' \u2014 hoje est\u00E1s '+dif+'% acima.'):' \u2014 hoje est\u00E1s em linha.'));
+    }
 
-    /* 2. hora mais desguarnecida: muito peso de venda, pouca gente */
-    var cand=horas.filter(function(h){ return pessoasA(list,h)>0; })
-      .map(function(h){ return {h:h, r:(EUR[h]/totEur)/pessoasA(list,h)}; })
-      .sort(function(a,b){ return b.r-a.r; });
-    if(cand.length>1 && cand[0].h!==pico){
-      var w=cand[0];
-      ins.push({t:'i', h:'Hora mais esticada: '+w.h+'h',
-        tx:'\u00C0s '+w.h+'h tens '+pessoasA(list,w.h)+' pessoa'+(pessoasA(list,w.h)===1?'':'s')+' para '+Math.round(100*EUR[w.h]/totEur)+'% da venda do dia \u2014 \u00E9, proporcionalmente, a hora em que cada pessoa leva mais carga.'});
+    /* 2. DESALINHAMENTO: comparar o peso de venda de cada hora com o peso de
+       equipa dessa hora. Ambos em % do dia, por isso sao comparaveis mesmo
+       sabendo que as vendas sao um total semanal (so uso proporcoes). */
+    var totPess=0; horas.forEach(function(h){ totPess+=pessoasA(list,h); }); totPess=totPess||1;
+    var desv=horas.map(function(h){
+      var pv=EUR[h]/totEur*100, pe=pessoasA(list,h)/totPess*100;
+      return {h:h, pv:pv, pe:pe, d:pe-pv, n:pessoasA(list,h)};
+    });
+    /* muita venda, pouca gente \u2014 se calhar de ser a hora de pico, junta tudo
+       num so cartao (senao dizia "em linha" a verde e "staff curto" a vermelho
+       sobre a MESMA hora, o que se lia como contradicao) */
+    var curta=desv.slice().sort(function(a,b){ return a.d-b.d; })[0];
+    if(curta && curta.d<-2){
+      var mesmaHora=(curta.h===pico);
+      ins.push({t:'r', h:(mesmaHora?'Pico de vendas \u00E0s '+pico+'h com staff curto':'Vendas altas e staff curto \u00E0s '+curta.h+'h'),
+        tx:'As '+curta.h+'h '+(mesmaHora?'s\u00E3o a hora mais forte da loja e ':'')+'valem <b>'+fmtD1(curta.pv)+'% das vendas</b> do dia, mas s\u00F3 tens l\u00E1 <b>'+fmtD1(curta.pe)+'% da equipa</b> ('+curta.n+' pessoa'+(curta.n===1?'':'s')+'). \u00C9 a hora em que a equipa est\u00E1 mais esticada face ao que entra em loja \u2014 se puderes refor\u00E7ar, \u00E9 aqui.'
+          +(mesmaHora?vsMes:'')});
+    }
+    if(!curta || curta.d>=-2 || curta.h!==pico){
+      /* o pico nao foi coberto acima: emite o cartao proprio */
+      ins.push({t:'g', h:'Pico de vendas \u00E0s '+pico+'h',
+        tx:'As <b>'+pico+'h</b> s\u00E3o a hora que mais pesa nas vendas ('+pesoPico+'% do dia) e tens l\u00E1 <b>'+nPico+' pessoa'+(nPico===1?'':'s')+'</b>, o que est\u00E1 em linha com o peso da venda.'+vsMes});
+    }
+    /* muita gente, poucas vendas */
+    var sobra=desv.slice().sort(function(a,b){ return b.d-a.d; })[0];
+    if(sobra && sobra.d>2 && !(MANHA_H.indexOf(sobra.h)>=0 && !fds)){
+      ins.push({t:'i', h:'Muito staff e poucas vendas \u00E0s '+sobra.h+'h',
+        tx:'As '+sobra.h+'h t\u00EAm <b>'+fmtD1(sobra.pe)+'% da equipa</b> ('+sobra.n+' pessoas) para apenas <b>'+fmtD1(sobra.pv)+'% das vendas</b>. \u00C9 a hora com mais folga do dia \u2014 candidata a ceder algu\u00E9m para as horas fortes.'});
+    }
+    /* nota: se a hora "com mais folga" for de manha num dia util, nao a acuso \u2014
+       e o camiao. O bloco 2b em baixo trata disso de forma mais completa. */
+
+    /* 2b. MANHA vs FINAL DA TARDE \u2014 o desequilibrio que o Dario suspeita */
+    function bloco(hs){
+      var pv=0, pe=0;
+      hs.forEach(function(h){ if(EUR[h]!=null){ pv+=EUR[h]/totEur*100; pe+=pessoasA(list,h)/totPess*100; } });
+      return {pv:pv, pe:pe};
+    }
+    var bM=bloco(MANHA_H), bT=bloco(TARDE_H);
+    if(bM.pe>0 && bT.pe>0){
+      var folgaM=bM.pe-bM.pv, faltaT=bT.pv-bT.pe;
+      if(folgaM>4 && faltaT>4){
+        ins.push({t:'r', h:'Rev\u00EA o hor\u00E1rio: manh\u00E3 carregada, final da tarde curto',
+          tx:'De manh\u00E3 (7h-11h) tens <b>'+fmtD1(bM.pe)+'% da equipa</b> para '+fmtD1(bM.pv)+'% das vendas. Ao final da tarde (17h-21h) \u00E9 ao contr\u00E1rio: <b>'+fmtD1(bT.pe)+'% da equipa</b> para '+fmtD1(bT.pv)+'% das vendas. '
+            +(fds?'Como hoje n\u00E3o h\u00E1 cami\u00E3o, esta diferen\u00E7a n\u00E3o tem justifica\u00E7\u00E3o \u2014 passa gente da manh\u00E3 para o final da tarde.'
+                 :'Parte da manh\u00E3 justifica-se com o cami\u00E3o, mas a diferen\u00E7a \u00E9 grande: vale a pena passar algu\u00E9m da manh\u00E3 para o final da tarde.')});
+      } else if(faltaT>4){
+        ins.push({t:'i', h:'Final da tarde pouco refor\u00E7ado',
+          tx:'Entre as 17h e as 21h fazes '+fmtD1(bT.pv)+'% das vendas do dia com '+fmtD1(bT.pe)+'% da equipa. \u00C9 o bloco mais rent\u00E1vel do dia e est\u00E1 abaixo do peso que merece.'});
+      }
     }
 
     /* 3. competencias no pico (cruzamento com o Mapa) */
@@ -1986,33 +2037,46 @@ function insightsDia(dt){
     }
   }
 
-  /* 4. manha: camiao (so dias uteis)
-     Compara sempre o mesmo: a media das 8h-11h de hoje contra a media das
-     mesmas horas nos dias do mesmo tipo do mes (antes comparava o maximo de
-     hoje com a media das 9h \u2014 coisas diferentes). */
-  var HM=[8,9,10,11];
-  var manhaHoje=HM.reduce(function(s,h){ return s+pessoasA(list,h); },0)/HM.length;
-  var mmArr=HM.map(mediaMesA).filter(function(x){ return x!=null; });
+  /* 4. manha: camiao (so dias uteis). A logistica entra as 7h, por isso a
+     janela e 7h-11h. Compara sempre o mesmo: media das mesmas horas. */
+  var manhaHoje=MANHA_H.reduce(function(s,h){ return s+pessoasA(list,h); },0)/MANHA_H.length;
+  var mmArr=MANHA_H.map(mediaMesA).filter(function(x){ return x!=null; });
   var manhaMes=mmArr.length?(mmArr.reduce(function(a,b){return a+b;},0)/mmArr.length):null;
   if(!fds){
     var curto=(manhaMes!=null && manhaHoje<manhaMes*0.7);
-    ins.push({t:curto?'r':'g', h:'Manh\u00E3 \u2014 cami\u00E3o e reposi\u00E7\u00E3o',
-      tx:'De manh\u00E3 (8h-11h) tens em m\u00E9dia <b>'+fmtD1(manhaHoje)+' pessoas</b> em loja'+(manhaMes!=null?(', contra '+fmtD1(manhaMes)+' nas manh\u00E3s dos dias \u00FAteis deste m\u00EAs'):'')+'. \u00C9 a janela do cami\u00E3o e da reposi\u00E7\u00E3o'
+    ins.push({t:curto?'r':'g', h:'Manh\u00E3 \u2014 cami\u00E3o e reposi\u00E7\u00E3o (7h-11h)',
+      tx:'De manh\u00E3 tens em m\u00E9dia <b>'+fmtD1(manhaHoje)+' pessoas</b> em loja'+(manhaMes!=null?(', contra '+fmtD1(manhaMes)+' nas manh\u00E3s dos dias \u00FAteis deste m\u00EAs'):'')+'. A log\u00EDstica entra \u00E0s 7h e \u00E9 esta a janela do cami\u00E3o e da reposi\u00E7\u00E3o'
         +(curto?' \u2014 hoje est\u00E1 bem abaixo do habitual, aten\u00E7\u00E3o \u00E0 mercadoria por repor.':'.')});
   } else {
     ins.push({t:'i', h:'Fim de semana \u2014 sem cami\u00E3o',
-      tx:'Hoje n\u00E3o h\u00E1 cami\u00E3o, por isso a manh\u00E3 n\u00E3o tem carga de reposi\u00E7\u00E3o. Tens em m\u00E9dia '+fmtD1(manhaHoje)+' pessoas entre as 8h e as 11h \u2014 sem log\u00EDstica, estas horas devem seguir as vendas como as restantes.'});
+      tx:'Hoje n\u00E3o h\u00E1 cami\u00E3o, por isso a manh\u00E3 n\u00E3o tem carga de reposi\u00E7\u00E3o. Tens em m\u00E9dia '+fmtD1(manhaHoje)+' pessoas entre as 7h e as 11h \u2014 sem log\u00EDstica, estas horas devem seguir as vendas como as restantes.'});
   }
 
-  /* 5. fecho \u2014 conta quem esta em loja na ultima meia hora antes de fechar
-     (usar a hora cheia dava 0: os turnos acabam exatamente a essa hora) */
-  var ultima=0; list.forEach(function(p){ ultima=Math.max(ultima,p.e); });
-  var midF=ultima-30;
-  var nF=list.filter(function(p){ return p.s<=midF && p.e>midF; }).length;
-  var hhF=Math.floor(ultima/60), mmF=ultima%60;
-  var horaF=hhF+(mmF?('h'+('0'+mmF).slice(-2)):'h');
-  ins.push({t:nF<2?'r':'g', h:'Fecho \u00E0s '+horaF,
-    tx:'Ficam <b>'+nF+' pessoa'+(nF===1?'':'s')+'</b> na \u00FAltima meia hora. '+(nF<2?'\u00C9 pouco para arrumar e fechar a loja em condi\u00E7\u00F5es.':'D\u00E1 para arrumar e fechar a loja.')});
+  /* 5. fecho as 24h15 \u2014 regras minimas por seccao */
+  var fecha=list.filter(function(p){ return p.e>=FECHO_MIN; });
+  var porSec={}; fecha.forEach(function(p){ var s=p.sec||'Outros'; porSec[s]=(porSec[s]||0)+1; });
+  var falhas=[], oks=[];
+  FECHO_REGRAS.forEach(function(rg){
+    var n=porSec[rg.sec]||0;
+    if(n<rg.min) falhas.push({rg:rg, n:n, grave:true});
+    else if(n<rg.ideal) falhas.push({rg:rg, n:n, grave:false});
+    else oks.push(rg.sec+' '+n);
+  });
+  var detalhe=FECHO_REGRAS.map(function(rg){ return rg.sec+' '+(porSec[rg.sec]||0)+'/'+rg.min; }).join(' \u00B7 ');
+  if(falhas.length){
+    var graves=falhas.filter(function(f){return f.grave;});
+    var tx='Ao fecho (24h15) ficam <b>'+fecha.length+' pessoas</b> no total. ';
+    tx+=graves.length
+      ? '<b>Abaixo do m\u00EDnimo: '+graves.map(function(f){ return f.rg.sec+' com '+f.n+' (m\u00EDnimo '+f.rg.min+')'; }).join(', ')+'.</b> '
+      : '';
+    var soIdeal=falhas.filter(function(f){return !f.grave;});
+    if(soIdeal.length) tx+='No m\u00EDnimo mas abaixo do ideal: '+soIdeal.map(function(f){ return f.rg.sec+' com '+f.n+' (ideal '+f.rg.ideal+')'; }).join(', ')+'. ';
+    tx+='Regra da loja: T\u00EAxtil 3 (ideal 4) \u00B7 Cal\u00E7ado 3 (ideal 4) \u00B7 Caixa 2.';
+    ins.push({t:graves.length?'r':'i', h:'Fecho \u00E0s 24h15 \u2014 '+(graves.length?'abaixo do m\u00EDnimo':'no m\u00EDnimo, mas d\u00E1 para melhorar'), tx:tx});
+  } else {
+    ins.push({t:'g', h:'Fecho \u00E0s 24h15 \u2014 dentro das regras',
+      tx:'Ficam <b>'+fecha.length+' pessoas</b> ao fecho, e todas as sec\u00E7\u00F5es cumprem: '+esc(detalhe.replace(/\/\d+/g,''))+'. T\u00EAxtil e Cal\u00E7ado no ideal (4) e Caixa com 2.'});
+  }
 
   var cards=ins.map(function(x){
     return '<div class="eq-ins '+x.t+'"><div class="ei-h">'+esc(x.h)+'</div><div class="ei-b">'+x.tx+'</div></div>';
