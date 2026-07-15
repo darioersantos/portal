@@ -41,6 +41,9 @@ window.PORTAL_LINKS = {
   wp_pc:             "wp_pc.html",
   notificacoes:      "notificacoes.html",
 
+  /* ---- Base de Dados ---- */
+  upload:            "upload.html",
+
   /* ---- Formularios ---- */
   staffdb:           "staffdb.html",
   happyhour:         "happyhour.html",
