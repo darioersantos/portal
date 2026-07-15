@@ -334,6 +334,10 @@
   .area.editing .task .tdel{display:inline-flex;}
   .task .tmv{display:none;background:none;border:1.5px solid var(--line);border-radius:8px;color:var(--muted);font-weight:800;cursor:pointer;font-family:inherit;padding:3px 8px;flex:none;font-size:13px;line-height:1;}
   .area.editing .task .tmv{display:inline-flex;}
+  /* modo edicao: o proprio texto da tarefa passa a ser editavel */
+  .area.editing .task .tt{border:1.5px dashed var(--line);border-radius:8px;padding:5px 8px;margin:-3px 0;cursor:text;min-width:40px;}
+  .area.editing .task .tt:focus{outline:none;border-style:solid;border-color:var(--accent);background:#fff;}
+  .area.editing .task input[type=checkbox],.area.editing .task .box{pointer-events:none;opacity:.45;}
   .addrow{display:none;gap:8px;margin:2px 15px 14px;}
   .area.editing .addrow{display:flex;}
   .addrow input{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:10px;padding:11px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);}
@@ -384,7 +388,7 @@
     <div id="areas"></div>
 
     <div class="field">
-      <label for="obs">Observa&#xe7;&#xf5;es (opcional)</label>
+      <label for="obs">Observa&#xE7;&#xF5;es (opcional)</label>
       <textarea id="obs" placeholder="Algo a registar? (ex.: faltou material, avaria...)"></textarea>
     </div>
     <div class="field">
@@ -743,7 +747,7 @@ IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
 
-var SL_FOTOS={'Ant\u00f3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00fajo':'images/img_04.jpg','Ricardo Eus\u00e9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00e3o Paiva':'images/img_10.jpg','Jo\u00e3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00e2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00e9rgio Correia':'images/img_21.jpg','Andr\u00e9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00fajo':'images/img_25.jpg','Lu\u00eds Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00e2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00e3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00e7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00edrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00faria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00e1rio Santos':'images/img_51.jpg','Beatriz Jer\u00f3nimo':'images/img_52.jpg'};
+var SL_FOTOS={'Ant\u00F3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00FAjo':'images/img_04.jpg','Ricardo Eus\u00E9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00E3o Paiva':'images/img_10.jpg','Jo\u00E3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00E2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00E9rgio Correia':'images/img_21.jpg','Andr\u00E9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00FAjo':'images/img_25.jpg','Lu\u00EDs Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00E2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00E3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00E7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00EDrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00FAria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00E1rio Santos':'images/img_51.jpg','Beatriz Jer\u00F3nimo':'images/img_52.jpg'};
 var NAV=(window.PORTAL_NAV||[]);
 
 var BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
@@ -815,18 +819,18 @@ const BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BAC
 
 const AREAS=[
   {key:'abertura', nome:'Abertura', lu:'sunrise', tarefas:[
-    'Dar a volta \u00e0 loja ver necessidades',
+    'Dar a volta \u00E0 loja ver necessidades',
     'Fazer VDL (Florisbela)',
     'Contagem cofre',
     'Contagem ingresso',
     'Imprimir briefing e preencher',
     'Colar o F12',
-    'Planear entrada de loja no turno da manh\u00e3'
+    'Planear entrada de loja no turno da manh\u00E3'
   ]},
   {key:'fecho', nome:'Fecho', lu:'moon', tarefas:[
-    'Zebras e r\u00e1dios a carregar',
+    'Zebras e r\u00E1dios a carregar',
     'Sem equipamentos da loja "perdidos"',
-    '\u00c1rea Social arrumada',
+    '\u00C1rea Social arrumada',
     'Provadores arrumados',
     'Portas abertas dos provadores'
   ]}
@@ -834,7 +838,7 @@ const AREAS=[
 
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
-/* ---- lista de tarefas edit\u00e1vel (guardada na nuvem, igual em todos os dispositivos) ---- */
+/* ---- lista de tarefas edit\u00E1vel (guardada na nuvem, igual em todos os dispositivos) ---- */
 const ITEMS_SEC='_ckitems';
 let itemsNoteId='';
 const EDITMODE={};
@@ -851,7 +855,7 @@ function carregarItens(){
   }).catch(function(){});
 }
 function guardarItens(){
-  if(!BACKEND){ alert('Sem liga\u00e7\u00e3o \u00e0 nuvem \u2014 a altera\u00e7\u00e3o n\u00e3o ficou guardada.'); return; }
+  if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem \u2014 a altera\u00E7\u00E3o n\u00E3o ficou guardada.'); return; }
   var payload={}; AREAS.forEach(function(a){ payload[a.key]=a.tarefas; });
   var old=itemsNoteId; itemsNoteId='';
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
@@ -859,7 +863,7 @@ function guardarItens(){
     .then(function(r){return r.json();}).then(function(j){
       if(j&&j.ok&&old){ fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_del', id:old})}).catch(function(){}); }
     })
-    .catch(function(){ alert('N\u00e3o foi poss\u00edvel guardar a lista na nuvem. Tenta de novo.'); });
+    .catch(function(){ alert('N\u00E3o foi poss\u00EDvel guardar a lista na nuvem. Tenta de novo.'); });
 }
 function snapshotChecks(){
   var m={};
@@ -882,13 +886,14 @@ function render(){
     const card=document.createElement('div'); card.className='area'+(idx===0?'':' hide')+(EDITMODE[a.key]?' editing':''); card.dataset.key=a.key;
     let tasks='';
     a.tarefas.forEach(function(t,i){
-      tasks+='<label class="task"><input type="checkbox" data-area="'+a.key+'" data-i="'+i+'"><span class="box"></span><span class="tt">'+esc(t)+'</span><button type="button" class="tmv tup" data-area="'+a.key+'" data-i="'+i+'" title="Subir">\u25b2</button><button type="button" class="tmv tdown" data-area="'+a.key+'" data-i="'+i+'" title="Descer">\u25bc</button><button type="button" class="tdel" data-area="'+a.key+'" data-i="'+i+'" title="Remover da lista">\u2715</button></label>';
+      var ed=EDITMODE[a.key]?' contenteditable="true" spellcheck="false"':'';
+      tasks+='<label class="task"><input type="checkbox" data-area="'+a.key+'" data-i="'+i+'"><span class="box"></span><span class="tt" data-area="'+a.key+'" data-i="'+i+'"'+ed+'>'+esc(t)+'</span><button type="button" class="tmv tup" data-area="'+a.key+'" data-i="'+i+'" title="Subir">\u25B2</button><button type="button" class="tmv tdown" data-area="'+a.key+'" data-i="'+i+'" title="Descer">\u25BC</button><button type="button" class="tdel" data-area="'+a.key+'" data-i="'+i+'" title="Remover da lista">\u2715</button></label>';
     });
     card.innerHTML=
       '<div class="area-head"><span class="area-ic"><i data-lu="'+a.lu+'" data-sz="22"></i></span><h2>'+esc(a.nome)+'</h2><button type="button" class="area-edit'+(EDITMODE[a.key]?' on':'')+'" data-area="'+a.key+'"><i data-lu="pen-line" data-sz="13"></i> '+(EDITMODE[a.key]?'Concluir':'Editar lista')+'</button></div>'+
       '<button class="area-all" data-area="'+a.key+'">Marcar todas</button>'+
       '<div class="tasks">'+tasks+'</div>'+
-      '<div class="addrow"><input type="text" placeholder="Nova tarefa\u2026" data-area="'+a.key+'"><button type="button" data-area="'+a.key+'">\uff0b Adicionar</button></div>';
+      '<div class="addrow"><input type="text" placeholder="Nova tarefa\u2026" data-area="'+a.key+'"><button type="button" data-area="'+a.key+'">\uFF0B Adicionar</button></div>';
     root.appendChild(card);
   });
   root.querySelectorAll('.area-all').forEach(function(b){
@@ -910,6 +915,21 @@ function render(){
       if(!a || !a.tarefas[i]) return;
       if(!confirm('Remover "'+a.tarefas[i]+'" da lista?\n(Fica removida em todos os dispositivos.)')) return;
       a.tarefas.splice(i,1); guardarItens(); renderKeep();
+    });
+  });
+  /* editar o texto da tarefa: so em modo edicao, grava ao sair do campo ou com Enter */
+  root.querySelectorAll('.tt[contenteditable]').forEach(function(sp){
+    sp.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); });
+    sp.addEventListener('keydown', function(e){
+      if(e.key==='Enter'){ e.preventDefault(); sp.blur(); }
+      else if(e.key==='Escape'){ e.preventDefault(); sp.textContent=AREAS.find(function(x){return x.key===sp.dataset.area;}).tarefas[+sp.dataset.i]; sp.blur(); }
+    });
+    sp.addEventListener('blur', function(){
+      var a=AREAS.find(function(x){return x.key===sp.dataset.area;}); if(!a) return;
+      var i=+sp.dataset.i, novo=sp.textContent.replace(/\s+/g,' ').trim(), antigo=a.tarefas[i];
+      if(!novo){ sp.textContent=antigo; return; }
+      if(novo===antigo){ sp.textContent=antigo; return; }
+      a.tarefas[i]=novo; guardarItens(); renderKeep();
     });
   });
   root.querySelectorAll('.tmv').forEach(function(b){
@@ -953,7 +973,7 @@ function coletar(){
 document.getElementById('btnSubmit').addEventListener('click', function(){
   const nome=document.getElementById('nome').value.trim();
   if(!nome){ alert('Seleciona o teu nome.'); document.getElementById('nome').focus(); return; }
-  if(!BACKEND){ alert('Sem liga\u00e7\u00e3o \u00e0 nuvem.'); return; }
+  if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
   const btn=this; btn.disabled=true; btn.textContent='A guardar\u2026';
   const payload={ nome:nome, obs:document.getElementById('obs').value.trim(), data:new Date().toISOString(), areas:coletar() };
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
@@ -970,7 +990,7 @@ document.getElementById('btnSubmit').addEventListener('click', function(){
         carregarHist();
       }else{ throw new Error('erro'); }
     })
-    .catch(function(){ alert('N\u00e3o foi poss\u00edvel guardar. Tenta de novo.'); btn.disabled=false; btn.innerHTML='<i data-lu="check"></i> Confirmar checklist'; });
+    .catch(function(){ alert('N\u00E3o foi poss\u00EDvel guardar. Tenta de novo.'); btn.disabled=false; btn.innerHTML='<i data-lu="check"></i> Confirmar checklist'; });
 });
 
 function imprimirDia(){
@@ -982,7 +1002,7 @@ function imprimirDia(){
     a.tarefas.forEach(function(t){ html+='<li><span class="bx"></span><span>'+esc(t)+'</span></li>'; });
     html+='</ul>';
   });
-  html+='<div class="ph-sign">Respons\u00e1vel: ________________________________<br>Assinatura: __________________________________</div>';
+  html+='<div class="ph-sign">Respons\u00E1vel: ________________________________<br>Assinatura: __________________________________</div>';
   document.getElementById('printArea').innerHTML=html;
   setTimeout(function(){ window.print(); },80);
 }
@@ -1010,13 +1030,13 @@ function carregarHist(){
 }
 function renderHist(){
   var box=document.getElementById('hist'); if(!box) return;
-  if(!HIST.length){ box.innerHTML='<div id="histEmpty">Ainda n\u00e3o h\u00e1 registos.</div>'; return; }
+  if(!HIST.length){ box.innerHTML='<div id="histEmpty">Ainda n\u00E3o h\u00E1 registos.</div>'; return; }
   box.innerHTML='';
   HIST.forEach(function(h){
     var p=h.p||{}; var areas=Array.isArray(p.areas)?p.areas:[];
-    var resumo=areas.map(function(a){ var f=(a.tarefas||[]).filter(function(t){return t.ok;}).length; var tot=(a.tarefas||[]).length; return esc(a.nome)+' '+f+'/'+tot; }).join(' \u00b7 ');
+    var resumo=areas.map(function(a){ var f=(a.tarefas||[]).filter(function(t){return t.ok;}).length; var tot=(a.tarefas||[]).length; return esc(a.nome)+' '+f+'/'+tot; }).join(' \u00B7 ');
     var row=document.createElement('div'); row.className='hrow';
-    row.innerHTML='<div class="hinfo"><div class="hnome">'+esc(p.nome||'\u2014')+'</div><div class="hsub">'+esc(fmtDataHora(h.ts))+(resumo?' \u00b7 '+resumo:'')+(p.obs?' \u00b7 '+esc(p.obs):'')+'</div></div>';
+    row.innerHTML='<div class="hinfo"><div class="hnome">'+esc(p.nome||'\u2014')+'</div><div class="hsub">'+esc(fmtDataHora(h.ts))+(resumo?' \u00B7 '+resumo:'')+(p.obs?' \u00B7 '+esc(p.obs):'')+'</div></div>';
     var del=document.createElement('button'); del.className='hdel'; del.textContent='\u2715'; del.title='Apagar registo'; del.onclick=function(){ apagarHist(h.id); };
     row.appendChild(del);
     box.appendChild(row);
@@ -1026,7 +1046,7 @@ function apagarHist(id){
   if(!confirm('Apagar este registo?')) return;
   fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_del', id:id})})
     .then(function(r){return r.json();}).then(function(){ HIST=HIST.filter(function(x){return String(x.id)!==String(id);}); renderHist(); })
-    .catch(function(){ alert('N\u00e3o foi poss\u00edvel apagar.'); });
+    .catch(function(){ alert('N\u00E3o foi poss\u00EDvel apagar.'); });
 }
 
 render();
