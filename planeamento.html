@@ -1774,6 +1774,19 @@ function renderChart(){
    cada periodo do dia e avaliado pela FUNCAO que tem, e nao pelo mesmo criterio.
    So as horas de venda sao julgadas por euros por pessoa.
    ============================================================ */
+/* ---------------------------------------------------------------
+   Calendario fiscal da empresa: o ano NAO comeca em janeiro \u2014 comeca
+   no 1.o domingo de fevereiro, e a semana corre de domingo a sabado.
+   Em 2026 a semana 1 comeca a 1/2, logo a semana 23 vai de 5 a 11 de julho.
+   (Contar as semanas a partir de janeiro dava um mes errado.)
+   --------------------------------------------------------------- */
+function semanaFiscalInicio(n, ano){
+  if(!n || n<1 || !ano) return null;
+  var d=new Date(ano,1,1);                       /* 1 de fevereiro */
+  d.setDate(d.getDate() + ((7-d.getDay())%7));   /* avanca ate ao 1.o domingo (getDay: 0=domingo) */
+  d.setDate(d.getDate() + (n-1)*7);
+  return d;
+}
 /* icones usados nas Observacoes AI */
 IC.truck=IC.truck||'<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>';
 IC.moon=IC.moon||'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
@@ -1819,12 +1832,21 @@ function renderObs(){
   }
 
   /* ---- 1b. as vendas e o horario sao do mesmo periodo? ---- */
-  var semMes=(function(){ var m=/S(?:emana)?\s*(\d+)/i.exec(VSEM||''); if(!m||!PLAN) return null;
-    var d=new Date(PLAN.year,0,1+(parseInt(m[1],10)-1)*7); return d.getMonth(); })();
-  if(semMes!=null && PLAN && semMes!==PLAN.month){
-    var MN=['janeiro','fevereiro','mar\u00E7o','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-    obs.push({t:'r', ic:'alert-triangle', h:'As vendas n\u00E3o s\u00E3o do m\u00EAs do hor\u00E1rio',
-      tx:'O hor\u00E1rio \u00E9 de '+MN[PLAN.month]+' mas as vendas carregadas s\u00E3o da '+VSEM+' ('+MN[semMes]+'). Estou a cruzar per\u00EDodos diferentes, por isso l\u00EA estas recomenda\u00E7\u00F5es como uma tend\u00EAncia e n\u00E3o como n\u00FAmeros exatos. Carrega as vendas de uma semana de '+MN[PLAN.month]+' para a an\u00E1lise ficar certa.'});
+  var semIni=(function(){ var m=/S(?:emana)?\s*(\d+)/i.exec(VSEM||''); if(!m||!PLAN) return null;
+    var ya=/(20\d{2})/.exec(VSEM||'');
+    return semanaFiscalInicio(parseInt(m[1],10), ya?parseInt(ya[1],10):PLAN.year); })();
+  var semMes=semIni?semIni.getMonth():null;
+  var MN=['janeiro','fevereiro','mar\u00E7o','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  function dstr(d){ return d.getDate()+' '+MN[d.getMonth()].slice(0,3); }
+  if(semIni && PLAN){
+    var semFim=new Date(semIni.getTime()+6*86400000);
+    if(semMes!==PLAN.month){
+      obs.push({t:'r', ic:'alert-triangle', h:'As vendas n\u00E3o s\u00E3o do m\u00EAs do hor\u00E1rio',
+        tx:'O hor\u00E1rio \u00E9 de '+MN[PLAN.month]+', mas as vendas carregadas s\u00E3o da '+VSEM+', que no calend\u00E1rio fiscal vai de '+dstr(semIni)+' a '+dstr(semFim)+'. Estou a cruzar per\u00EDodos diferentes: l\u00EA estas recomenda\u00E7\u00F5es como tend\u00EAncia. Carrega as vendas de uma semana de '+MN[PLAN.month]+' para a an\u00E1lise ficar exata.'});
+    } else {
+      obs.push({t:'g', ic:'badge-check', h:'Vendas e hor\u00E1rio do mesmo per\u00EDodo',
+        tx:'A '+VSEM+' vai de '+dstr(semIni)+' a '+dstr(semFim)+' (calend\u00E1rio fiscal, que come\u00E7a no 1.\u00BA domingo de fevereiro) e o hor\u00E1rio \u00E9 de '+MN[PLAN.month]+'. Est\u00E3o no mesmo m\u00EAs, por isso a compara\u00E7\u00E3o \u00E9 fi\u00E1vel.'});
+    }
   }
 
   /* ---- 2. horas de venda: carga por pessoa vs hora normal ---- */
