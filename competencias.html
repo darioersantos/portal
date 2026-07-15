@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="SPZ Portal">
-<title>Mapa de Compet&#xea;ncias &middot; Sport Zone Vasco da Gama</title>
+<title>Mapa de Compet&#xEA;ncias &middot; Sport Zone Vasco da Gama</title>
 <script src="config.js"></script>
 <script src="links.js"></script>
 <script src="roster.js"></script>
@@ -230,7 +230,7 @@
     --bg:#f6f5f3;--card:#ffffff;--ink:#1a1303;--muted:#7c7264;--line:#ece7df;
     --accent:#FF8100;--accent-dark:#E06E00;--accent-soft:#ffe7cf;--accent-ink:#8a4500;
     --neg:#dc2626;--pos:#15803d;--shadow:0 1px 2px rgba(26,19,3,.06),0 4px 16px rgba(26,19,3,.07);
-    --l0:#f1eee9;--l1:#f87171;--l2:#fbbf24;--l3:#34d399;
+    --l0:#f1eee9;--l1:#60a5fa;--l2:#fbbf24;--l3:#34d399;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;overscroll-behavior:none;touch-action:pan-y;}
@@ -257,6 +257,7 @@
   .legend .it{display:flex;align-items:center;gap:6px;}
   .legend .sw{width:16px;height:16px;border-radius:5px;border:1px solid rgba(0,0,0,.08);}
   .sw0{background:var(--l0);} .sw1{background:var(--l1);} .sw2{background:var(--l2);} .sw3{background:var(--l3);}
+  table.mat tr.alvo td.name{box-shadow:inset 3px 0 0 var(--accent);background:var(--accent-soft);}
 
   .filtros{display:flex;flex-wrap:wrap;gap:7px;margin:0 2px 12px;}
   .chip{border:1.5px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:7px 13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
@@ -348,7 +349,7 @@
 <div class="main">
   <header class="topbar">
     <button class="menu-btn" id="menuBtn"><span data-ic="menu"></span></button>
-    <div class="tb-hi"><h1>Mapa de Compet&#xea;ncias</h1><p>Avalia&#xe7;&#xe3;o de compet&#xea;ncias por colaborador.</p></div>
+    <div class="tb-hi"><h1>Mapa de Compet&#xEA;ncias</h1><p>Avalia&#xE7;&#xE3;o de compet&#xEA;ncias por colaborador.</p></div>
     <div class="tb-right"><div class="tb-icon" id="btnPrint" title="Imprimir"><span data-ic="printer"></span></div> <span class="saved" id="saveStatus"><span class="dot"></span><span class="saved-txt">Guardado</span></span></div>
   </header>
   <div class="content">
@@ -357,20 +358,19 @@
 
 
 <main>
-  <p class="intro">Os colaboradores v&#xea;m automaticamente da <b>Super Liga</b> (por &#xe1;rea). Toca numa c&#xe9;lula para definir o n&#xed;vel.</p>
+  <p class="intro">Os colaboradores v&#xEA;m automaticamente da <b>Super Liga</b> (por &#xE1;rea). Toca numa c&#xE9;lula para definir o n&#xED;vel.</p>
 
   <div class="legend">
-    <span class="it"><span class="sw sw0"></span> N&#xe3;o avaliado</span>
-    <span class="it"><span class="sw sw1"></span> Em forma&#xe7;&#xe3;o</span>
-    <span class="it"><span class="sw sw2"></span> Com supervis&#xe3;o</span>
-    <span class="it"><span class="sw sw3"></span> Aut&#xf3;nomo</span>
+    <span class="it"><span class="sw sw0"></span> N&#xE3;o avaliado</span>
+    <span class="it"><span class="sw sw1"></span> Em forma&#xE7;&#xE3;o</span>
+    <span class="it"><span class="sw sw2"></span> Com supervis&#xE3;o</span>
+    <span class="it"><span class="sw sw3"></span> Aut&#xF3;nomo</span>
   </div>
 
   <div class="filtros" id="filtros"></div>
 
   <div class="resumo-wrap">
-    <button class="resumo-btn" id="btnResumo" type="button"><i data-lu="bar-chart-3"></i> Resumo global de compet&#xea;ncias</button>
-    <div class="resumo-panel" id="resumoPanel"></div>
+    <div class="resumo-panel open" id="resumoPanel"></div>
   </div>
 
   <div id="printHead"></div>
@@ -715,7 +715,7 @@ IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
 
-var SL_FOTOS={'Ant\u00f3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00fajo':'images/img_04.jpg','Ricardo Eus\u00e9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00e3o Paiva':'images/img_10.jpg','Jo\u00e3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00e2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00e9rgio Correia':'images/img_21.jpg','Andr\u00e9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00fajo':'images/img_25.jpg','Lu\u00eds Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00e2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00e3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00e7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00edrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00faria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00e1rio Santos':'images/img_51.jpg','Beatriz Jer\u00f3nimo':'images/img_52.jpg'};
+var SL_FOTOS={'Ant\u00F3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00FAjo':'images/img_04.jpg','Ricardo Eus\u00E9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00E3o Paiva':'images/img_10.jpg','Jo\u00E3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00E2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00E9rgio Correia':'images/img_21.jpg','Andr\u00E9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00FAjo':'images/img_25.jpg','Lu\u00EDs Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00E2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00E3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00E7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00EDrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00FAria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00E1rio Santos':'images/img_51.jpg','Beatriz Jer\u00F3nimo':'images/img_52.jpg'};
 var NAV=(window.PORTAL_NAV||[]);
 
 var BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
@@ -788,16 +788,18 @@ const ROSTER_URL='https://script.google.com/macros/s/AKfycbxztRKM-1SdK2PYfVrBQgb
 const COMP='_comp';
 
 const TOPICOS=[
-  'CAIXA','ENTRADA PROCEDIMENTOS','SNEAKERS BALC\u00c3O','ARMAZ\u00c9M CAL\u00c7ADO','USO DO GPC',
-  'PREPARA\u00c7\u00c3O ONLINE LS','PROCEDIMENTO PROVADORES','VENDAS POR METRO','SALES FORCE (CRIAR E CONSULTAR)',
-  'REC. MOBSHOP CAMI\u00c3O','TRANSFER\u00caNCIAS','DPD','GARLAND','TIBCO'
+  'CAIXA','ENTRADA PROCEDIMENTOS','SNEAKERS BALC\u00C3O','ARMAZ\u00C9M CAL\u00C7ADO','USO DO GPC',
+  'PREPARA\u00C7\u00C3O ONLINE LS','PROCEDIMENTO PROVADORES','VENDAS POR METRO','SALES FORCE (CRIAR E CONSULTAR)',
+  'REC. MOBSHOP CAMI\u00C3O','TRANSFER\u00CANCIAS','DPD','GARLAND','TIBCO'
 ];
-const AREA_NOMES={calcado:'Cal\u00e7ado',caixa:'Caixa',textil:'T\u00eaxtil',logistica:'Log\u00edstica',sup:'Dire\u00e7\u00e3o',estagios:'Est\u00e1gios',visual:'Visual'};
+const AREA_NOMES={calcado:'Cal\u00E7ado',caixa:'Caixa',textil:'T\u00EAxtil',logistica:'Log\u00EDstica',sup:'Dire\u00E7\u00E3o',estagios:'Est\u00E1gios',visual:'Visual'};
 
 let ROSTER=[];      // [{id, nome}] achatado por ordem de area
 let GROUPS=[];      // [{id, nome:areaNome, nomes:[...]}]
 let M={};           // matriz: { "Nome": {ti: nivel} }
 let filtro='todas';
+/* ?nome=... : vem do Caderno de Acompanhamento e destaca a linha desse colaborador */
+var ALVO=(function(){ try{ return new URLSearchParams(location.search).get('nome')||''; }catch(e){ return ''; } })();
 
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function set(id,t){var e=document.getElementById(id);if(e)e.textContent=t;}
@@ -810,7 +812,7 @@ function carregar(){
   var pComp=BACKEND?fetch(BACKEND+'?action=notas&t='+Date.now()).then(r=>r.json()).catch(()=>null):Promise.resolve(null);
   Promise.all([pRoster,pComp]).then(function(res){
     var roster=res[0], notas=res[1];
-    if(!Array.isArray(roster)||!roster.length){ document.getElementById('board').innerHTML='<div class="status">N\u00e3o foi poss\u00edvel obter os colaboradores da Super Liga. Recarrega.</div>'; setStatus('off','Sem liga\u00e7\u00e3o'); return; }
+    if(!Array.isArray(roster)||!roster.length){ document.getElementById('board').innerHTML='<div class="status">N\u00E3o foi poss\u00EDvel obter os colaboradores da Super Liga. Recarrega.</div>'; setStatus('off','Sem liga\u00E7\u00E3o'); return; }
     GROUPS=roster.map(function(g){ return {id:g.id, nome:(AREA_NOMES[g.id]||(g.id.charAt(0).toUpperCase()+g.id.slice(1))), nomes:(g.nomes||[]).slice()}; });
     // matriz: usar a nota _comp mais recente; limpar as antigas
     if(notas&&notas.ok&&Array.isArray(notas.notas)){
@@ -844,7 +846,7 @@ function render(){
   grupos.forEach(function(g){
     html+='<tr class="area"><td colspan="'+(TOPICOS.length+1)+'">'+esc(g.nome)+'</td></tr>';
     g.nomes.forEach(function(nome){
-      html+='<tr><td class="name" title="'+esc(nome)+'">'+esc(nome)+'</td>';
+      html+='<tr'+(nome===ALVO?' class="alvo" id="linhaAlvo"':'')+'><td class="name" title="'+esc(nome)+'">'+esc(nome)+'</td>';
       var row=M[nome]||{};
       for(var ti=0;ti<TOPICOS.length;ti++){
         var lvl=+row[ti]||0;
@@ -856,6 +858,8 @@ function render(){
   html+='</tbody></table></div>';
   board.innerHTML=html;
   refreshResumo();
+  var alvo=document.getElementById('linhaAlvo');
+  if(alvo) setTimeout(function(){ alvo.scrollIntoView({block:'center',behavior:'smooth'}); },120);
   board.querySelectorAll('td.cell').forEach(function(c){
     c.addEventListener('click',function(){
       var nome=c.dataset.nome, ti=c.dataset.ti;
@@ -871,21 +875,21 @@ function render(){
 
 function imprimir(){
   var hoje=new Date().toLocaleDateString('pt-PT',{day:'2-digit',month:'long',year:'numeric'});
-  document.getElementById('printHead').innerHTML='<h1>Mapa de Compet\u00eancias</h1><div class="pdt">Sport Zone &middot; Vasco da Gama &middot; '+esc(hoje)+'</div>';
+  document.getElementById('printHead').innerHTML='<h1>Mapa de Compet\u00EAncias</h1><div class="pdt">Sport Zone &middot; Vasco da Gama &middot; '+esc(hoje)+'</div>';
   window.print();
 }
 var _bp=document.getElementById('btnPrint'); if(_bp) _bp.addEventListener('click',imprimir);
 /* ---- guardar matriz (nota _comp, sem mudar Apps Script) ---- */
 var saveTimer;
 function guardar(){
-  if(!BACKEND){ setStatus('off','Sem liga\u00e7\u00e3o'); return; }
+  if(!BACKEND){ setStatus('off','Sem liga\u00E7\u00E3o'); return; }
   setStatus('sync','A guardar\u2026');
   clearTimeout(saveTimer);
   saveTimer=setTimeout(function(){
     fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
       body:JSON.stringify({action:'nota_add', seccao:COMP, autor:'mapa', texto:JSON.stringify(M)})})
       .then(r=>r.json()).then(function(j){ if(j&&j.ok) setStatus('ok','Guardado'); else throw 0; })
-      .catch(function(){ setStatus('off','Sem liga\u00e7\u00e3o \u2014 tenta de novo'); });
+      .catch(function(){ setStatus('off','Sem liga\u00E7\u00E3o \u2014 tenta de novo'); });
   },1200);
 }
 
@@ -911,16 +915,12 @@ function renderResumo(){
       +'<div class="rn"><b>'+n+'</b><span>de '+totalColab+'</span></div>'
       +'<div class="rbar"><i style="width:'+Math.min(100,pct)+'%"></i></div></div>';
   }).join('');
-  panel.innerHTML='<h3>Quantos colaboradores dominam cada compet\u00eancia</h3>'
-    +'<p class="rsub">Soma autom\u00e1tica dos quadrados verdes (n\u00edvel <b>Aut\u00f3nomo</b>) de toda a loja \u2014 '+totalColab+' colaboradores. Ajuda a identificar lacunas e necessidades de forma\u00e7\u00e3o (a vermelho, as mais fr\u00e1geis).</p>'
+  panel.innerHTML='<h3>Quantos colaboradores dominam cada compet\u00EAncia</h3>'
+    +'<p class="rsub">Soma autom\u00E1tica dos quadrados verdes (n\u00EDvel <b>Aut\u00F3nomo</b>) de toda a loja \u2014 '+totalColab+' colaboradores. Ajuda a identificar lacunas e necessidades de forma\u00E7\u00E3o (a vermelho, as mais fr\u00E1geis).</p>'
     +'<div class="resumo-grid">'+cards+'</div>';
   if(window.lucideRepl) window.lucideRepl();
 }
-document.getElementById('btnResumo').addEventListener('click',function(){
-  var p=document.getElementById('resumoPanel');
-  p.classList.toggle('open');
-  if(p.classList.contains('open')) renderResumo();
-});
+/* o resumo global esta sempre visivel: render() -> refreshResumo() trata de o desenhar */
 
 carregar();
 </script>
