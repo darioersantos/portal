@@ -279,7 +279,8 @@
   .comp-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;}
   .comp-item:last-child{border-bottom:none;}
   .comp-item .lvl{margin-left:auto;font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;}
-  .lvl.l1{background:#fde8e8;color:#b91c1c;}
+  .lvl.l0{background:#f1eee9;color:#6b7280;}
+  .lvl.l1{background:#dbeafe;color:#1d4ed8;}
   .lvl.l2{background:#fef3cd;color:#9a6700;}
   .comp-ok{font-size:13px;color:var(--pos);font-weight:700;}
   .comp-link{display:inline-block;margin-top:10px;font-size:13px;font-weight:800;color:var(--accent-dark);text-decoration:none;}
@@ -365,7 +366,7 @@
 
 
 <main>
-  <p class="intro">Acompanhamento individual de cada colaborador. <span class="priv"><i data-lu="lock"></i> Privado da dire&#xe7;&#xe3;o</span></p>
+  <p class="intro">Acompanhamento individual de cada colaborador. <span class="priv"><i data-lu="lock"></i> Privado da dire&#xE7;&#xE3;o</span></p>
 
   <div class="card">
     <div class="field" style="margin:0;">
@@ -377,7 +378,7 @@
   <div class="hint-pick" id="hintPick">Escolhe um colaborador para abrir o caderno.</div>
 
   <div id="ficha">
-    <div class="part-label">1 &#xb7; Pontos fortes e a desenvolver</div>
+    <div class="part-label">1 &#xB7; Pontos fortes e a desenvolver</div>
     <div class="card">
       <div class="sec-t"><i data-lu="dumbbell"></i> Pontos fortes</div>
       <div class="field"><textarea id="fortes" placeholder="O que faz bem&#x2026;"></textarea></div>
@@ -386,7 +387,7 @@
       <button class="btn save" id="btnSavePontos" type="button" style="width:100%;"><i data-lu="save"></i> Guardar pontos</button>
     </div>
 
-    <div class="part-label">2 &#xb7; Registo das conversas</div>
+    <div class="part-label">2 &#xB7; Registo das conversas</div>
     <div class="card conv-add">
       <div class="sec-t"><i data-lu="message-circle"></i> Nova conversa</div>
       <div class="crow">
@@ -394,27 +395,28 @@
         <div class="field"><label for="cTema">Tema</label><input type="text" id="cTema" placeholder="Ex: Acompanhamento"></div>
       </div>
       <div class="field"><label for="cNotas">Notas</label><textarea id="cNotas" placeholder="O que foi combinado / observado&#x2026;"></textarea></div>
-      <button class="btn save" id="btnConv" type="button" style="width:100%;">&#xff0b; Adicionar conversa</button>
+      <button class="btn save" id="btnConv" type="button" style="width:100%;">&#xFF0B; Adicionar conversa</button>
       <div id="convList"></div>
     </div>
 
     <div class="card">
-      <div class="sec-t"><i data-lu="bar-chart-3"></i> Liga&#xe7;&#xe3;o ao Mapa de Compet&#xea;ncias</div>
+      <div class="sec-t"><i data-lu="bar-chart-3"></i> Liga&#xE7;&#xE3;o ao Mapa de Compet&#xEA;ncias</div>
+      <p class="intro" style="margin:0 0 10px;">Este caderno l&#xEA; o <b>Mapa de Compet&#xEA;ncias</b> deste colaborador e mostra abaixo as val&#xEA;ncias que lhe faltam desenvolver. Usa-as para definir os pontos a trabalhar.</p>
       <div id="compBox"><p class="intro" style="margin:0;">&#x2014;</p></div>
-      <a class="comp-link" href="competencias.html">Abrir Mapa de Compet&#xea;ncias &#x2192;</a>
+      <a class="comp-link" id="compLink" href="competencias.html">Abrir Mapa de Compet&#xEA;ncias &#x2192;</a>
     </div>
 
-    <div class="part-label">3 &#xb7; Observa&#xe7;&#xf5;es</div>
+    <div class="part-label">3 &#xB7; Observa&#xE7;&#xF5;es</div>
     <div class="card">
-      <div class="sec-t"><i data-lu="clipboard-list"></i> Observa&#xe7;&#xf5;es</div>
-      <div class="field" style="margin:0 0 14px;"><textarea id="obs" placeholder="Notas adicionais, contexto, combina&#xe7;&#xf5;es&#x2026;"></textarea></div>
-      <button class="btn save" id="btnSaveObs" type="button" style="width:100%;"><i data-lu="save"></i> Guardar observa&#xe7;&#xf5;es</button>
+      <div class="sec-t"><i data-lu="clipboard-list"></i> Observa&#xE7;&#xF5;es</div>
+      <div class="field" style="margin:0 0 14px;"><textarea id="obs" placeholder="Notas adicionais, contexto, combina&#xE7;&#xF5;es&#x2026;"></textarea></div>
+      <button class="btn save" id="btnSaveObs" type="button" style="width:100%;"><i data-lu="save"></i> Guardar observa&#xE7;&#xF5;es</button>
     </div>
 
-    <div class="part-label">4 &#xb7; Assinaturas digitais</div>
+    <div class="part-label">4 &#xB7; Assinaturas digitais</div>
     <div class="card">
-      <div class="sec-t"><i data-lu="pen-line"></i> Assinar no ecr&#xe3;</div>
-      <p class="intro" style="margin:0 0 12px;">Cada pessoa assina com o dedo ou o rato no respetivo quadro. As assinaturas ficam guardadas e aparecem na impress&#xe3;o.</p>
+      <div class="sec-t"><i data-lu="pen-line"></i> Assinar no ecr&#xE3;</div>
+      <p class="intro" style="margin:0 0 12px;">Cada pessoa assina com o dedo ou o rato no respetivo quadro. As assinaturas ficam guardadas e aparecem na impress&#xE3;o.</p>
       <div class="sign-grid">
         <div class="sign-col">
           <label>Assinatura do colaborador</label>
@@ -777,7 +779,7 @@ IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2
 IC.mic=IC.mic||'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
 IC.camera=IC.camera||'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
 
-var SL_FOTOS={'Ant\u00f3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00fajo':'images/img_04.jpg','Ricardo Eus\u00e9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00e3o Paiva':'images/img_10.jpg','Jo\u00e3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00e2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00e9rgio Correia':'images/img_21.jpg','Andr\u00e9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00fajo':'images/img_25.jpg','Lu\u00eds Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00e2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00e3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00e7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00edrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00faria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00e1rio Santos':'images/img_51.jpg','Beatriz Jer\u00f3nimo':'images/img_52.jpg'};
+var SL_FOTOS={'Ant\u00F3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00FAjo':'images/img_04.jpg','Ricardo Eus\u00E9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00E3o Paiva':'images/img_10.jpg','Jo\u00E3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00E2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00E9rgio Correia':'images/img_21.jpg','Andr\u00E9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00FAjo':'images/img_25.jpg','Lu\u00EDs Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00E2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00E3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00E7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00EDrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00FAria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00E1rio Santos':'images/img_51.jpg','Beatriz Jer\u00F3nimo':'images/img_52.jpg'};
 var NAV=(window.PORTAL_NAV||[]);
 
 var BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
@@ -847,8 +849,8 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 "use strict";
 const BACKEND=(typeof window!=='undefined'&&window.BACKEND_URL?String(window.BACKEND_URL).trim():'');
 const SEC='_caderno';
-const TOPICOS=['CAIXA','ENTRADA PROCEDIMENTOS','SNEAKERS BALC\u00c3O','ARMAZ\u00c9M CAL\u00c7ADO','USO DO GPC','PREPARA\u00c7\u00c3O ONLINE LS','PROCEDIMENTO PROVADORES','VENDAS POR METRO','SALES FORCE (CRIAR E CONSULTAR)','REC. MOBSHOP CAMI\u00c3O','TRANSFER\u00caNCIAS','DPD','GARLAND','TIBCO'];
-const NIVEIS={1:'Em forma\u00e7\u00e3o',2:'Com supervis\u00e3o',3:'Aut\u00f3nomo'};
+const TOPICOS=['CAIXA','ENTRADA PROCEDIMENTOS','SNEAKERS BALC\u00C3O','ARMAZ\u00C9M CAL\u00C7ADO','USO DO GPC','PREPARA\u00C7\u00C3O ONLINE LS','PROCEDIMENTO PROVADORES','VENDAS POR METRO','SALES FORCE (CRIAR E CONSULTAR)','REC. MOBSHOP CAMI\u00C3O','TRANSFER\u00CANCIAS','DPD','GARLAND','TIBCO'];
+const NIVEIS={1:'Em forma\u00E7\u00E3o',2:'Com supervis\u00E3o',3:'Aut\u00F3nomo'};
 
 function today(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
 function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
@@ -868,7 +870,7 @@ document.getElementById('colaborador').addEventListener('change',function(){ loa
 function loadFor(name){
   current=name; data=blankData(); oldIds=[]; compM={};
   if(!name){ showFicha(false); return; }
-  if(!BACKEND){ paint(); showFicha(true); setStatus('Sem liga\u00e7\u00e3o \u00e0 nuvem.'); return; }
+  if(!BACKEND){ paint(); showFicha(true); setStatus('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return; }
   setStatus('A carregar\u2026');
   fetch(BACKEND+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){
     if(j&&j.ok&&Array.isArray(j.notas)){
@@ -881,7 +883,7 @@ function loadFor(name){
       if(comps.length){ try{ compM=JSON.parse(comps[0].texto||'{}')||{}; }catch(e){} }
     }
     paint(); showFicha(true); setStatus('');
-  }).catch(function(){ paint(); showFicha(true); setStatus('Sem liga\u00e7\u00e3o. Recarrega.'); });
+  }).catch(function(){ paint(); showFicha(true); setStatus('Sem liga\u00E7\u00E3o. Recarrega.'); });
 }
 
 function paint(){
@@ -911,15 +913,32 @@ function pintaConversas(){
     l.appendChild(div);
   });
 }
+/* separa os topicos em: a reforcar (nivel 1-2) e por desenvolver (ainda sem avaliacao) */
+function faltasComp(nome){
+  var row=compM[nome]||{}, reforcar=[], porDesenvolver=[];
+  for(var ti=0;ti<TOPICOS.length;ti++){
+    var lv=+row[ti]||0;
+    if(lv===1||lv===2) reforcar.push({t:TOPICOS[ti],lv:lv});
+    else if(lv===0) porDesenvolver.push(TOPICOS[ti]);
+  }
+  return {row:row, reforcar:reforcar, porDesenvolver:porDesenvolver, temDados:Object.keys(row).length>0};
+}
 function pintaComp(){
   var box=document.getElementById('compBox');
-  var row=compM[current]||{};
-  var reforcar=[];
-  for(var ti=0;ti<TOPICOS.length;ti++){ var lv=+row[ti]||0; if(lv===1||lv===2) reforcar.push({t:TOPICOS[ti],lv:lv}); }
-  if(!Object.keys(row).length){ box.innerHTML='<p class="intro" style="margin:0;">Sem dados no Mapa de Compet\u00eancias para este colaborador.</p>'; return; }
-  if(!reforcar.length){ box.innerHTML='<p class="comp-ok">\u2713 Aut\u00f3nomo em todos os t\u00f3picos avaliados.</p>'; return; }
-  var h='<p class="intro" style="margin:0 0 6px;">\u00c1reas a refor\u00e7ar (do Mapa de Compet\u00eancias):</p>';
-  reforcar.forEach(function(r){ h+='<div class="comp-item"><span>'+esc(r.t)+'</span><span class="lvl l'+r.lv+'">'+NIVEIS[r.lv]+'</span></div>'; });
+  var f=faltasComp(current);
+  var link=document.getElementById('compLink');
+  if(link) link.href='competencias.html'+(current?('?nome='+encodeURIComponent(current)):'');
+  if(!f.temDados){ box.innerHTML='<p class="intro" style="margin:0;">Ainda sem avalia\u00E7\u00E3o no Mapa de Compet\u00EAncias. Abre o Mapa e avalia este colaborador para veres aqui as val\u00EAncias que lhe faltam desenvolver.</p>'; return; }
+  var h='';
+  if(f.reforcar.length){
+    h+='<p class="intro" style="margin:0 0 6px;">\u00C1reas a refor\u00E7ar (j\u00E1 avaliadas, ainda sem autonomia):</p>';
+    f.reforcar.forEach(function(r){ h+='<div class="comp-item"><span>'+esc(r.t)+'</span><span class="lvl l'+r.lv+'">'+NIVEIS[r.lv]+'</span></div>'; });
+  }
+  if(f.porDesenvolver.length){
+    h+='<p class="intro" style="margin:'+(f.reforcar.length?'12px':'0')+' 0 6px;">Val\u00EAncias que ainda falta desenvolver (sem avalia\u00E7\u00E3o no Mapa):</p>';
+    f.porDesenvolver.forEach(function(t){ h+='<div class="comp-item"><span>'+esc(t)+'</span><span class="lvl l0">Por desenvolver</span></div>'; });
+  }
+  if(!h) h='<p class="comp-ok">\u2713 Aut\u00F3nomo em todos os t\u00F3picos do Mapa de Compet\u00EAncias.</p>';
   box.innerHTML=h;
 }
 
@@ -935,7 +954,7 @@ function initPad(key, padId){
   var ctx=cv.getContext('2d');
   var obj={pad:pad, cv:cv, ctx:ctx, empty:true, drawing:false};
   function resize(){
-    // manter o tra\u00e7o atual ao redimensionar
+    // manter o tra\u00E7o atual ao redimensionar
     var prev=obj.empty?null:cv.toDataURL('image/png');
     var r=pad.getBoundingClientRect(); var dpr=window.devicePixelRatio||1;
     cv.width=Math.max(1,Math.round(r.width*dpr)); cv.height=Math.max(1,Math.round(r.height*dpr));
@@ -984,7 +1003,7 @@ window.addEventListener('resize',function(){ if(PADS.col)PADS.col.resize(); if(P
 /* guardar tudo (1 registo por colaborador: adiciona novo, apaga antigos) */
 function guardar(btn, doneLabel){
   if(!current){ alert('Escolhe um colaborador.'); return Promise.resolve(false); }
-  if(!BACKEND){ alert('Sem liga\u00e7\u00e3o \u00e0 nuvem.'); return Promise.resolve(false); }
+  if(!BACKEND){ alert('Sem liga\u00E7\u00E3o \u00E0 nuvem.'); return Promise.resolve(false); }
   data.fortes=document.getElementById('fortes').value;
   data.desenvolver=document.getElementById('desenvolver').value;
   data.obs=document.getElementById('obs').value;
@@ -1003,7 +1022,7 @@ function guardar(btn, doneLabel){
       loadFor(current); // re-sincroniza ids e repinta
       return true;
     })
-    .catch(function(){ if(btn){ btn.disabled=false; btn.textContent=old; } alert('N\u00e3o foi poss\u00edvel guardar. Tenta de novo.'); return false; });
+    .catch(function(){ if(btn){ btn.disabled=false; btn.textContent=old; } alert('N\u00E3o foi poss\u00EDvel guardar. Tenta de novo.'); return false; });
 }
 
 /* parte 1 \u2014 guardar pontos */
@@ -1042,7 +1061,20 @@ function montarPrint(){
     compHtml='<table class="conv"><tbody>';
     avaliadas.forEach(function(a){ compHtml+='<tr><td class="t">'+esc(a.t)+'</td><td>'+esc(NIVEIS[a.lv])+'</td></tr>'; });
     compHtml+='</tbody></table>';
-  } else { compHtml='<p>Sem compet\u00eancias avaliadas no Mapa.</p>'; }
+  } else { compHtml='<p>Sem compet\u00EAncias avaliadas no Mapa.</p>'; }
+  // Valencias que ainda faltam desenvolver (a reforcar + ainda sem avaliacao)
+  var f=faltasComp(current), falta='';
+  if(f.reforcar.length){
+    falta+='<p><b>A refor\u00E7ar (ainda sem autonomia):</b></p><table class="conv"><tbody>';
+    f.reforcar.forEach(function(r){ falta+='<tr><td class="t">'+esc(r.t)+'</td><td>'+esc(NIVEIS[r.lv])+'</td></tr>'; });
+    falta+='</tbody></table>';
+  }
+  if(f.porDesenvolver.length){
+    falta+='<p><b>Ainda por desenvolver (sem avalia\u00E7\u00E3o no Mapa):</b></p><table class="conv"><tbody>';
+    f.porDesenvolver.forEach(function(t){ falta+='<tr><td class="t">'+esc(t)+'</td><td>Por desenvolver</td></tr>'; });
+    falta+='</tbody></table>';
+  }
+  if(!falta) falta='<p>Aut\u00F3nomo em todos os t\u00F3picos do Mapa de Compet\u00EAncias.</p>';
   // Pontos debatidos (fortes + a desenvolver)
   var deb='';
   if((data.fortes||'').trim()) deb+='<p><b>Pontos fortes:</b> '+esc(data.fortes.trim())+'</p>';
@@ -1061,15 +1093,16 @@ function montarPrint(){
   var imgSup=data.sigSup?'<img src="'+data.sigSup+'" alt="">':'';
   var hoje=new Date().toLocaleDateString('pt-PT');
   var dataAss=data.sigData?fmtData(data.sigData):hoje;
-  var html='<h1>Caderno de Compet\u00eancias</h1><div class="psub">Sport Zone \u00b7 Vasco da Gama \u2014 privado da dire\u00e7\u00e3o</div>'
+  var html='<h1>Caderno de Compet\u00EAncias</h1><div class="psub">Sport Zone \u00B7 Vasco da Gama \u2014 privado da dire\u00E7\u00E3o</div>'
     +'<table class="who"><tbody>'
     +'<tr><td class="k">Colaborador</td><td class="v">'+esc(current||'\u2014')+'</td></tr>'
     +'<tr><td class="k">Data</td><td class="v">'+esc(hoje)+'</td></tr>'
     +'</tbody></table>'
-    +'<h2>Compet\u00eancias avaliadas</h2>'+compHtml
+    +'<h2>Compet\u00EAncias avaliadas</h2>'+compHtml
+    +'<h2>Val\u00EAncias que ainda falta desenvolver</h2>'+falta
     +'<h2>Pontos debatidos</h2>'+deb
     +'<h2>Pontos assinalados</h2>'+assin
-    +'<h2>Observa\u00e7\u00f5es</h2>'+obs
+    +'<h2>Observa\u00E7\u00F5es</h2>'+obs
     +'<div class="signrow">'
       +'<div class="sigcol"><div class="sigimg">'+imgCol+'</div><div class="sigline">Assinatura do colaborador</div><div class="signame">'+esc(current||'')+'</div></div>'
       +'<div class="sigcol"><div class="sigimg">'+imgSup+'</div><div class="sigline">Assinatura do supervisor</div><div class="signame">'+esc(dataAss)+'</div></div>'
