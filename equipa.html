@@ -320,6 +320,10 @@
   .eq-shift{position:absolute;top:2px;bottom:2px;border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:4px;padding:0 7px;font-size:9.5px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.18);}
   .eq-shift .t2{opacity:.9;}
   .eq-empty{text-align:center;color:var(--muted2);padding:40px 16px;font-size:14px;}
+  /* animacao enquanto o horario carrega */
+  .eq-spin{width:34px;height:34px;margin:0 auto 14px;border:3px solid var(--line2);border-top-color:var(--accent);border-radius:50%;animation:eqspin .8s linear infinite;}
+  @keyframes eqspin{to{transform:rotate(360deg);}}
+  @media (prefers-reduced-motion:reduce){ .eq-spin{animation-duration:2.4s;} }
   .eq-empty .big{width:56px;height:56px;margin:0 auto 12px;border-radius:16px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;}
   .eq-empty .big .ico{width:28px;height:28px;color:var(--accent-dark);}
   .eq-empty .imp{margin-top:14px;border:none;background:var(--accent);color:#fff;border-radius:12px;padding:12px 20px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
@@ -1677,6 +1681,7 @@ IC['bar-chart-3']=IC['bar-chart-3']||'<path d="M3 3v18h18"/><path d="M18 17V9"/>
 IC['file-text']=IC['file-text']||'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h5"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>';
 IC.printer=IC.printer||'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>';
 var ESC=null, EDITS={byDay:{}}, FOTOS={};
+var ESCLOAD=true;   /* true enquanto o horario ainda esta a ser lido da nuvem */
 var SL_BASE='https://manager9yc.github.io/superliga/';
 var SL_FOTOS={'Ant\u00F3nio Pinto':'images/img_02.jpg','Mariana Pereira':'images/img_03.jpg','Rodrigo Ara\u00FAjo':'images/img_04.jpg','Ricardo Eus\u00E9bio':'images/img_05.jpg','Rodrigo Santos':'images/img_06.jpg','Jorge Teixeira':'images/img_07.jpg','Ricardo Esteves':'images/img_08.jpg','Beatriz Rosa':'images/img_09.jpg','Jo\u00E3o Paiva':'images/img_10.jpg','Jo\u00E3o Ferreira':'images/img_11.jpg','Miguel Viegas':'images/img_12.jpg','Yorky Reyes':'images/img_13.jpg','Vasco Tavares':'images/img_14.jpg','Ariana Santos':'images/img_15.jpg','Ana Ferreira':'images/img_16.jpg','Florisbela Tavares':'images/img_17.jpg','T\u00E2nia Costa':'images/img_18.jpg','Soraia Alves':'images/img_19.jpg','Diogo Silva':'images/img_20.jpg','S\u00E9rgio Correia':'images/img_21.jpg','Andr\u00E9 Louro':'images/img_22.jpg','Susana Morgado':'images/img_23.jpg','Carla Frade':'images/img_24.jpg','Bruna Ara\u00FAjo':'images/img_25.jpg','Lu\u00EDs Pereira':'images/img_26.jpg','Elisabete Oliveira':'images/img_27.jpg','Sana Branta':'images/img_28.jpg','Tiago Pinto':'images/img_29.jpg','T\u00E2nia Coutinho':'images/img_30.jpg','Zezita Segunda':'images/img_31.jpg','Palmira Camilo':'images/img_32.jpg','Daniela Correia':'images/img_33.jpg','Ana Morais':'images/img_34.jpg','Diana Bernardo':'images/img_35.jpg','Catarina Tavares':'images/img_36.jpg','Mariana Vieira':'images/img_37.jpg','Lara Ferreira':'images/img_38.jpg','Susana Perdig\u00E3o':'images/img_54.jpg','Beatriz Carreiro':'images/img_40.jpg','Mariana Louren\u00E7o':'images/img_41.jpg','Maria Coelho':'images/img_42.jpg','Edgar Castro':'images/img_43.jpg','Diogo Porf\u00EDrio':'images/img_44.jpg','Leandra Ricardo':'images/img_45.jpg','N\u00FAria Correia':'images/img_46.jpg','Beatriz Cruz':'images/img_47.jpg','Rafaela Gomes':'images/img_48.jpg','Ricardo Pereira':'images/img_49.jpg','Nicole Pinto':'images/img_50.jpg','D\u00E1rio Santos':'images/img_51.jpg','Beatriz Jer\u00F3nimo':'images/img_52.jpg'};
 function eqNorm(s){ try{ return String(s||'').normalize('NFD').replace(/[\u0300-\u036F]/g,'').toUpperCase().replace(/\s+/g,' ').trim(); }catch(e){ return String(s||'').toUpperCase().trim(); } }
@@ -1839,7 +1844,9 @@ function avatarHTML(nome, sec){ var url=FOTOS[nome]||slFotoN(nome); var ini=esc(
 function render(){
   renderBar();
   var body=document.getElementById('eqBody');
-  if(!ESC){ body.innerHTML='<div class="eq-empty"><div class="big">'+svg('users')+'</div>Ainda n\u00E3o importaste o hor\u00E1rio.<br>Importa o hor\u00E1rio mensal (PDF) para veres a equipa de cada dia.<br><button class="imp" id="eqImport2">'+svg('upload')+' Ir a Upload de Arquivos</button></div>'; document.getElementById('eqImport2').onclick=function(){ location.href='upload.html'; }; mountIcons(body); return; }
+  /* enquanto o horario esta a ser lido da nuvem mostra a animacao, nao o estado "sem horario" */
+  if(!ESC && ESCLOAD){ body.innerHTML='<div class="eq-empty"><div class="eq-spin"></div>A carregar o hor\u00E1rio\u2026<br><span style="font-size:12.5px;opacity:.75;">A ir buscar o hor\u00E1rio mais recente.</span></div>'; return; }
+  if(!ESC){ body.innerHTML='<div class="eq-empty"><div class="big">'+svg('users')+'</div>Ainda n\u00E3o h\u00E1 hor\u00E1rio carregado.<br>O hor\u00E1rio mensal (PDF) \u00E9 carregado em <b>Upload de Arquivos</b> e aparece aqui automaticamente.<br><button class="imp" id="eqImport2">'+svg('upload')+' Ir a Upload de Arquivos</button></div>'; document.getElementById('eqImport2').onclick=function(){ location.href='upload.html'; }; mountIcons(body); return; }
   var _dw=DOW[selDate.getDay()]; _dw=_dw.charAt(0).toUpperCase()+_dw.slice(1);
   var dowStr='<div class="eq-dow"><b>'+_dw+'</b> &middot; '+selDate.getDate()+' de '+MONS[selDate.getMonth()]+' de '+selDate.getFullYear()+'</div>';
   var fileStr=ESC.file?('<div class="eq-file">'+svg('file-text')+' Hor\u00E1rio: <b>'+esc(ESC.file)+'</b></div>'):'';
@@ -1952,16 +1959,18 @@ function loadEscala(){
   try{ var lf=localStorage.getItem('sz_fotos'); if(lf){ var f=JSON.parse(lf); if(f) FOTOS=f; } }catch(e){}
   try{ var lff=localStorage.getItem('sz_ff'); if(lff){ var ff=JSON.parse(lff); if(ff) FF=ff; } }catch(e){}
   try{ EQSOLO=sessionStorage.getItem('sz_eqsolo')||''; }catch(e){}
+  /* se ja houver copia local, mostra-a de imediato \u2014 nao ha nada a esperar */
+  if(ESC) ESCLOAD=false;
   pickToday(); render();
-  if(!BACKEND) return;
+  if(!BACKEND){ ESCLOAD=false; render(); return; }
   fetch(BACKEND+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){
     var ns=(j&&j.notas)?j.notas:[]; function latest(sec){ var a=ns.filter(function(n){return String(n.seccao)===sec;}); if(!a.length) return null; a.sort(function(x,y){return new Date(y.data)-new Date(x.data);}); try{ return JSON.parse(a[0].texto); }catch(e){ return null; } }
     var e=latest('_escala'); if(e&&e.people){ ESC=e; }
     var ed=latest('_escalaEdit'); if(ed&&ed.byDay){ EDITS=ed; }
     var fo=latest('_fotos'); if(fo&&typeof fo==='object'){ FOTOS=fo; }
     loadFF(latest('_vendas'));
-    pickToday(); render();
-  }).catch(function(){});
+    ESCLOAD=false; pickToday(); render();
+  }).catch(function(){ ESCLOAD=false; render(); });
 }
 
 
