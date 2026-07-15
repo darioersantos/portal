@@ -1136,7 +1136,9 @@ function checkCofreReset(){
   if(state.cofreDay && state.cofreDay!==key){
     autoSnapshot(state.cofreDay);   // grava o historico do dia que terminou ANTES de limpar
     state.cofreManha=freshCofre(); state.cofreNoite=freshCofre();
-    state.banco={notas:{}, moedas:{}}; state.periodo='manha'; linkCofre(); initAll(true);
+    state.banco={notas:{}, moedas:{}};
+    state.caixas=freshCaixas();     // as caixas tambem zeram na viragem do dia (02:00)
+    state.periodo='manha'; linkCofre(); initAll(true);
   }
   if(state.cofreDay!==key){ state.cofreDay=key; save(); }
 }
@@ -1384,7 +1386,7 @@ function migrate(){
   if(!state.cofreManha) state.cofreManha=freshCofre();
   if(!state.cofreNoite) state.cofreNoite=freshCofre();
   if(state.periodo!=='manha' && state.periodo!=='noite') state.periodo='manha';
-  // CAIXAS: uma unica lista persistente. Nada e apagado automaticamente (so pelo botao "Limpar caixas").
+  // CAIXAS: lista unica. Zera na viragem do dia (02:00, ver checkCofreReset) ou pelo botao "Limpar caixas".
   // Retrocompat: se vier do formato por-data (caixasByDate), recupera a lista mais recente.
   if(!Array.isArray(state.caixas)){
     if(state.caixasByDate && typeof state.caixasByDate==='object' && !Array.isArray(state.caixasByDate)){
