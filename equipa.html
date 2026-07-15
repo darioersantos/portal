@@ -319,6 +319,19 @@
   .eq-track{position:relative;height:24px;border-radius:8px;overflow:hidden;}
   .eq-shift{position:absolute;top:2px;bottom:2px;border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:4px;padding:0 7px;font-size:9.5px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.18);}
   .eq-shift .t2{opacity:.9;}
+  /* Insights AI do dia (fim do ecra) */
+  .eq-inswrap{margin:20px 2px 6px;}
+  .eq-inswrap .ei-t{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:var(--ink);margin-bottom:10px;}
+  .eq-inswrap .ei-t .ico{width:17px;height:17px;color:var(--accent-dark);}
+  .eq-ins{border:1px solid var(--line2);border-left:3px solid var(--muted2);border-radius:12px;padding:11px 13px;background:#fff;margin-bottom:9px;box-shadow:var(--shadow-sm);}
+  .eq-ins.g{border-left-color:var(--green);}
+  .eq-ins.r{border-left-color:var(--red);}
+  .eq-ins.i{border-left-color:var(--accent);}
+  .eq-ins .ei-h{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:3px;}
+  .eq-ins .ei-b{font-size:12.5px;color:#4a515b;line-height:1.6;}
+  .eq-ins .ei-b b{color:var(--ink);}
+  .eq-inote{font-size:11.5px;color:var(--muted2);line-height:1.5;margin-top:4px;padding:0 2px;}
+  @media print{ .eq-inswrap{display:none !important;} }
   .eq-empty{text-align:center;color:var(--muted2);padding:40px 16px;font-size:14px;}
   /* animacao enquanto o horario carrega */
   .eq-spin{width:34px;height:34px;margin:0 auto 14px;border:3px solid var(--line2);border-top-color:var(--accent);border-radius:50%;animation:eqspin .8s linear infinite;}
@@ -1691,6 +1704,9 @@ var SEC_ORDER=['Dire\u00E7\u00E3o','Caixa','Cal\u00E7ado','T\u00EAxtil','Log\u00
 var SEC_COLORS={'Dire\u00E7\u00E3o':'#4f6ef5','Caixa':'#0e7490','Cal\u00E7ado':'#FF8100','T\u00EAxtil':'#db2777','Log\u00EDstica':'#059669','Visual':'#7c3aed','SAF':'#475569','Est\u00E1gios':'#d97706','Tempor\u00E1rio':'#4d7c0f','Outros':'#6b7280'};
 function secColor(sec){ return SEC_COLORS[sec]||'#6b7280'; }
 var FF={};        /* footfall por hora {hora:ff} (do _vendas) */
+var EUR={};       /* vendas por hora {hora:eur} (do _vendas) \u2014 total da semana importada */
+var VSEM='';      /* semana das vendas, ex "Semana 23 \u00B7 2026" */
+var COMP=null;    /* mapa de competencias {nome:{topicoIdx:nivel}} (do _comp) */
 var EQSOLO='';    /* sec\u00E7\u00E3o isolada pelo filtro (vazio = ver todas) */
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function pad2(n){return ('0'+n).slice(-2);}
@@ -1889,8 +1905,122 @@ function render(){
     });
     html+='</div></div>';
   });
+  html+=insightsDia(dt);
   body.innerHTML=html; wire(body, groups, order);
 }
+
+/* ================================================================
+   Insights AI do dia \u2014 cruza a equipa escalada NESTE dia com o peso
+   de vendas por hora (_vendas) e o mapa de competencias (_comp).
+   Nota honesta: as vendas importadas sao o total de UMA SEMANA, por isso
+   so uso o PESO relativo de cada hora, nunca euros por pessoa neste dia.
+   ================================================================ */
+var EQTOP=['CAIXA','ENTRADA PROCEDIMENTOS','SNEAKERS BALC\u00C3O','ARMAZ\u00C9M CAL\u00C7ADO','USO DO GPC',
+  'PREPARA\u00C7\u00C3O ONLINE LS','PROCEDIMENTO PROVADORES','VENDAS POR METRO','SALES FORCE (CRIAR E CONSULTAR)',
+  'REC. MOBSHOP CAMI\u00C3O','TRANSFER\u00CANCIAS','DPD','GARLAND','TIBCO'];
+function eqNorm(s){ return String(s||'').toUpperCase().replace(/\s+/g,' ').trim(); }
+/* quantas pessoas da lista estao em loja a uma dada hora */
+function pessoasA(list, h){ var mid=h*60+30, n=0; list.forEach(function(p){ if(p.s<=mid && p.e>mid) n++; }); return n; }
+function nomesA(list, h){ var mid=h*60+30; return list.filter(function(p){ return p.s<=mid && p.e>mid; }); }
+/* media do mes a uma hora, nos dias do mesmo tipo (util vs fim de semana) */
+function mediaMesA(h){
+  if(!ESC||!ESC.people) return null;
+  var fds=(selDate.getDay()===0||selDate.getDay()===6);
+  var dim=new Date(ESC.year, ESC.month+1, 0).getDate(), mid=h*60+30, soma=0, dias=0;
+  for(var d=1; d<=dim; d++){
+    var dow=new Date(ESC.year, ESC.month, d).getDay();
+    if(((dow===0||dow===6))!==fds) continue;
+    var n=0;
+    ESC.people.forEach(function(p){ var hh=decodeCode(p.days[d], ESC.legend); if(hh && hh[0]<=mid && hh[1]>mid) n++; });
+    soma+=n; dias++;
+  }
+  return dias?soma/dias:null;
+}
+function insightsDia(dt){
+  if(!dt||!dt.list||!dt.list.length) return '';
+  var list=dt.list;
+  var horas=Object.keys(EUR).map(Number).filter(function(h){ return EUR[h]>0; }).sort(function(a,b){return a-b;});
+  var ins=[];
+  var fds=(selDate.getDay()===0||selDate.getDay()===6);
+  var totEur=0; horas.forEach(function(h){ totEur+=EUR[h]; }); totEur=totEur||1;
+
+  if(!horas.length){
+    ins.push({t:'i', h:'Sem vendas por hora', tx:'Importa o Excel de vendas na An\u00E1lise de Vendas para eu poder cruzar a equipa deste dia com as horas que mais pesam.'});
+  } else {
+    /* 1. pico de vendas vs equipa deste dia */
+    var pico=horas.slice().sort(function(a,b){ return EUR[b]-EUR[a]; })[0];
+    var nPico=pessoasA(list,pico), mPico=mediaMesA(pico);
+    var pesoPico=Math.round(100*EUR[pico]/totEur);
+    var txt='As <b>'+pico+'h</b> s\u00E3o a hora que mais pesa nas vendas ('+pesoPico+'% do dia). Hoje tens <b>'+nPico+' pessoa'+(nPico===1?'':'s')+'</b> em loja a essa hora';
+    var tipo='g';
+    if(mPico!=null){
+      var dif=Math.round(100*(nPico/(mPico||1)-1));
+      txt+=', contra uma m\u00E9dia de '+fmtD1(mPico)+' nos '+(fds?'fins de semana':'dias \u00FAteis')+' deste m\u00EAs';
+      if(dif<=-20){ tipo='r'; txt+=' \u2014 <b>'+Math.abs(dif)+'% abaixo do normal</b>. \u00C9 a hora mais forte da loja: se puderes refor\u00E7ar, \u00E9 aqui.'; }
+      else if(dif>=20){ tipo='i'; txt+=' \u2014 '+dif+'% acima do normal. Boa cobertura do pico.'; }
+      else { txt+=' \u2014 em linha com o habitual.'; }
+    } else { txt+='.'; }
+    ins.push({t:tipo, h:'Pico de vendas vs equipa', tx:txt});
+
+    /* 2. hora mais desguarnecida: muito peso de venda, pouca gente */
+    var cand=horas.filter(function(h){ return pessoasA(list,h)>0; })
+      .map(function(h){ return {h:h, r:(EUR[h]/totEur)/pessoasA(list,h)}; })
+      .sort(function(a,b){ return b.r-a.r; });
+    if(cand.length>1 && cand[0].h!==pico){
+      var w=cand[0];
+      ins.push({t:'i', h:'Hora mais esticada: '+w.h+'h',
+        tx:'\u00C0s '+w.h+'h tens '+pessoasA(list,w.h)+' pessoa'+(pessoasA(list,w.h)===1?'':'s')+' para '+Math.round(100*EUR[w.h]/totEur)+'% da venda do dia \u2014 \u00E9, proporcionalmente, a hora em que cada pessoa leva mais carga.'});
+    }
+
+    /* 3. competencias no pico (cruzamento com o Mapa) */
+    if(COMP){
+      var ti=EQTOP.indexOf('SNEAKERS BALC\u00C3O');
+      var mapa={}; Object.keys(COMP).forEach(function(n){ mapa[eqNorm(n)]=COMP[n]; });
+      var noPico=nomesA(list,pico), aval=0, aut=0;
+      noPico.forEach(function(p){ var row=mapa[eqNorm(p.nome)]; if(!row) return; aval++; if(+row[ti]===3) aut++; });
+      if(aval>=2){
+        ins.push({t:aut===0?'r':(aut/aval<0.4?'r':'g'), h:'Autonomia em Sneakers \u00E0s '+pico+'h',
+          tx:'Das '+aval+' pessoas avaliadas que hoje est\u00E3o em loja \u00E0s '+pico+'h, <b>'+aut+' '+(aut===1?'\u00E9 aut\u00F3noma':'s\u00E3o aut\u00F3nomas')+'</b> em Sneakers Balc\u00E3o. '
+            +(aut===0?'Ningu\u00E9m aut\u00F3nomo na hora mais forte \u2014 vale a pena trocar um turno ou p\u00F4r algu\u00E9m experiente ao lado.':(aut/aval<0.4?'\u00C9 pouco para a hora de maior venda.':'Boa cobertura de autonomia no pico.'))});
+      }
+    }
+  }
+
+  /* 4. manha: camiao (so dias uteis)
+     Compara sempre o mesmo: a media das 8h-11h de hoje contra a media das
+     mesmas horas nos dias do mesmo tipo do mes (antes comparava o maximo de
+     hoje com a media das 9h \u2014 coisas diferentes). */
+  var HM=[8,9,10,11];
+  var manhaHoje=HM.reduce(function(s,h){ return s+pessoasA(list,h); },0)/HM.length;
+  var mmArr=HM.map(mediaMesA).filter(function(x){ return x!=null; });
+  var manhaMes=mmArr.length?(mmArr.reduce(function(a,b){return a+b;},0)/mmArr.length):null;
+  if(!fds){
+    var curto=(manhaMes!=null && manhaHoje<manhaMes*0.7);
+    ins.push({t:curto?'r':'g', h:'Manh\u00E3 \u2014 cami\u00E3o e reposi\u00E7\u00E3o',
+      tx:'De manh\u00E3 (8h-11h) tens em m\u00E9dia <b>'+fmtD1(manhaHoje)+' pessoas</b> em loja'+(manhaMes!=null?(', contra '+fmtD1(manhaMes)+' nas manh\u00E3s dos dias \u00FAteis deste m\u00EAs'):'')+'. \u00C9 a janela do cami\u00E3o e da reposi\u00E7\u00E3o'
+        +(curto?' \u2014 hoje est\u00E1 bem abaixo do habitual, aten\u00E7\u00E3o \u00E0 mercadoria por repor.':'.')});
+  } else {
+    ins.push({t:'i', h:'Fim de semana \u2014 sem cami\u00E3o',
+      tx:'Hoje n\u00E3o h\u00E1 cami\u00E3o, por isso a manh\u00E3 n\u00E3o tem carga de reposi\u00E7\u00E3o. Tens em m\u00E9dia '+fmtD1(manhaHoje)+' pessoas entre as 8h e as 11h \u2014 sem log\u00EDstica, estas horas devem seguir as vendas como as restantes.'});
+  }
+
+  /* 5. fecho \u2014 conta quem esta em loja na ultima meia hora antes de fechar
+     (usar a hora cheia dava 0: os turnos acabam exatamente a essa hora) */
+  var ultima=0; list.forEach(function(p){ ultima=Math.max(ultima,p.e); });
+  var midF=ultima-30;
+  var nF=list.filter(function(p){ return p.s<=midF && p.e>midF; }).length;
+  var hhF=Math.floor(ultima/60), mmF=ultima%60;
+  var horaF=hhF+(mmF?('h'+('0'+mmF).slice(-2)):'h');
+  ins.push({t:nF<2?'r':'g', h:'Fecho \u00E0s '+horaF,
+    tx:'Ficam <b>'+nF+' pessoa'+(nF===1?'':'s')+'</b> na \u00FAltima meia hora. '+(nF<2?'\u00C9 pouco para arrumar e fechar a loja em condi\u00E7\u00F5es.':'D\u00E1 para arrumar e fechar a loja.')});
+
+  var cards=ins.map(function(x){
+    return '<div class="eq-ins '+x.t+'"><div class="ei-h">'+esc(x.h)+'</div><div class="ei-b">'+x.tx+'</div></div>';
+  }).join('');
+  var nota=VSEM?('<div class="eq-inote">Peso das horas com base na '+esc(VSEM)+' (An\u00E1lise de Vendas). Comparo propor\u00E7\u00F5es, n\u00E3o euros por pessoa.</div>'):'';
+  return '<div class="eq-inswrap"><div class="ei-t">'+svg('lightbulb')+' Insights AI do dia</div>'+cards+nota+'</div>';
+}
+function fmtD1(v){ var n=Math.round((+v||0)*10)/10; return String(n).replace('.',','); }
 function wire(body, groups, order){
   mountIcons(body);
   body.querySelectorAll('.eq-chip').forEach(function(el){ el.onclick=function(){ var s=el.getAttribute('data-sec'); EQSOLO=(EQSOLO===s)?'':s; try{ sessionStorage.setItem('sz_eqsolo', EQSOLO); }catch(e){} render(); }; });
@@ -1952,12 +2082,14 @@ var _pb=document.getElementById('eqPrint'); if(_pb) _pb.addEventListener('click'
 function saveEscala(){ try{ localStorage.setItem('sz_escala', JSON.stringify(ESC)); }catch(e){} if(!BACKEND||!ESC) return; try{ sessionStorage.removeItem('sz_notas_cache'); }catch(e){} fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_add',seccao:'_escala',autor:ESC.label||'',texto:JSON.stringify(ESC)})}).catch(function(){}); }
 function saveEdits(){ try{ localStorage.setItem('sz_escala_edit', JSON.stringify(EDITS)); }catch(e){} if(!BACKEND) return; try{ sessionStorage.removeItem('sz_notas_cache'); }catch(e){} fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_add',seccao:'_escalaEdit',autor:'',texto:JSON.stringify(EDITS)})}).catch(function(){}); }
 function saveFotos(){ try{ localStorage.setItem('sz_fotos', JSON.stringify(FOTOS)); }catch(e){} if(!BACKEND) return; try{ sessionStorage.removeItem('sz_notas_cache'); }catch(e){} fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_add',seccao:'_fotos',autor:'',texto:JSON.stringify(FOTOS)})}).catch(function(){}); }
-function loadFF(v){ if(v&&v.hourly){ FF={}; v.hourly.forEach(function(h){ var hh=parseInt(String(h.l).slice(0,2),10); if(!isNaN(hh)) FF[hh]=+h.ff||0; }); try{ localStorage.setItem('sz_ff', JSON.stringify(FF)); }catch(e){} } }
+function loadFF(v){ if(v&&v.hourly){ FF={}; EUR={}; v.hourly.forEach(function(h){ var hh=parseInt(String(h.l).slice(0,2),10); if(!isNaN(hh)){ FF[hh]=+h.ff||0; EUR[hh]=+h.eur||0; } }); VSEM=v.semana||''; try{ localStorage.setItem('sz_eur', JSON.stringify(EUR)); localStorage.setItem('sz_vsem', VSEM); }catch(e){} try{ localStorage.setItem('sz_ff', JSON.stringify(FF)); }catch(e){} } }
 function loadEscala(){
   try{ var ls=localStorage.getItem('sz_escala'); if(ls){ var e=JSON.parse(ls); if(e&&e.people) ESC=e; } }catch(e){}
   try{ var le=localStorage.getItem('sz_escala_edit'); if(le){ var e2=JSON.parse(le); if(e2&&e2.byDay) EDITS=e2; } }catch(e){}
   try{ var lf=localStorage.getItem('sz_fotos'); if(lf){ var f=JSON.parse(lf); if(f) FOTOS=f; } }catch(e){}
   try{ var lff=localStorage.getItem('sz_ff'); if(lff){ var ff=JSON.parse(lff); if(ff) FF=ff; } }catch(e){}
+  try{ var leu=localStorage.getItem('sz_eur'); if(leu){ var eu=JSON.parse(leu); if(eu) EUR=eu; } }catch(e){}
+  try{ VSEM=localStorage.getItem('sz_vsem')||''; }catch(e){}
   try{ EQSOLO=sessionStorage.getItem('sz_eqsolo')||''; }catch(e){}
   /* se ja houver copia local, mostra-a de imediato \u2014 nao ha nada a esperar */
   if(ESC) ESCLOAD=false;
@@ -1969,6 +2101,7 @@ function loadEscala(){
     var ed=latest('_escalaEdit'); if(ed&&ed.byDay){ EDITS=ed; }
     var fo=latest('_fotos'); if(fo&&typeof fo==='object'){ FOTOS=fo; }
     loadFF(latest('_vendas'));
+    var cp=latest('_comp'); if(cp&&typeof cp==='object') COMP=cp;
     ESCLOAD=false; pickToday(); render();
   }).catch(function(){ ESCLOAD=false; render(); });
 }
