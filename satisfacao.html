@@ -939,15 +939,24 @@ function mostrarResultados(){
   }
   if(!BACKEND){ box.innerHTML='<div class="status">Sem liga\u00E7\u00E3o \u00E0 nuvem.</div>'; return; }
   box.innerHTML='<div class="status">A carregar resultados\u2026</div>';
-  fetch(BACKEND+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){
-    var subs=[];
-    if(j&&j.ok&&Array.isArray(j.notas)){
+  /* XHR direto (NAO fetch): o nav.js intercepta o fetch e serve da cache local. Como quem
+     responde ao inquerito e outra pessoa/dispositivo, a cache de quem ve os resultados nunca
+     era invalidada e as respostas novas nao apareciam. */
+  var x=new XMLHttpRequest(); x.open('GET', BACKEND+'?action=notas&t='+Date.now(), true);
+  x.onreadystatechange=function(){
+    if(x.readyState!==4) return;
+    var subs=[], j=null;
+    try{ j=JSON.parse(x.responseText); }catch(e){}
+    if(!j){ box.innerHTML='<div class="status">Sem liga\u00E7\u00E3o. Recarrega.</div>'; return; }
+    if(j.ok&&Array.isArray(j.notas)){
       j.notas.filter(function(n){return String(n.seccao)===SEC;}).forEach(function(n){
         try{ var p=JSON.parse(n.texto||'{}'); if(!p.data) p.data=n.data; subs.push(p); }catch(e){}
       });
     }
     renderResultados(subs);
-  }).catch(function(){ box.innerHTML='<div class="status">Sem liga\u00E7\u00E3o. Recarrega.</div>'; });
+  };
+  x.onerror=function(){ box.innerHTML='<div class="status">Sem liga\u00E7\u00E3o. Recarrega.</div>'; };
+  x.send();
 }
 function avg(arr){ var v=arr.filter(function(x){return x>0;}); if(!v.length)return 0; return v.reduce(function(a,b){return a+b;},0)/v.length; }
 function barCls(a){ return a>=2.34?'hi':(a>=1.67?'mid':'lo'); }
