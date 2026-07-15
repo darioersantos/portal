@@ -123,7 +123,7 @@ window.PORTAL_NAV = [
     document.addEventListener('DOMContentLoaded',function(){
       try{ var c=document.querySelector('.content'); if(c && !document.getElementById('szPubHead')){
         var h=document.createElement('div'); h.id='szPubHead'; h.style.cssText='display:flex;align-items:center;gap:11px;margin:0 0 18px;';
-        h.innerHTML='<img src="'+(window.SZ_LOGO||'')+'" alt="VG" style="width:42px;height:42px;border-radius:12px;flex:none;object-fit:contain;"><div><div style="font-weight:800;font-size:15px;color:#1a1d21;">Sport Zone Vasco da Gama</div><div style="font-size:12px;color:#8b929c;">Formulário</div></div>';
+        h.innerHTML='<img src="'+(window.SZ_LOGO||'')+'" alt="VG" style="width:42px;height:42px;border-radius:12px;flex:none;object-fit:contain;"><div><div style="font-weight:800;font-size:15px;color:#1a1d21;">Portal Vasco da Gama</div><div style="font-size:12px;color:#8b929c;">Formulário</div></div>';
         c.insertBefore(h,c.firstChild);
       } }catch(e){}
     });
