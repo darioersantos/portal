@@ -2358,7 +2358,18 @@ function loadEscala(){
   if(ESC) ESCLOAD=false;
   pickToday(); render();
   if(!BACKEND){ ESCLOAD=false; render(); return; }
-  fetch(BACKEND+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){
+  /* XHR direto e NAO fetch: o nav.js intercepta o fetch de "?action=notas" e,
+     se tiver cache, devolve-a e so atualiza em segundo plano. Pior: a cache so
+     e marcada como suja no dispositivo que gravou \u2014 por isso as Regras de staff
+     feitas no telemovel nao apareciam no computador. O "&t=" nao engana o
+     wrapper (ele so procura "action=notas" no URL). O XHR passa ao lado dele.
+     A pintura rapida ja vem do localStorage acima, por isso nao se perde nada. */
+  var xhr=new XMLHttpRequest();
+  xhr.open('GET', BACKEND+'?action=notas&t='+Date.now(), true);
+  xhr.onreadystatechange=function(){
+    if(xhr.readyState!==4) return;
+    var j=null; try{ j=JSON.parse(xhr.responseText); }catch(e){}
+    if(!j){ ESCLOAD=false; render(); return; }
     var ns=(j&&j.notas)?j.notas:[]; function latest(sec){ var a=ns.filter(function(n){return String(n.seccao)===sec;}); if(!a.length) return null; a.sort(function(x,y){return new Date(y.data)-new Date(x.data);}); try{ return JSON.parse(a[0].texto); }catch(e){ return null; } }
     var e=latest('_escala'); if(e&&e.people){ ESC=e; }
     var ed=latest('_escalaEdit'); if(ed&&ed.byDay){ EDITS=ed; }
@@ -2367,7 +2378,9 @@ function loadEscala(){
     var cp=latest('_comp'); if(cp&&typeof cp==='object') COMP=cp;
     var rg=latest('_regras'); if(rg&&rg.alvo){ REGRAS=rg; try{ localStorage.setItem('sz_regras', JSON.stringify(rg)); }catch(e){} }
     ESCLOAD=false; pickToday(); render();
-  }).catch(function(){ ESCLOAD=false; render(); });
+  };
+  xhr.onerror=function(){ ESCLOAD=false; render(); };
+  xhr.send();
 }
 
 
