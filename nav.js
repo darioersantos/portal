@@ -188,6 +188,16 @@ window.PORTAL_NAV = [
   var css = `
   .field select, select[data-staff]{-webkit-appearance:none !important;appearance:none !important;width:100%;box-sizing:border-box;background-image:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%236b7280%27 stroke-width=%272.5%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:38px;}
 
+  /* --- App instalada (PWA): corrigir o espaco a mais no topo ---
+     A app usa apple-mobile-web-app-status-bar-style="default", por isso o iOS ja poe o
+     conteudo ABAIXO da barra de estado e env(safe-area-inset-top) e 0. A regra antiga
+     tinha um minimo de 44px "por defesa", o que somava ~60px de vazio e encolhia o ecra.
+     Aqui basta a safe-area (0 neste modo, >0 se algum dia mudar) + uma folga pequena. */
+  @media all and (display-mode:standalone), all and (display-mode:fullscreen){
+    body .topbar{padding-top:calc(env(safe-area-inset-top) + 16px) !important;}
+    body .sb-brand{padding-top:calc(env(safe-area-inset-top) + 14px) !important;}
+  }
+
   /* --- base premium --- */
   *{-webkit-tap-highlight-color:transparent;}
   html{scroll-behavior:smooth;}
