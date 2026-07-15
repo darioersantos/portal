@@ -44,9 +44,9 @@ window.PORTAL_NAV = [
     {k:'pf_palmilhas', ic:'footprints', nm:'Venda de palmilhas'}
   ]},
   {group:'Formulários', items:[
+    {k:'admissao', ic:'user-plus', nm:'Pedido de Admissão'},
     {k:'happyhour', ic:'banknote', nm:'Happy Hour'},
     {k:'alarmado', ic:'tag', nm:'Alarmado'},
-    {k:'admissao', ic:'user-plus', nm:'Pedido de Admissão'},
     {k:'avaliacoes', ic:'star', nm:'Avaliações Mensais'},
     {k:'atendimento_loja', ic:'shopping-bag', nm:'Atendimento Loja'},
     {k:'atendimento_caixa', ic:'receipt', nm:'Atendimento Caixa'},
