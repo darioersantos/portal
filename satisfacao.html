@@ -286,6 +286,19 @@
   .thanks h2{margin:8px 0 4px;color:var(--pos);}
   .thanks p{color:var(--muted);font-size:14px;margin:0 0 16px;}
 
+  /* ---- Codigo de acesso aos resultados (mesmo layout das Reunioes) ---- */
+  #codeGate{position:fixed;inset:0;z-index:500;background:linear-gradient(135deg,#FF8100,#E66200);display:flex;align-items:center;justify-content:center;padding:20px;}
+  #codeGate.hidden{display:none;}
+  .cg-card{background:#fff;border-radius:20px;box-shadow:0 14px 44px rgba(0,0,0,.3);padding:26px 22px;width:100%;max-width:340px;text-align:center;}
+  .cg-ic{line-height:0;color:var(--accent-dark);}
+  .cg-card h2{margin:8px 0 2px;font-size:22px;color:var(--accent-dark);}
+  .cg-card p{margin:0 0 16px;color:var(--muted);font-size:14px;}
+  .cg-card input{width:100%;text-align:center;letter-spacing:6px;font-size:22px;border:1.5px solid var(--line);border-radius:12px;padding:13px;font-family:inherit;box-sizing:border-box;color:var(--ink);background:#fff;}
+  .cg-card input:focus{outline:none;border-color:var(--accent);}
+  .cg-err{color:var(--red);font-size:13px;font-weight:700;min-height:18px;margin:8px 0;}
+  .cg-ok{width:100%;background:var(--accent);color:#fff;border:none;border-radius:13px;padding:14px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;margin-top:2px;}
+  .cg-back{display:inline-block;margin-top:14px;color:var(--muted);font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;}
+
   /* resultados */
   .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:2px 0 6px;}
   .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:12px;text-align:center;}
@@ -396,6 +409,18 @@
     <div id="pergEditor"><div class="status">A carregar&#x2026;</div></div>
   </div>
 </main>
+
+<div id="codeGate" class="hidden">
+  <div class="cg-card">
+    <div class="cg-ic"><i data-lu="lock" data-sz="40"></i></div>
+    <h2>Resultados</h2>
+    <p>Introduz o c&#xF3;digo de acesso.</p>
+    <input type="password" inputmode="numeric" id="cgInput" placeholder="C&#xF3;digo" autocomplete="off">
+    <div class="cg-err" id="cgErr"></div>
+    <button class="cg-ok" id="cgOk" type="button">Entrar</button><br>
+    <a class="cg-back" id="cgBack">&#x2039; Voltar ao inqu&#xE9;rito</a>
+  </div>
+</div>
 
 
   </div>
@@ -1134,15 +1159,31 @@ function showTab(which){
   if(perg) mostrarPergEditor();
 }
 document.getElementById('tabResp').addEventListener('click',function(){ showTab('resp'); });
-document.getElementById('tabRes').addEventListener('click',function(){
-  if(sessionStorage.getItem('resOK')!=='1'){
-    var p=prompt('Palavra-passe para ver os resultados:');
-    if(p===null) return;
-    if(String(p).trim()!=='1011'){ alert('Palavra-passe incorreta.'); return; }
-    try{ sessionStorage.setItem('resOK','1'); }catch(e){}
+/* ---- Codigo de acesso aos resultados (1011) \u2014 mesmo layout das Reunioes ---- */
+(function(){
+  var CODE='1011';
+  var gate=document.getElementById('codeGate'), inp=document.getElementById('cgInput'), err=document.getElementById('cgErr');
+  function abrirGate(){
+    err.textContent=''; inp.value='';
+    gate.classList.remove('hidden');
+    if(window.lucideRepl) window.lucideRepl();
+    setTimeout(function(){ try{ inp.focus(); }catch(e){} },120);
   }
-  showTab('res');
-});
+  function fecharGate(){ gate.classList.add('hidden'); }
+  function tenta(){
+    if(inp.value.trim()===CODE){
+      try{ sessionStorage.setItem('resOK','1'); }catch(e){}
+      fecharGate(); showTab('res');
+    } else { err.textContent='C\u00F3digo errado. Tenta outra vez.'; inp.value=''; inp.focus(); }
+  }
+  document.getElementById('cgOk').addEventListener('click',tenta);
+  document.getElementById('cgBack').addEventListener('click',fecharGate);
+  inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); tenta(); } });
+  document.getElementById('tabRes').addEventListener('click',function(){
+    if(sessionStorage.getItem('resOK')==='1'){ showTab('res'); return; }
+    abrirGate();
+  });
+})();
 document.getElementById('tabPerg').addEventListener('click',function(){ showTab('perg'); });
 document.getElementById('btnSubmit').addEventListener('click',submit);
 (function(){ var sb=document.getElementById('btnShare'); if(!sb) return; sb.onclick=function(){ var link=location.href.split('?')[0].split('#')[0]+'?publico=1'; function done(){ var o=sb.innerHTML; sb.innerHTML='<i data-lu="check"></i> Link copiado!'; if(window.lucideRepl)window.lucideRepl(); setTimeout(function(){ sb.innerHTML=o; if(window.lucideRepl)window.lucideRepl(); },1700); } if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(link).then(done,done); } else { try{ prompt('Copia o link:', link); }catch(e){} } }; })();
