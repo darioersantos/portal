@@ -295,6 +295,7 @@
   .eq-regbtn{margin-left:10px;display:inline-flex;align-items:center;gap:5px;background:none;border:1px solid var(--line2);border-radius:999px;padding:4px 10px;font-size:10.5px;font-weight:800;color:var(--accent-dark);cursor:pointer;font-family:inherit;}
   .eq-regbtn .ico{width:11px;height:11px;}
   .eq-cleg .eq-semalvo{margin-left:8px;font-style:italic;color:var(--muted2);font-weight:600;}
+  .eq-chart .sub .eq-vsem{color:var(--muted2);font-weight:600;}
   @media print{ .eq-regbtn{display:none !important;} }
   .eq-chart{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:14px 14px 10px;margin-bottom:14px;}
   .eq-chart h3{margin:0;font-size:14px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px;}
@@ -1856,10 +1857,16 @@ function staffChart(list){
   });
   var maxc=Math.max.apply(null,counts.concat([1]));
   var peak=counts.indexOf(maxc);
+  /* HORAS COM MAIS CLIENTES EM LOJA \u2014 pelo footfall (visitas), que e o que
+     manda no atendimento: escala-se gente para clientes, nao para euros.
+     Antes marcava as 4 horas com mais visitas (numero arbitrario) e chamava-lhes
+     "maior fluxo de vendas" (nome errado: era footfall).
+     Regra: horas com pelo menos 75% das visitas da melhor hora. Recalcula-se
+     sozinha a cada BTR novo, sem horas fixas no codigo. */
+  var FF_PC=0.75;
   var ffVals=hours.map(function(h){ return FF[h]||0; });
   var maxff=Math.max.apply(null, ffVals.concat([0]));
-  var sortedFF=ffVals.slice().sort(function(a,b){return b-a;});
-  var ffThresh=sortedFF.length>=4?sortedFF[3]:(sortedFF[sortedFF.length-1]||1);
+  var ffThresh=maxff*FF_PC;
   function isFF(i){ return maxff>0 && ffVals[i]>0 && ffVals[i]>=ffThresh; }
   var n=hours.length, gap=3, bw=(W-gap*(n-1))/n;
   /* Alvo (ideal) por hora \u2014 SO quando ha uma seccao filtrada.
@@ -1901,8 +1908,16 @@ function staffChart(list){
   }
   var peakTxt=(maxc>0)?('Pico de equipa \u00E0s '+hours[peak]+'h ('+maxc+' pessoas)'):'';
   var ffHours=hours.filter(function(h,i){return isFF(i);});
-  var ffTxt=ffHours.length?(' &middot; <b style="color:#e0413e">Maior fluxo de vendas: '+ffHours.map(function(h){return h+'h';}).join(', ')+'</b>'):'';
-  var legend='<div class="eq-cleg"><span class="d1"></span>'+(EQSOLO?('equipa de '+esc(EQSOLO)):'equipa por hora')+(maxff>0?' <span class="d2"></span>maior fluxo de vendas':'')+' <span class="d3"></span>abertura (10h)'
+  /* mostra o intervalo (13h-19h) em vez de listar hora a hora, e diz de onde vem */
+  var ffTxt='';
+  if(ffHours.length){
+    var faixa=(ffHours.length>2 && ffHours[ffHours.length-1]-ffHours[0]===ffHours.length-1)
+      ? (ffHours[0]+'h-'+ffHours[ffHours.length-1]+'h')
+      : ffHours.map(function(h){return h+'h';}).join(', ');
+    ffTxt=' &middot; <b style="color:#e0413e">Mais clientes em loja: '+faixa+'</b>'
+      +(VSEM?('<span class="eq-vsem"> ('+esc(VSEM)+')</span>'):'');
+  }
+  var legend='<div class="eq-cleg"><span class="d1"></span>'+(EQSOLO?('equipa de '+esc(EQSOLO)):'equipa por hora')+(maxff>0?' <span class="d2"></span>mais clientes em loja':'')+' <span class="d3"></span>abertura (10h)'
     +(temAlvo?(' <span class="d4"></span>ideal de '+esc(EQSOLO)):(EQSOLO?' <span class="eq-semalvo">sem alvo definido para '+esc(EQSOLO)+'</span>':' <span class="eq-semalvo">escolhe uma sec\u00E7\u00E3o para veres o ideal</span>'))
     +'<button type="button" class="eq-regbtn" id="fcEdit">'+svg2('square-pen')+' Regras de staff</button></div>';
   return '<div class="eq-chart"><h3>'+svg2('bar-chart-3')+' Staff ao longo do dia</h3><div class="sub">'+peakTxt+ffTxt+'</div><svg viewBox="0 0 '+W+' '+H+'">'+svg+'</svg>'+legend+'</div>';
