@@ -856,7 +856,8 @@ var formSuf=0, querMais='', recomenda=0;
 /* ---------- construir o inqu\u00E9rito ---------- */
 function segHTML(key, val){
   var h='<div class="seg" data-key="'+key+'">';
-  ESCALA.forEach(function(o){ h+='<button type="button" data-v="'+o.v+'"'+(val===o.v?' class="on"':'')+'><span class="n">'+o.v+'</span>'+esc(o.t)+'</button>'; });
+  /* so o texto (Nao / Neutro / Sim). O valor 1-3 continua no data-v, para as medias. */
+  ESCALA.forEach(function(o){ h+='<button type="button" data-v="'+o.v+'"'+(val===o.v?' class="on"':'')+'>'+esc(o.t)+'</button>'; });
   return h+'</div>';
 }
 function buildSurvey(){
