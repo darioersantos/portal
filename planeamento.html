@@ -289,6 +289,8 @@
   .pl-fte{margin-top:10px;background:var(--accent-soft);border:1px solid #ffe2c0;border-radius:12px;padding:11px 13px;font-size:12.5px;color:var(--accent-ink);line-height:1.55;}
   .pl-fte b{font-size:15px;}
   .pl-fte .sp{color:var(--muted);font-weight:600;}
+  .pl-ai-sub{font-size:12.5px;color:var(--muted);line-height:1.55;margin:-2px 0 6px;}
+  .pl-ai-sub b{color:var(--accent-ink);}
   .pl-obs .pl-ob{display:flex;align-items:flex-start;gap:12px;padding:12px 2px;border-bottom:1px solid var(--line);}
   .pl-obs .pl-ob:last-child{border-bottom:none;}
   .pl-obs .pl-ob .ic-w{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:none;}
@@ -342,7 +344,7 @@
     <div class="pl-fte" id="plFte"></div>
   </div>
   <div class="panel" id="plProdPanel" style="display:none"><div class="p-head"><h2>Produtividade</h2></div><div id="plProd"></div></div>
-  <div class="panel"><div class="p-head"><h2>Observa&ccedil;&otilde;es</h2></div><div class="pl-obs" id="plObs"></div></div>
+  <div class="panel"><div class="p-head"><h2>Observa&ccedil;&otilde;es AI</h2></div><div class="pl-ai-sub" id="plAiSub"></div><div class="pl-obs" id="plObs"></div></div>
   <div class="pl-note" id="plNote"></div>
 </div></div>
 </div>
@@ -1623,7 +1625,7 @@ document.getElementById('sbUser').onclick=function(){ if(confirm('Terminar sessa
 /* ===== Modulo ===== */
 
 var H0=8, H1=23;
-var PLAN=null, SALESH=[], planMode='wk', planUnit='pes';   /* planUnit: 'pes' = n\u00BA de pessoas | 'fte' */
+var PLAN=null, SALESH=[], VSEM='', planMode='wk', planUnit='pes';   /* planUnit: 'pes' = n\u00BA de pessoas | 'fte' */
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function grp(n){ n=Math.round(n); var s=String(Math.abs(n)), o=''; while(s.length>3){o='.'+s.slice(-3)+o;s=s.slice(0,-3);} return (n<0?'-':'')+s+o; }
 function fmtEur(v){ return grp(v)+'\u20AC'; }
@@ -1765,40 +1767,153 @@ function renderChart(){
   var xl=hrs.map(function(h,i){return '<text x="'+X(i).toFixed(1)+'" y="'+(Hh-8)+'" class="pl-axis" text-anchor="middle">'+h+'h</text>';}).join('');
   host.innerHTML='<svg viewBox="0 0 '+W+' '+Hh+'" class="pl-svg">'+grid+bars+line+xl+lab+'</svg>';
 }
+/* ============================================================
+   Observacoes AI \u2014 motor de regras
+   A loja nao vive so de vendas: de manha chega o camiao de logistica e faz-se
+   reposicao; a noite vende-se pouco mas a loja tem de ficar arrumada. Por isso
+   cada periodo do dia e avaliado pela FUNCAO que tem, e nao pelo mesmo criterio.
+   So as horas de venda sao julgadas por euros por pessoa.
+   ============================================================ */
+/* icones usados nas Observacoes AI */
+IC.truck=IC.truck||'<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>';
+IC.moon=IC.moon||'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+IC.lightbulb=IC.lightbulb||'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>';
+IC['alert-triangle']=IC['alert-triangle']||'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>';
+IC.info=IC.info||'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+var PERIODOS=[
+  {id:'log', nome:'manh\u00E3',  ic:'truck',    h0:8,  h1:11, fn:'chegada do cami\u00E3o e reposi\u00E7\u00E3o de mercadoria'},
+  {id:'ven', nome:'tarde',  ic:'trending-up', h0:12, h1:20, fn:'horas de venda \u2014 \u00E9 aqui que se faz a fatura\u00E7\u00E3o'},
+  {id:'fec', nome:'noite',  ic:'moon',     h0:21, h1:23, fn:'arruma\u00E7\u00E3o e fecho da loja'}
+];
+function perDe(h){ for(var i=0;i<PERIODOS.length;i++){ if(h>=PERIODOS[i].h0 && h<=PERIODOS[i].h1) return PERIODOS[i]; } return null; }
+function mediana(a){ if(!a.length) return 0; var b=a.slice().sort(function(x,y){return x-y;}); var m=Math.floor(b.length/2); return b.length%2?b[m]:(b[m-1]+b[m])/2; }
+/* junta, por periodo, equipa media, horas-pessoa e vendas */
+function resumoPeriodos(staff){
+  return PERIODOS.map(function(p){
+    var hs=[], sp=0, sv=0, n=0;
+    for(var h=Math.max(p.h0,H0); h<=Math.min(p.h1,H1); h++){ var s=staff[h-H0]||0; hs.push(h); sp+=s; sv+=salesAt(h); n++; }
+    return {p:p, hrs:hs, pessoasH:sp, media:n?sp/n:0, vendas:sv, n:n};
+  });
+}
 function renderObs(){
-  var host=document.getElementById('plObs'); if(!host) return;
-  if(!PLAN){ host.innerHTML='<div class="pl-empty">Sem hor\u00E1rio. Importa-o em <b>Hor\u00E1rio do Staff</b>.</div>'; return; }
-  var staff=avgByMode(); var hrs=[]; for(var h=H0;h<=H1;h++)hrs.push(h);
-  var avg=staff.reduce(function(a,b){return a+b;},0)/(staff.length||1);
-  var open=hrs.filter(function(h){return salesAt(h)>0;});
-  var obs=[];
+  var host=document.getElementById('plObs'), sub=document.getElementById('plAiSub'); if(!host) return;
+  if(!PLAN){ host.innerHTML='<div class="pl-empty">Sem hor\u00E1rio. Importa-o em <b>Hor\u00E1rio do Staff</b>.</div>'; if(sub) sub.textContent=''; return; }
+  var staff=avgByMode(), hrs=[]; for(var h=H0;h<=H1;h++)hrs.push(h);
   var lbl=(planMode==='we'?'ao fim de semana':'nos dias \u00FAteis');
-  if(open.length){
-    var sp=open.slice().sort(function(a,b){return salesAt(b)-salesAt(a);})[0]; var st=staff[sp-H0];
-    obs.push({t:st<avg?'r':'g',ic:'trending-up',h:'Pico de vendas',tx:'O pico de vendas \u00E9 \u00E0s '+sp+'h ('+fmtEur(salesAt(sp))+'). Nessa hora tens em m\u00E9dia '+st+' pessoas '+lbl+(st<avg?' \u2014 abaixo da m\u00E9dia do dia ('+(Math.round(avg*10)/10)+'). Vale a pena refor\u00E7ar.':' (acima da m\u00E9dia).')});
-    // overstaffed: high staff, low sales
-    var med=open.map(function(h){return salesAt(h);}).sort(function(a,b){return a-b;})[Math.floor(open.length/2)];
-    var over=open.filter(function(h){return staff[h-H0]>avg && salesAt(h)<med;}).sort(function(a,b){return (staff[b-H0]-salesAt(b)/1000)-(staff[a-H0]-salesAt(a)/1000);})[0];
-    if(over!=null){ obs.push({t:'i',ic:'users',h:'Poss\u00EDvel excesso',tx:'\u00C0s '+over+'h tens '+staff[over-H0]+' pessoas mas as vendas s\u00E3o s\u00F3 '+fmtEur(salesAt(over))+' \u2014 muita equipa para pouca venda.'}); }
-  } else {
-    obs.push({t:'i',ic:'info',h:'Sem vendas por hora',tx:'Ainda n\u00E3o carreguei as vendas por hora. Importa primeiro o Excel de vendas na An\u00E1lise de Vendas para cruzar os dados.'});
+  var comVendas=hrs.filter(function(h){ return salesAt(h)>0; });
+  var R=resumoPeriodos(staff), byId={}; R.forEach(function(x){ byId[x.p.id]=x; });
+  var totPH=R.reduce(function(a,x){return a+x.pessoasH;},0)||1;
+  var obs=[];
+  if(sub) sub.innerHTML='An\u00E1lise autom\u00E1tica do hor\u00E1rio '+lbl+', per\u00EDodo a per\u00EDodo. A manh\u00E3 \u00E9 avaliada pela <b>carga de reposi\u00E7\u00E3o</b> (cami\u00E3o), a tarde pelas <b>vendas</b> e a noite pelo <b>trabalho de arruma\u00E7\u00E3o</b> \u2014 porque cada uma serve para uma coisa diferente. '
+    +'Comparo o <b>peso de cada hora</b>, n\u00E3o euros por pessoa: as vendas importadas s\u00E3o o total de uma semana e a equipa \u00E9 a m\u00E9dia de um dia, por isso s\u00F3 as propor\u00E7\u00F5es entre horas s\u00E3o compar\u00E1veis.';
+
+  /* ---- 1. como esta repartido o esforco ---- */
+  var rep=R.map(function(x){ return x.p.nome+' '+Math.round(100*x.pessoasH/totPH)+'%'; }).join(' \u00B7 ');
+  obs.push({t:'i', ic:'users', h:'Como est\u00E1 repartida a equipa',
+    tx:'Das horas-pessoa do dia, '+rep+'. Em m\u00E9dia: '+fmtDec1(byId.log.media)+' pessoas de manh\u00E3, '+fmtDec1(byId.ven.media)+' \u00E0 tarde e '+fmtDec1(byId.fec.media)+' \u00E0 noite.'});
+
+  if(!comVendas.length){
+    obs.push({t:'i', ic:'info', h:'Faltam as vendas por hora',
+      tx:'Para eu poder recomendar ajustes com n\u00FAmeros, importa o Excel de vendas na An\u00E1lise de Vendas. Sem isso s\u00F3 consigo ver a distribui\u00E7\u00E3o da equipa, n\u00E3o consigo dizer se est\u00E1 equilibrada.'});
+    host.innerHTML=obs.map(obHTML).join(''); mountIcons(host); return;
   }
-  var maxH=hrs.slice().sort(function(a,b){return staff[b-H0]-staff[a-H0];})[0];
-  obs.push({t:'i',ic:'users',h:'Hora com mais equipa',tx:'Tens mais equipa \u00E0s '+maxH+'h ('+staff[maxH-H0]+' pessoas em m\u00E9dia '+lbl+').'});
-  obs.push({t:'i',ic:'clock',h:'Abertura e fecho',tx:'\u00C0 abertura (10h) tens '+staff[10-H0]+' pessoas; ao fecho (23h) tens '+staff[23-H0]+' pessoas.'});
-  host.innerHTML=obs.map(function(x){return '<div class="pl-ob '+x.t+'"><div class="ic-w">'+svg(x.ic)+'</div><div class="txt"><div class="oh">'+esc(x.h)+'</div><div class="ob">'+esc(x.tx)+'</div></div></div>';}).join('');
+
+  /* ---- 1b. as vendas e o horario sao do mesmo periodo? ---- */
+  var semMes=(function(){ var m=/S(?:emana)?\s*(\d+)/i.exec(VSEM||''); if(!m||!PLAN) return null;
+    var d=new Date(PLAN.year,0,1+(parseInt(m[1],10)-1)*7); return d.getMonth(); })();
+  if(semMes!=null && PLAN && semMes!==PLAN.month){
+    var MN=['janeiro','fevereiro','mar\u00E7o','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+    obs.push({t:'r', ic:'alert-triangle', h:'As vendas n\u00E3o s\u00E3o do m\u00EAs do hor\u00E1rio',
+      tx:'O hor\u00E1rio \u00E9 de '+MN[PLAN.month]+' mas as vendas carregadas s\u00E3o da '+VSEM+' ('+MN[semMes]+'). Estou a cruzar per\u00EDodos diferentes, por isso l\u00EA estas recomenda\u00E7\u00F5es como uma tend\u00EAncia e n\u00E3o como n\u00FAmeros exatos. Carrega as vendas de uma semana de '+MN[PLAN.month]+' para a an\u00E1lise ficar certa.'});
+  }
+
+  /* ---- 2. horas de venda: carga por pessoa vs hora normal ---- */
+  var venH=byId.ven.hrs.filter(function(h){ return salesAt(h)>0 && staff[h-H0]>0; });
+  var ratio={}; venH.forEach(function(h){ ratio[h]=salesAt(h)/staff[h-H0]; });
+  var base=mediana(venH.map(function(h){ return ratio[h]; }));
+  var apertadas=venH.filter(function(h){ return ratio[h] > base*1.35; }).sort(function(a,b){ return ratio[b]-ratio[a]; });
+  var folgadas =venH.filter(function(h){ return ratio[h] < base*0.65; }).sort(function(a,b){ return ratio[a]-ratio[b]; });
+
+  function pct(h){ return Math.round(100*(ratio[h]/base-1)); }
+  var pico=comVendas.slice().sort(function(a,b){ return salesAt(b)-salesAt(a); })[0];
+  var picoOK=(ratio[pico]==null)||(ratio[pico]<=base*1.35);
+  obs.push({t:picoOK?'g':'r', ic:'trending-up', h:'Pico de vendas \u00E0s '+pico+'h',
+    tx:'As '+pico+'h s\u00E3o a hora mais forte da loja e tens l\u00E1 '+fmtDec1(staff[pico-H0])+' pessoas. '
+      +(picoOK?'A equipa acompanha o peso da venda \u2014 est\u00E1 equilibrado.':'Para o que se vende a essa hora, cada pessoa est\u00E1 a levar '+pct(pico)+'% mais carga do que numa hora de venda normal: podes estar a perder vendas por falta de atendimento. Refor\u00E7a esta hora.')});
+
+  /* so vale a pena repetir se a hora apertada nao for a do pico, que ja foi dita acima */
+  var outraApertada=apertadas.filter(function(h){ return h!==pico; })[0];
+  if(outraApertada!=null){
+    obs.push({t:'r', ic:'alert-triangle', h:'Equipa a menos \u00E0s '+outraApertada+'h',
+      tx:'Fora do pico, as '+outraApertada+'h s\u00E3o a hora mais apertada: cada pessoa leva '+pct(outraApertada)+'% mais carga do que numa hora de venda normal, com '+fmtDec1(staff[outraApertada-H0])+' pessoas.'});
+  }
+  if(folgadas.length){
+    var f=folgadas[0];
+    obs.push({t:'i', ic:'users', h:'Folga \u00E0s '+f+'h',
+      tx:'\u00C0s '+f+'h cada pessoa leva '+Math.abs(pct(f))+'% menos carga do que numa hora de venda normal, com '+fmtDec1(staff[f-H0])+' pessoas. \u00C9 dentro do hor\u00E1rio de venda, por isso aqui h\u00E1 mesmo margem para libertar algu\u00E9m \u2014 ao contr\u00E1rio da noite, que precisa de gente para arrumar.'});
+  }
+
+  /* ---- 3. manha: julgada pela reposicao, nao pelas vendas ---- */
+  var mediaDia=staff.reduce(function(x,y){return x+y;},0)/(staff.length||1);
+  var m=byId.log.media;
+  if(m < mediaDia*0.6){
+    obs.push({t:'r', ic:'truck', h:'Manh\u00E3 curta para o cami\u00E3o',
+      tx:'De manh\u00E3 tens s\u00F3 '+fmtDec1(m)+' pessoas, contra '+fmtDec1(mediaDia)+' de m\u00E9dia do dia. \u00C9 nesta janela que chega o cami\u00E3o e se faz a reposi\u00E7\u00E3o \u2014 com esta equipa, o risco \u00E9 a loja abrir com mercadoria por repor.'});
+  } else {
+    obs.push({t:'g', ic:'truck', h:'Manh\u00E3 com equipa para a reposi\u00E7\u00E3o',
+      tx:'De manh\u00E3 tens '+fmtDec1(m)+' pessoas ('+Math.round(100*byId.log.pessoasH/totPH)+'% das horas-pessoa do dia). \u00C9 pouco tempo de venda, mas \u00E9 o esfor\u00E7o do cami\u00E3o e da reposi\u00E7\u00E3o \u2014 por isso n\u00E3o conto estas horas como excesso.'});
+  }
+
+  /* ---- 4. noite: julgada pela arrumacao, nao pelas vendas ---- */
+  var nt=byId.fec.media;
+  var vhNoite=byId.fec.n?byId.fec.vendas/byId.fec.n:0;      /* venda media por hora, a noite */
+  var vhTarde=byId.ven.n?byId.ven.vendas/byId.ven.n:0;      /* venda media por hora, a tarde */
+  var quebra=vhTarde?Math.round(100*(1-vhNoite/vhTarde)):0; /* quanto a venda abranda a noite */
+  if(nt < 2){
+    obs.push({t:'r', ic:'moon', h:'Noite curta para arrumar',
+      tx:'Ao fecho ficam '+fmtDec1(nt)+' pessoas. A venda abranda '+quebra+'% face \u00E0 tarde, mas a loja tem de ficar arrumada para o dia seguinte \u2014 com t\u00E3o pouca gente, ou o fecho atrasa ou a arruma\u00E7\u00E3o fica por fazer.'});
+  } else if(nt > byId.ven.media){
+    obs.push({t:'i', ic:'moon', h:'Noite com mais gente do que a tarde',
+      tx:'\u00C0 noite tens '+fmtDec1(nt)+' pessoas, mais do que as '+fmtDec1(byId.ven.media)+' da tarde, e a venda por hora \u00E9 '+quebra+'% menor. A arruma\u00E7\u00E3o justifica equipa, mas n\u00E3o mais do que nas horas de venda \u2014 vale a pena passar algu\u00E9m para a tarde.'});
+  } else {
+    obs.push({t:'g', ic:'moon', h:'Noite equilibrada para o fecho',
+      tx:'\u00C0 noite ficam '+fmtDec1(nt)+' pessoas e a venda por hora cai '+quebra+'% face \u00E0 tarde. Visto s\u00F3 pelas vendas parecia equipa a mais, mas \u00E9 o turno da arruma\u00E7\u00E3o e do fecho \u2014 por isso n\u00E3o trato isto como excesso.'});
+  }
+
+  /* ---- 5. recomendacao concreta: mover uma pessoa ---- */
+  var origem=null, destino=null;
+  if(apertadas.length) destino=apertadas[0];
+  else if(!picoOK) destino=pico;
+  if(folgadas.length) origem=folgadas[0];
+  else if(nt > byId.ven.media && byId.fec.hrs.length) origem=byId.fec.hrs.slice().sort(function(a,b){ return (salesAt(a)/(staff[a-H0]||1))-(salesAt(b)/(staff[b-H0]||1)); })[0];
+  if(origem!=null && destino!=null && origem!==destino){
+    obs.push({t:'g', ic:'lightbulb', h:'Ajuste sugerido: 1 pessoa das '+origem+'h para as '+destino+'h',
+      tx:'\u00C0s '+destino+'h a equipa est\u00E1 sobrecarregada ('+pct(destino)+'% acima do normal) e \u00E0s '+origem+'h est\u00E1 folgada. Passar uma pessoa de '+origem+'h para '+destino+'h n\u00E3o muda o custo do hor\u00E1rio nem o n\u00FAmero de FTE, e p\u00F5e a equipa onde o cliente est\u00E1. Mant\u00E9m a manh\u00E3 como est\u00E1 \u2014 \u00E9 o cami\u00E3o \u2014 e a noite tamb\u00E9m, que \u00E9 a arruma\u00E7\u00E3o.'});
+  } else if(destino!=null){
+    obs.push({t:'r', ic:'lightbulb', h:'Falta gente \u00E0s '+destino+'h, mas n\u00E3o h\u00E1 folga de onde tirar',
+      tx:'\u00C0s '+destino+'h a carga por pessoa \u00E9 '+pct(destino)+'% acima do normal, mas nas restantes horas de venda ningu\u00E9m est\u00E1 folgado \u2014 n\u00E3o h\u00E1 de onde tirar sem descobrir outra hora. Se queres cobrir esta hora, \u00E9 caso para refor\u00E7ar mesmo o hor\u00E1rio, e n\u00E3o para trocar turnos. A manh\u00E3 (cami\u00E3o) e a noite (arruma\u00E7\u00E3o) n\u00E3o devem ser mexidas.'});
+  } else if(origem!=null){
+    obs.push({t:'i', ic:'lightbulb', h:'H\u00E1 folga \u00E0s '+origem+'h',
+      tx:'\u00C0s '+origem+'h sobra equipa face ao que se vende, mas nenhuma hora de venda est\u00E1 sobrecarregada. Podes libertar algu\u00E9m dessa hora sem prejudicar o atendimento \u2014 ou aproveit\u00E1-la para tarefas de loja.'});
+  } else {
+    obs.push({t:'g', ic:'lightbulb', h:'Sem ajustes \u00F3bvios a fazer',
+      tx:'Nas horas de venda, a carga por pessoa n\u00E3o se afasta muito da hora de refer\u00EAncia. Tendo em conta o cami\u00E3o de manh\u00E3 e a arruma\u00E7\u00E3o \u00E0 noite, o hor\u00E1rio '+lbl+' est\u00E1 equilibrado.'});
+  }
+
+  host.innerHTML=obs.map(obHTML).join('');
   mountIcons(host);
 }
+function obHTML(x){ return '<div class="pl-ob '+x.t+'"><div class="ic-w">'+svg(x.ic)+'</div><div class="txt"><div class="oh">'+esc(x.h)+'</div><div class="ob">'+esc(x.tx)+'</div></div></div>'; }
 function renderAll(){ renderSeg(); renderUnit(); renderLegend(); document.getElementById('plTitle').textContent=PLAN?('Equipa por hora \u00D7 Vendas por hora \u2014 '+PLAN.label):'Equipa por hora \u00D7 Vendas por hora'; renderChart(); renderFteBox(); renderProd(); renderObs(); var note=document.getElementById('plNote'); if(note) note.textContent=PLAN?('Baseado no hor\u00E1rio importado em "Hor\u00E1rio do Staff" ('+nSel()+' dias '+(planMode==='we'?'de fim de semana':'\u00FAteis')+'). Pausas de almo\u00E7o/jantar ignoradas.'):''; mountIcons(document.querySelector('.pl-wrap')); }
 function loadAll(){
   try{ var le=localStorage.getItem('sz_escala'); if(le){ var e0=JSON.parse(le); var p0=planFromEscala(e0); if(p0) PLAN=p0; } }catch(e){}
-  try{ var lv=localStorage.getItem('sz_vendas'); if(lv){ var v0=JSON.parse(lv); if(v0&&v0.hourly) SALESH=v0.hourly.map(function(x){return {h:parseInt(String(x.l).slice(0,2),10), eur:x.eur};}); } }catch(e){}
+  try{ var lv=localStorage.getItem('sz_vendas'); if(lv){ var v0=JSON.parse(lv); if(v0&&v0.hourly){ SALESH=v0.hourly.map(function(x){return {h:parseInt(String(x.l).slice(0,2),10), eur:x.eur};}); VSEM=v0.semana||''; } } }catch(e){}
   renderAll();
   if(!BACKEND) return;
   fetch(BACKEND+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){
     var ns=(j&&j.notas)?j.notas:[]; function latest(sec){ var a=ns.filter(function(n){return String(n.seccao)===sec;}); if(!a.length) return null; a.sort(function(x,y){return new Date(y.data)-new Date(x.data);}); try{ return JSON.parse(a[0].texto); }catch(e){ return null; } }
     var escd=latest('_escala'); if(escd){ var p=planFromEscala(escd); if(p) PLAN=p; }
-    var v=latest('_vendas'); if(v&&v.hourly){ SALESH=v.hourly.map(function(x){return {h:parseInt(String(x.l).slice(0,2),10), eur:x.eur};}); }
+    var v=latest('_vendas'); if(v&&v.hourly){ SALESH=v.hourly.map(function(x){return {h:parseInt(String(x.l).slice(0,2),10), eur:x.eur};}); VSEM=v.semana||''; }
     renderAll();
   }).catch(function(){});
 }
