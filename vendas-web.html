@@ -322,6 +322,25 @@
   .vd-tab .ico{width:19px;height:19px;}
   .vd-tab.active{background:var(--accent-soft);border-color:#f3c48f;color:var(--accent-ink);}
   .vd-tab.active .ico{color:var(--accent-dark);}
+  /* ===== Widgets do Resumo ===== */
+  .vd-wbar{display:flex;align-items:center;gap:9px;margin:0 2px 12px;}
+  .vd-wbar .wb-t{font-size:17px;font-weight:800;color:var(--ink);letter-spacing:-.01em;}
+  .vd-wbar .wb-n{font-size:12px;font-weight:700;color:var(--muted2);}
+  .vd-wbar .wb-btn{margin-left:auto;display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:800;color:var(--accent-dark);cursor:pointer;font-family:inherit;box-shadow:var(--shadow-sm);}
+  .vd-wbar .wb-btn .ico{width:14px;height:14px;}
+  .vd-wedit{display:none;}
+  .vd-wedit.open{display:block;background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:12px;margin:0 2px 16px;box-shadow:var(--shadow);}
+  .vd-wedit .we-h{font-size:12.5px;color:var(--muted);font-weight:700;margin-bottom:8px;}
+  .we-row{display:flex;align-items:center;gap:9px;padding:8px 2px;border-bottom:1px solid var(--line);}
+  .we-row:last-of-type{border-bottom:none;}
+  .we-chk{width:23px;height:23px;flex:none;border:1.5px solid var(--line2);border-radius:7px;background:#fff;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;}
+  .we-chk.on{background:var(--accent);border-color:var(--accent);}
+  .we-chk .ico{width:14px;height:14px;color:#fff;}
+  .we-ic{line-height:0;color:var(--muted2);} .we-ic .ico{width:16px;height:16px;}
+  .we-nm{flex:1;min-width:0;font-size:13.5px;font-weight:700;color:var(--ink);}
+  .we-mv{background:none;border:1.5px solid var(--line2);border-radius:8px;color:var(--muted);font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;padding:3px 8px;line-height:1;}
+  .we-mv:disabled{opacity:.3;cursor:default;}
+  .we-reset{margin-top:10px;background:none;border:none;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;padding:4px 2px;text-decoration:underline;}
   /* ===== Recomendacoes AI ===== */
   .vd-recsub{font-size:12.5px;color:var(--muted);line-height:1.55;margin:-4px 0 12px;}
   .vd-recsub b{color:var(--accent-ink);}
@@ -466,22 +485,28 @@
   </div>
   <div class="vd-tabs" id="vdTabs"></div>
   <div id="vdResumo">
-  <div class="kpis" id="vdKpis"></div>
-  <div class="panel">
+  <div class="vd-wbar" id="vdWbar"></div>
+  <div class="vd-wedit" id="vdWedit"></div>
+  <div class="kpis" id="vdKpis" data-w="kpis"></div>
+  <div class="panel" data-w="serie">
     <div class="p-head"><h2>Evolu&#231;&#227;o de Vendas Semanais</h2><select class="vd-sel" id="vdMetric"><option value="eur">Vendas (&#8364;)</option><option value="tx">Transa&#231;&#245;es</option></select></div>
     <div class="vd-chart-wrap" id="vdLine"></div>
     <div class="vd-note" id="vdDayNote">Gr&#225;fico di&#225;rio (Dom&#8594;S&#225;b) fica dispon&#237;vel quando importares o ficheiro com as vendas por dia da semana.</div>
   </div>
-  <div class="panel"><div class="p-head"><h2>Vendas por Hora</h2></div><div class="vd-chart-wrap" id="vdHourly"></div></div>
-  <div class="vd-two">
+  <div class="vd-two" data-w="peso">
+    <div class="panel"><div class="p-head"><h2>Peso por &#193;rea</h2></div><div id="vdPesoArea"></div></div>
+    <div class="panel"><div class="p-head"><h2>Peso por G&#233;nero</h2></div><div id="vdPesoGen"></div></div>
+  </div>
+  <div class="panel" data-w="hora"><div class="p-head"><h2>Vendas por Hora</h2></div><div class="vd-chart-wrap" id="vdHourly"></div></div>
+  <div class="vd-two" data-w="top">
     <div class="panel"><div class="p-head"><h2 id="vdTopTitle">Top Atividades</h2><button class="vd-toggle" id="vdCatToggle">Ver por categoria</button></div><div class="vd-catlist" id="vdTopCat"></div></div>
     <div class="panel"><div class="p-head"><h2>Em Queda</h2></div><div class="vd-catlist" id="vdDownCat"></div></div>
   </div>
-  <div class="vd-two">
+  <div class="vd-two" data-w="marcas">
     <div class="panel"><div class="p-head"><h2>Marcas Mais Vendidas</h2></div><div class="vd-areafilter" id="vdMarcaFilter"></div><div class="vd-chart-wrap" id="vdBrand"></div></div>
     <div class="panel"><div class="p-head"><h2>Vendas por &#193;rea</h2></div><div class="vd-catlist" id="vdAreas"></div></div>
   </div>
-  <div class="panel"><div class="p-head"><h2>Insights da Semana</h2></div><div class="vd-insights" id="vdInsights"></div></div>
+  <div class="panel" data-w="insights"><div class="p-head"><h2>Insights da Semana</h2></div><div class="vd-insights" id="vdInsights"></div></div>
   </div>
   <div id="vdDetail" style="display:none"></div>
 </div></div>
@@ -1863,6 +1888,130 @@ function detHoras(){ var mode=detState.hora; var data=VD.hourly||[]; var best=da
    Regras deterministas: cada recomendacao diz sempre PORQUE a diz.
    ================================================================ */
 function fmtDec1(v){ var n=Math.round((+v||0)*10)/10; return String(n).replace('.',','); }
+
+/* ================================================================
+   WIDGETS do Resumo \u2014 o utilizador escolhe quais ve e por que ordem.
+   Cada painel do Resumo tem data-w="chave". A configuracao fica no
+   localStorage e e aplicada reordenando/escondendo os proprios paineis.
+   ================================================================ */
+var WIDGETS=[
+  {k:'kpis',     nm:'KPIs',              ic:'banknote'},
+  {k:'serie',    nm:'Evolu\u00E7\u00E3o semanal',  ic:'trending-up'},
+  {k:'peso',     nm:'Peso por \u00E1rea e g\u00E9nero', ic:'package'},
+  {k:'hora',     nm:'Vendas por hora',   ic:'clock'},
+  {k:'top',      nm:'Top e Em queda',    ic:'list-checks'},
+  {k:'marcas',   nm:'Marcas e \u00E1reas',    ic:'tag'},
+  {k:'insights', nm:'Insights da semana',ic:'lightbulb'}
+];
+var WCFG={order:null, off:{}};
+function wLoad(){ try{ var s=localStorage.getItem('sz_vd_w'); if(s){ var o=JSON.parse(s); if(o&&typeof o==='object'){ WCFG.order=Array.isArray(o.order)?o.order:null; WCFG.off=o.off||{}; } } }catch(e){} }
+function wSave(){ try{ localStorage.setItem('sz_vd_w', JSON.stringify(WCFG)); }catch(e){} }
+function wOrder(){
+  var all=WIDGETS.map(function(w){return w.k;});
+  if(!WCFG.order) return all.slice();
+  /* respeita a ordem guardada e acrescenta no fim os widgets novos */
+  var out=WCFG.order.filter(function(k){ return all.indexOf(k)>=0; });
+  all.forEach(function(k){ if(out.indexOf(k)<0) out.push(k); });
+  return out;
+}
+function applyWidgets(){
+  var host=document.getElementById('vdResumo'); if(!host) return;
+  var ord=wOrder();
+  ord.forEach(function(k){
+    var el=host.querySelector('[data-w="'+k+'"]'); if(!el) return;
+    el.style.display = WCFG.off[k] ? 'none' : '';
+    host.appendChild(el);              /* reordena: reanexar move para o fim */
+  });
+  renderWbar();
+}
+function renderWbar(){
+  var bar=document.getElementById('vdWbar'); if(!bar) return;
+  var n=WIDGETS.filter(function(w){ return !WCFG.off[w.k]; }).length;
+  bar.innerHTML='<span class="wb-t">Widgets</span><span class="wb-n">'+n+' de '+WIDGETS.length+'</span>'
+    +'<button class="wb-btn" id="vdWedBtn">'+svg('square-pen')+' Editar</button>';
+  mountIcons(bar);
+  document.getElementById('vdWedBtn').onclick=toggleWedit;
+}
+function toggleWedit(){
+  var box=document.getElementById('vdWedit');
+  if(box.classList.contains('open')){ box.classList.remove('open'); box.innerHTML=''; return; }
+  box.classList.add('open');
+  var ord=wOrder();
+  box.innerHTML='<div class="we-h">Escolhe o que queres ver e por que ordem</div>'
+    +ord.map(function(k,i){
+      var w=WIDGETS.filter(function(x){return x.k===k;})[0]; if(!w) return '';
+      var on=!WCFG.off[k];
+      return '<div class="we-row" data-k="'+k+'">'
+        +'<button class="we-chk'+(on?' on':'')+'" data-t="'+k+'" aria-label="Mostrar">'+(on?svg('badge-check'):'')+'</button>'
+        +'<span class="we-ic">'+svg(w.ic)+'</span><span class="we-nm">'+esc(w.nm)+'</span>'
+        +'<button class="we-mv" data-u="'+k+'"'+(i===0?' disabled':'')+'>\u25B2</button>'
+        +'<button class="we-mv" data-d="'+k+'"'+(i===ord.length-1?' disabled':'')+'>\u25BC</button></div>';
+    }).join('')
+    +'<button class="we-reset" id="vdWreset">Repor predefini\u00E7\u00E3o</button>';
+  mountIcons(box);
+  box.querySelectorAll('.we-chk').forEach(function(b){ b.onclick=function(){
+    var k=b.getAttribute('data-t'); if(WCFG.off[k]) delete WCFG.off[k]; else WCFG.off[k]=1;
+    wSave(); applyWidgets(); box.classList.remove('open'); toggleWedit(); }; });
+  box.querySelectorAll('.we-mv').forEach(function(b){ b.onclick=function(){
+    if(b.disabled) return;
+    var k=b.getAttribute('data-u')||b.getAttribute('data-d'), up=!!b.getAttribute('data-u');
+    var o=wOrder(), i=o.indexOf(k), j=up?i-1:i+1;
+    if(j<0||j>=o.length) return;
+    var t=o[i]; o[i]=o[j]; o[j]=t; WCFG.order=o; wSave(); applyWidgets(); box.classList.remove('open'); toggleWedit(); }; });
+  document.getElementById('vdWreset').onclick=function(){ WCFG={order:null,off:{}}; wSave(); applyWidgets(); box.classList.remove('open'); toggleWedit(); };
+}
+
+/* ---------------- Donuts coloridos: peso por area e por genero ---------------- */
+var PCOL=['#FF8100','#2563eb','#10b981','#a855f7','#ec4899','#f59e0b','#6b7280','#14b8a6'];
+function donutHTML(data, unidade){
+  var tot=0; data.forEach(function(d){ tot+=d.val; }); tot=tot||1;
+  var cx=90,cy=90,r=64,sw=27,C=2*Math.PI*r,off=0;
+  var segs=data.map(function(d,i){
+    var len=d.val/tot*C;
+    var s='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+PCOL[i%PCOL.length]+'" stroke-width="'+sw+'" '
+      +'stroke-dasharray="'+len.toFixed(1)+' '+(C-len).toFixed(1)+'" stroke-dashoffset="'+(-off).toFixed(1)+'" '
+      +'transform="rotate(-90 '+cx+' '+cy+')"><title>'+esc(d.nm)+': '+fmtEur(d.val)+'</title></circle>';
+    off+=len; return s;
+  }).join('');
+  var svgD='<svg viewBox="0 0 180 180" class="vd-donut">'+segs
+    +'<text x="90" y="86" text-anchor="middle" class="vd-dn-big">'+fmtEur(tot)+'</text>'
+    +'<text x="90" y="104" text-anchor="middle" class="vd-dn-sm">'+esc(unidade||'total')+'</text></svg>';
+  var lg=data.map(function(d,i){
+    return '<div class="vd-lg"><span class="dot" style="background:'+PCOL[i%PCOL.length]+'"></span>'
+      +'<span class="lg-nm">'+esc(d.nm)+'</span>'
+      +'<span class="lg-sp">'+fmtDelta(d.val/tot*100)+'%</span></div>';
+  }).join('');
+  return '<div class="vd-donwrap"><div class="vd-donut-box">'+svgD+'</div><div class="vd-legend">'+lg+'</div></div>';
+}
+/* respeita os filtros do Explorar (area/genero/atividade/categoria) */
+function pesoRows(){
+  if(!hasFacts()) return null;
+  var d=VD.facts.dim;
+  return VD.facts.rows.filter(function(r){
+    if(exp.area && d.area[r[0]]!==exp.area) return false;
+    if(exp.gen && (GEN_BUCKET[d.gen[r[1]]]||d.gen[r[1]])!==exp.gen) return false;
+    if(exp.act && d.act[r[2]]!==exp.act) return false;
+    if(exp.cat && d.cat[r[4]]!==exp.cat) return false;
+    return true;
+  });
+}
+function renderPeso(){
+  var hA=document.getElementById('vdPesoArea'), hG=document.getElementById('vdPesoGen');
+  if(!hA||!hG) return;
+  var rows=pesoRows();
+  if(!rows||!rows.length){
+    var msg='<div class="vd-note">Importa o Excel BTR com o detalhe por artigo para veres o peso por \u00E1rea e por g\u00E9nero.</div>';
+    hA.innerHTML=msg; hG.innerHTML=msg; return;
+  }
+  var fa=(exp.area||exp.gen||exp.act||exp.cat)?'<div class="vd-note">Com os filtros do Explorar aplicados.</div>':'';
+  function build(by){
+    var a=aggBy(rows,by);
+    return a.arr.filter(function(x){ return x.ns>0; }).slice(0,8).map(function(x){ return {nm:x.raw, val:x.ns}; });
+  }
+  hA.innerHTML=donutHTML(build('area'),'total')+fa;
+  hG.innerHTML=donutHTML(build('gen'),'total')+fa;
+  mountIcons(hA); mountIcons(hG);
+}
 var XM={comp:null, escala:null, roturas:[], pfhist:[]};
 function loadXM(ns){
   function lastOf(sec){ var a=ns.filter(function(n){return String(n.seccao)===sec;});
@@ -2148,7 +2297,7 @@ function wireDetail(){ var det=document.getElementById('vdDetail');
   det.querySelectorAll('button[data-x]').forEach(function(b){ b.onclick=function(){ var x=b.getAttribute('data-x'), v=b.getAttribute('data-v'); if(x==='clear'){ exp.area='';exp.gen='';exp.act='';exp.cat=''; } else if(x==='by'){ exp.by=v; } else { exp[x]=(exp[x]===v?'':v); if(x==='area'||x==='gen'){ exp.act='';exp.cat=''; } } showTab('explorar'); }; });
   det.querySelectorAll('select[data-x]').forEach(function(s){ s.onchange=function(){ exp[s.getAttribute('data-x')]=s.value; showTab('explorar'); }; });
   det.querySelectorAll('[data-h]').forEach(function(b){ b.onclick=function(){ detState.hora=b.getAttribute('data-h'); showTab('horas'); }; }); }
-function renderAll(){ document.getElementById('vdWeekLbl').textContent=VD.semana||'Semana'; renderKpis(); vdLineChart(); vdHourly(); renderTop(); renderMarcaFilter(); vdBrandChart(); renderAreas(); renderInsights(); renderTabs(); mountIcons(document.querySelector('.vd-wrap')); showTab(DETAIL); }
+function renderAll(){ document.getElementById('vdWeekLbl').textContent=VD.semana||'Semana'; renderKpis(); vdLineChart(); vdHourly(); renderTop(); renderMarcaFilter(); vdBrandChart(); renderAreas(); renderPeso(); renderInsights(); renderTabs(); applyWidgets(); mountIcons(document.querySelector('.vd-wrap')); showTab(DETAIL); }
 document.getElementById('vdMetric').addEventListener('change',vdLineChart);
 document.getElementById('vdCatToggle').addEventListener('click',function(){ catMode=(catMode==='cat'?'act':'cat'); renderTop(); mountIcons(document.getElementById('vdTopCat')); mountIcons(document.getElementById('vdDownCat')); });
 
@@ -2208,6 +2357,7 @@ document.getElementById('vdWeek').addEventListener('click',function(){ toast('Se
 function saveCloud(){ try{ localStorage.setItem('sz_vendas', JSON.stringify(VD)); }catch(e){} if(!BACKEND) return; try{ sessionStorage.removeItem('sz_notas_cache'); }catch(e){} fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_add',seccao:'_vendas',autor:VD.semana||'',texto:JSON.stringify(VD)})}).catch(function(){}); }
 function saveHist(){ try{ localStorage.setItem('sz_vendasH', JSON.stringify(HIST)); }catch(e){} if(!BACKEND) return; fetch(BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nota_add',seccao:'_vendasHist',autor:curWk(),texto:JSON.stringify(HIST)})}).catch(function(){}); }
 function loadCloud(){ try{ var ls=localStorage.getItem('sz_vendas'); if(ls){ var lv=JSON.parse(ls); if(lv&&lv.kpis) VD=lv; } }catch(e){} try{ var lh=localStorage.getItem('sz_vendasH'); if(lh){ var hv=JSON.parse(lh); if(hv) HIST=hv; } }catch(e){} renderAll(); if(!BACKEND) return; try{ sessionStorage.removeItem('sz_notas_cache'); }catch(e){} fetch(BACKEND+'?action=notas&t='+Date.now()).then(function(r){return r.json();}).then(function(j){ var ns=(j&&j.notas)?j.notas:[]; loadXM(ns); var vs=ns.filter(function(n){return String(n.seccao)==='_vendas';}); var hs=ns.filter(function(n){return String(n.seccao)==='_vendasHist';}); if(vs.length){ vs.sort(function(a,b){return new Date(b.data)-new Date(a.data);}); try{ var v=JSON.parse(vs[0].texto); if(v&&v.kpis){ VD=v; } }catch(e){} } if(hs.length){ hs.sort(function(a,b){return new Date(b.data)-new Date(a.data);}); try{ var h=JSON.parse(hs[0].texto); if(h&&typeof h==='object') HIST=h; }catch(e){} } if(!Object.keys(HIST).length){ updateHist(); } renderAll(); }).catch(function(){}); }
+wLoad();
 loadCloud();
 
 </script>
